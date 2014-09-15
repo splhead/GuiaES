@@ -1,27 +1,42 @@
 package com.silas.guiaes.activity;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import android.graphics.Bitmap;
-
+import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,7 +44,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.silas.guiaes.io.Util;
@@ -49,23 +66,26 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
+            System.setProperty("http.keepAlive", "false");
+        }
         setContentView(R.layout.activity_login);
         CookieHandler.setDefault(cookieManager);
+        final EditText etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+
+//        new CookieCaptchaTask().execute();
         new LoginTask().execute();
 
-
-        /*new CaptchaTask().execute("");
         final Button button = (Button) findViewById(R.id.bEntrar);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final EditText etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+
                 recaptchaResponseField = etCaptcha.getText().toString();
                 Log.d("cliquei", recaptchaResponseField);
-
-                new LoginTask().execute("");
-
+                if (!recaptchaResponseField.isEmpty())
+                    new LoginTask().execute();
             }
-        });*/
+        });
     }
 
     @Override
@@ -117,18 +137,22 @@ public class LoginActivity extends ActionBarActivity {
     private void captcha() {
         URL url;
         HttpURLConnection urlConnection = null;
-        InputStream in = null;
+        InputStream in;
 
 
         try {
-            getCookies(urlConnection);
 
             //pegar o captcha
             url = new URL("http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7");
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0");
 
             in = new BufferedInputStream(urlConnection.getInputStream());
             Document html = Jsoup.parse(leFluxo(in));
+
+            Element challenge = html.select("input#recaptcha_challenge_field").first();
+            recaptchaChallengeField = challenge.attr("value");
+
             Element imagem = html.select("img").first();
             Log.d("capt", html.html() + imagem.attr("src"));
             ImageView ivCaptcha;
@@ -142,181 +166,102 @@ public class LoginActivity extends ActionBarActivity {
                 urlConnection.disconnect();
             }
         }
-
-
-        /*final String url ="http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7";
-        final RequestParams params = new RequestParams();
-        Document doc = new ExtraiDocument(url).html();
-        Log.d("ca", doc.html());*/
-       /* cliente.get("http://cpbmais.cpb.com.br/login/index.php", params, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                Log.d("sadf", "Erro ao carregar login/index.php");
-            }
-
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Document html = Jsoup.parse(s);
-                Log.d("asdf", html.html());
-
-
-            }
-        });
-        url = "http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7";
-        cliente.get(url,
-                params, new TextHttpResponseHandler() {
-                    @Override
-                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(int i, Header[] headers, String s) {
-                        Log.d("asdfl", "url " + url);
-                        Document html = Jsoup.parse(s);
-                        Element imagem = html.select("img").first();
-                        Element desafio = html.select("input#recaptcha_challenge_field")
-                                .first();
-                        recaptchaChallengeField = desafio.attr("value");
-                        Log.d("sdf", imagem.attr("abs:src"));
-
-                        ImageView ivCaptcha;
-                        ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
-                        new Util().imagemDownload(imagem.attr("abs:src"), ivCaptcha);
-                    }
-                });
-
-        params.put("email", EMAIL);
-        params.put("senha", SENHA);*/
     }
 
-    private HttpURLConnection getCookies(HttpURLConnection urlConnection) throws IOException {
-        URL url;//primeira requisição pegar o cookie
-        url = new URL("http://cpbmais.cpb.com.br/login/index.php");
-        urlConnection = (HttpURLConnection) url.openConnection();
-        //in = new BufferedInputStream(urlConnection.getInputStream());
-        //System.out.println(urlConnection.getHeaderField("PHPSESSID"));
-        cookiesHeader = urlConnection.getHeaderFields().get("Set-Cookie");
-        for(String cookie : cookiesHeader ){
-            System.out.println("cookie: " + cookie);
+    private void login() {
+        final AndroidHttpClient cliente = AndroidHttpClient.newInstance("Android");
+
+
+        try {
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("email", EMAIL));
+            params.add(new BasicNameValuePair("senha", SENHA));
+            params.add(new BasicNameValuePair("response_challenge_field", recaptchaChallengeField));
+            params.add(new BasicNameValuePair("response_response_field", recaptchaResponseField));
+            final HttpPost post = new HttpPost("http://cpbmais.cpb.com.br/login/includes/autenticate.php");
+            post.setEntity(new UrlEncodedFormEntity(params));
+            post.setHeader(cookiesHeader.get(0).split(";")[0],cookiesHeader.get(0).split(";")[1]);
+
+            HttpResponse res = cliente.execute(post);
+            System.out.println(res.getStatusLine().getStatusCode());
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (cliente != null) cliente.close();
         }
-        return urlConnection;
     }
 
-    private Connection getConexao() {
-        if (con == null)
-        return con = Jsoup.connect("http://cpbmais.cpb.com.br/");
-        return con;
+    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+        System.out.println(result.toString());
+        return result.toString();
     }
 
-    class CaptchaTask extends AsyncTask<String, Void, Bitmap> {
+    private List<String> getCookies(){
+        URL url;//primeira requisição pegar o cookie
+        HttpURLConnection urlConnection = null;
+
+        if(cookiesHeader == null) try {
+            url = new URL("http://cpbmais.cpb.com.br/login/index.php");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0");
+            urlConnection.setInstanceFollowRedirects(false);
+            cookiesHeader = urlConnection.getHeaderFields().get("Set-Cookie");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        for(String cookie : cookiesHeader ){
+            System.out.println("cookie: " + cookie.split(";")[0]);
+        }
+
+        return cookiesHeader;
+    }
+
+    class CookieCaptchaTask extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Bitmap doInBackground(String... arg0) {
-            recaptcha();
+        protected Void doInBackground(String... arg0) {
+//            getCookies();
+            captcha();
             return null;
         }
+
     }
 
     class LoginTask extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... arg0) {
-            captcha(); return null;
-            /*try {
-                con = getConexao();
-                con.url("http://cpbmais.cpb.com.br/login/includes/autenticate.php")
-                        .timeout(10000)
-                        .userAgent(
-                                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0")
-                        .data("email", EMAIL, "senha", SENHA,
-                                "recaptcha_challenge_field",
-                                recaptchaChallengeField,
-                                "recaptcha_response_field", recaptchaResponseField)
-                        .method(Method.POST)
-                        .cookie("PHPSESSID", sessionId);
-
-                Document doc = con.execute().parse();
-
-
-
-                Log.d("login", doc.title() + " ");
-
-           *//* res = Jsoup.connect("http://cpbmais.cpb.com.br/htdocs/periodicos/lesjovens2014.php")
-                    .cookie("PHPSESSID", sessionId)
-                    .execute();
-            doc = res.parse();
-            Log.d("logado-request", doc.html() + " ");*//*
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;*/
+            getCookies();
+            login();
+            return null;
         }
+
     }
 
-    private void recaptcha() {
+
+    private void login_olld() {
         try {
-            con = getConexao();
-            if (sessionId == null) {
-                //para pegar o cookie
-                con.url(
-                        "http://cpbmais.cpb.com.br/login/index.php")
-                        .timeout(10000)
-                        .userAgent(
-                                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0");
-                sessionId = con.execute().cookie("PHPSESSID");
-                Log.d("cookie", sessionId);
-            }
 
-            // abre o captch
-            con.url("http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7");
-            /*con = Jsoup
-                    .connect(
-                            "http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7")
-                    .userAgent(
-                            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0")
-                            // .data("email", EMAIL, "senha", SENHA)
-                            // .method(Method.POST)
-                    .execute();*/
-            Document doc = con.execute().parse();
-
-            Element imagem = doc.select("img").first();
-            Element desafio = doc.select("input#recaptcha_challenge_field")
-                    .first();
-            recaptchaChallengeField = desafio.attr("value");
-            // String sessionId = res.cookie("PHPSESSID");+ sessionId
-
-            //Log.d("login2", doc.html() + " ");
-            Log.d("recaptcha", imagem.attr("abs:src"));
-
-            ImageView ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
-            new Util().imagemDownload(imagem.attr("abs:src"), ivCaptcha);
-            //new baixaImagemTask().execute(imagem.attr("abs:src"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*private class baixaImagemTask extends AsyncTask<String, Void, Bitmap> {
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-
-            return new Util().baixaImagem(urls[0]);
-
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            ImageView image = (ImageView) findViewById(R.id.ivCaptcha);
-            image.setImageBitmap(result);
-        }
-
-    }*/
-
-    private void login() {
-        try {
-            con = getConexao();
             con.url(
                             "http://cpbmais.cpb.com.br/login/includes/autenticate.php")
                     .timeout(10000)
@@ -331,18 +276,9 @@ public class LoginActivity extends ActionBarActivity {
                     .execute();
             Document doc = con.execute().parse();
 
-
-
             Log.d("login", doc.html() + " ");
 
-           /* res = Jsoup.connect("http://cpbmais.cpb.com.br/htdocs/periodicos/lesjovens2014.php")
-                    .cookie("PHPSESSID", sessionId)
-                    .execute();
-            doc = res.parse();
-            Log.d("logado-request", doc.html() + " ");*/
-
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
