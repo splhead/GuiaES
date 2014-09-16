@@ -1,9 +1,5 @@
 package com.silas.guiaes.io;
 
-import android.util.Log;
-
-import com.silas.guiaes.interfaces.TarefaConcluidaListener;
-import com.silas.guiaes.models.Extracao;
 import com.silas.guiaes.models.Trimestre;
 
 import org.jsoup.nodes.Document;
@@ -14,7 +10,7 @@ import java.util.StringTokenizer;
 /**
  * Created by silas on 08/09/14.
  */
-public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener {
+public class ExtraiTrimestre {
     private Trimestre trimestre;
     //private String url;
 
@@ -22,11 +18,11 @@ public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener
         //	new DocumentDownloadTask().execute(params);
     }
 
-    public Trimestre getTrimestre() {
+    public Trimestre trimestre() {
         return trimestre;
     }
 
-    @Override
+    /*@Override
     public void iniciaExtracao(Document html) {
         if (html != null) {
             // pegando do #conteudo por haver erro de sintaxe no html do
@@ -74,7 +70,7 @@ public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener
                 // Bitmap bitmap =
                 // BitmapFactory.decodeByteArray(imagemFile,0,imagemFile.length);
                 //Bitmap bitmap = null;
-				/*try {
+				*//*try {
 					Bitmap bitmap = new baixaImagemTask().execute(urlCapa).get();//new Util().baixaImagem(capa);
 					//image.setImageBitmap(bitmap);
 					if (bitmap == null) {
@@ -93,16 +89,16 @@ public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener
 
 				} catch (Exception e) {
 					e.printStackTrace();
-				}*/
+				}*//*
 
 
-				/*
+				*//*
 				 * Intent intent = new Intent(this, DownloadService.class);
 				 * Messenger messenger = new Messenger(handler);
 				 * intent.putExtra("MESSENGER", messenger);
 				 * intent.setData(Uri.parse(capa));
 				 * intent.putExtra("urlpath", capa); startService(intent);
-				 */
+				 *//*
 
                 // pega o nome original da imagem da capa
                 // capa = capa.substring(capa.lastIndexOf("/") + 1);
@@ -122,7 +118,7 @@ public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener
                 urlCapa = null;
 
                 //pega o link das lições do trimestre
-				/*int nLicao = 1;
+				*//*int nLicao = 1;
 				Elements linkLicoes = buscaElementos(html,
 						"div#conteudo a[href~="+ ordem_trimestre + ano +"]");
 				for (Element link : linkLicoes) {
@@ -130,14 +126,11 @@ public class ExtraiTrimestre extends Extracao implements TarefaConcluidaListener
 							+ String.valueOf(nLicao) + " " + link.text());
 					nLicao++;
 					new LicaoTask().execute(link.attr("abs:href"));
-				}*/
+				}*//*
             } //fim for trimestres
         }
-    }
+    }*/
 
-    @Override
-    public void quandoTarefaConcluida(Document html) {
-        this.iniciaExtracao(html);
-    }
+
 
 }
