@@ -24,7 +24,7 @@ public class CPBCliente extends AsyncHttpClient {
             synchronized (CPBCliente.class) {
                 if(cpb == null) {
                     cpb = new CPBCliente();
-                    myCookieStore = new PersistentCookieStore(c);
+                    myCookieStore = new PersistentCookieStore(c.getApplicationContext());
                     client.setCookieStore(myCookieStore);
                     client.setUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0");
                 }
