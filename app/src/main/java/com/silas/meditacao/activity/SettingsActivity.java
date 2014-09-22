@@ -1,4 +1,4 @@
-package com.silas.guiaes.activity;
+package com.silas.meditacao.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -17,6 +17,8 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
+
+import com.silas.guiaes.activity.R;
 
 import java.util.List;
 

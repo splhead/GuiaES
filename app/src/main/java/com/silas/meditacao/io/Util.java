@@ -1,4 +1,4 @@
-package com.silas.guiaes.io;
+package com.silas.meditacao.io;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;

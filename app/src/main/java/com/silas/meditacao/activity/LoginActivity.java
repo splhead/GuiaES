@@ -1,8 +1,7 @@
-package com.silas.guiaes.activity;
+package com.silas.meditacao.activity;
 
 import org.apache.http.Header;
 
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,7 +9,6 @@ import org.jsoup.nodes.Element;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.method.PasswordTransformationMethod;
@@ -25,8 +23,9 @@ import android.widget.ImageView;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.silas.guiaes.io.CPBCliente;
-import com.silas.guiaes.io.Util;
+import com.silas.guiaes.activity.R;
+import com.silas.meditacao.io.CPBCliente;
+import com.silas.meditacao.io.Util;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -65,7 +64,7 @@ public class LoginActivity extends ActionBarActivity {
                 recaptchaResponseField = etCaptcha.getText().toString();
                 Log.d("cliquei", recaptchaResponseField);
                 if (recaptchaResponseField.length() > 0)
-                    fazLogin(); teste();
+                    fazLogin(); //teste();
 
             }
         });
@@ -141,13 +140,7 @@ public class LoginActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
-
-            }
-        });
-    }
-
-    private void teste() {
-        client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/2014/frmd2014.php",
+                client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/2014/frmd2014.php",
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
@@ -159,6 +152,12 @@ public class LoginActivity extends ActionBarActivity {
                         Log.d("t", s);
                     }
                 });
+            }
+        });
+    }
+
+    private void teste() {
+
     }
 
 
@@ -181,4 +180,5 @@ public class LoginActivity extends ActionBarActivity {
 //                Log.d("cookies", s );
             }
         });
-    }}
+    }
+}
