@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -27,15 +28,17 @@ public class Extracao {
 
     public void extraiMeditacao(String html) {
         Calendar c = GregorianCalendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH,1);
         int iMes = c.get(Calendar.MONTH);
-        int iDia = 1;
+        int iDia = c.get(Calendar.DAY_OF_MONTH);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         StringBuilder sbTexto = new StringBuilder();
         Document doc = Jsoup.parse(html);
         Element raiz = doc.select("div#conteudo").first();
         Elements h2Titulos = doc.select("div#conteudo h2");
         for (Element titulo: h2Titulos) {
             //System.out.println(iDia + " " + titulo.text());
-            iDia++;
+
 
             Element prox = proximo(titulo, raiz);
             int contaHR = 0;
@@ -50,9 +53,9 @@ public class Extracao {
                     if(prox.previousElementSibling().tagName().equalsIgnoreCase("hr")) {
                         if (prox.text().length() < 2) {
                             prox = prox.nextElementSibling();
-                            System.out.println("passou");
                         }
-                        System.out.println(titulo.text() +"\ntexto_biblico: " + prox.text());
+                        System.out.println(sdf.format(c.getTime()) + " " +
+                                titulo.text() +"\ntexto_biblico: " + prox.text());
 
                     } else if(prox.text().length() > 1 && prox.tagName().equalsIgnoreCase("p")){
                         sbTexto.append(prox.text());
@@ -67,6 +70,7 @@ public class Extracao {
             }
             System.out.println("\ntexto: " + sbTexto.toString());
             sbTexto.delete(0,sbTexto.length());
+            c.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
 
