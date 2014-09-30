@@ -25,7 +25,10 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.CPBCliente;
+import com.silas.meditacao.io.Extracao;
 import com.silas.meditacao.io.Util;
+
+import java.util.Calendar;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -140,7 +143,10 @@ public class LoginActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
-                client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/2014/frmd2014.php",
+                Calendar c = Calendar.getInstance();
+                int iAno = c.get(Calendar.YEAR);
+                String sAno = String.valueOf(iAno);
+                client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" +sAno+ "/frmd" +sAno+ ".php",
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
@@ -149,7 +155,8 @@ public class LoginActivity extends ActionBarActivity {
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
-                        Log.d("t", s);
+                        //Log.d("t", s);
+                        new Extracao(getParent()).extraiMeditacao(s);
                     }
                 });
             }
