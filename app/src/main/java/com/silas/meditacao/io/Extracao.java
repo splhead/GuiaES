@@ -4,6 +4,7 @@ package com.silas.meditacao.io;
 import android.content.Context;
 import android.util.Log;
 
+import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.models.Meditacao;
 
 import org.jsoup.Jsoup;
@@ -19,11 +20,13 @@ import java.util.GregorianCalendar;
  * Created by silas on 08/09/14.
  */
 public class Extracao {
-    private Meditacao meditacao;
+    private Meditacao meditacao = new Meditacao("","","","");;
     private Context mContext;
+    private MeditacaoDBAdapter mdba;
 
     public Extracao(Context context) {
         mContext = context;
+        mdba = new MeditacaoDBAdapter(mContext);
     }
 
     public void extraiMeditacao(String html) {
@@ -33,14 +36,15 @@ public class Extracao {
         int iDia = c.get(Calendar.DAY_OF_MONTH);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         StringBuilder sbTexto = new StringBuilder();
+        String sData, sTitulo, sTextoBiblico, sTexto;
         Document doc = Jsoup.parse(html);
         Element raiz = doc.select("div#conteudo").first();
         Elements h2Titulos = doc.select("div#conteudo h2");
-        for (Element titulo: h2Titulos) {
+        for (Element eTitulo: h2Titulos) {
             //System.out.println(iDia + " " + titulo.text());
 
 
-            Element prox = proximo(titulo, raiz);
+            Element prox = proximo(eTitulo, raiz);
             int contaHR = 0;
 
 
@@ -54,8 +58,15 @@ public class Extracao {
                         if (prox.text().length() < 2) {
                             prox = prox.nextElementSibling();
                         }
-                        System.out.println(sdf.format(c.getTime()) + " " +
-                                titulo.text() +"\ntexto_biblico: " + prox.text());
+                        sData = sdf.format(c.getTime());
+                        sTitulo = eTitulo.text();
+                        sTextoBiblico = prox.text();
+//                        System.out.println( sData + " " +
+//                                 sTitulo +"\ntexto_biblico: " + sTextoBiblico);
+
+                        meditacao.setData(sData);
+                        meditacao.setTitulo(sTitulo);
+                        meditacao.setTextoBiblico(sTextoBiblico);
 
                     } else if(prox.text().length() > 1 && prox.tagName().equalsIgnoreCase("p")){
                         sbTexto.append(prox.text());
@@ -68,7 +79,15 @@ public class Extracao {
                 // passa para o próximo do mesmo nível
                 prox = prox.nextElementSibling();
             }
-            System.out.println("\ntexto: " + sbTexto.toString());
+            sTexto = sbTexto.toString();
+//            System.out.println("\ntexto: " + sTexto);
+
+
+            meditacao.setTexto(sTexto);
+            Log.d(this.getClass().getSimpleName(),meditacao.toString());
+
+            mdba.addMeditacao(meditacao);
+
             sbTexto.delete(0,sbTexto.length());
             c.add(Calendar.DAY_OF_MONTH, 1);
         }

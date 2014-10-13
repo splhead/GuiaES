@@ -10,7 +10,7 @@ import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 
 
 public class DBHelper extends SQLiteOpenHelper {
-	private static final String NOME_BANCO_DADOS = "escola_sabatina";
+	private static final String NOME_BANCO_DADOS = "guia";
 
 	private static final int VERSAO_BANCO_DADOS = 1;
 
@@ -38,6 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				bancodados.beginTransaction();
 				bancodados.execSQL(SQL_BANCO_DADOS[i]);
 				bancodados.setTransactionSuccessful();
+                Log.d(getClass().getSimpleName(), "BD criado");
 
 			} finally {
 				bancodados.endTransaction();
