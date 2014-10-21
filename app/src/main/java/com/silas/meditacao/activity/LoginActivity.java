@@ -45,20 +45,25 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        SharedPreferences _sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        cookies();
-        recaptcha();
+        conecta();
+
+    }
+
+    private void conecta() {
         final EditText etCaptcha = (EditText) findViewById(R.id.etCaptcha);
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etSenha = (EditText) findViewById(R.id.etSenha);
         etSenha.setTransformationMethod(new PasswordTransformationMethod());
-
+        SharedPreferences _sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         email = _sharedPreferences.getString("email","");
         senha = _sharedPreferences.getString("senha", "");
         //Log.d("sp", email + "\n" + senha);
         if (email.length() > 0) etEmail.setText(email);
         if (senha.length() > 0) etSenha.setText(senha);
+
+        cookies();
+        recaptcha();
 
         final Button button = (Button) findViewById(R.id.bEntrar);
         button.setOnClickListener(new View.OnClickListener() {
@@ -150,13 +155,13 @@ public class LoginActivity extends ActionBarActivity {
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
+                        conecta();
                     }
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
                         //Log.d("t", s);
-                        new Extracao(getParent()).extraiMeditacao(s);
+                        new Extracao(getApplicationContext()).extraiMeditacao(s);
                     }
                 });
             }
