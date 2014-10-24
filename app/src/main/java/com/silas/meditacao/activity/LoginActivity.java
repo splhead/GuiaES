@@ -168,11 +168,6 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    private void teste() {
-
-    }
-
-
     private void cookies() {
         client.get("http://cpbmais.cpb.com.br/login/index.php",null, new TextHttpResponseHandler() {
             @Override
