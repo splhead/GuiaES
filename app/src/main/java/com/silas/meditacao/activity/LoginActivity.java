@@ -2,6 +2,7 @@ package com.silas.meditacao.activity;
 
 import org.apache.http.Header;
 
+import org.apache.http.entity.StringEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -28,15 +30,15 @@ import com.silas.meditacao.io.CPBCliente;
 import com.silas.meditacao.io.Extracao;
 import com.silas.meditacao.io.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 
 public class LoginActivity extends ActionBarActivity {
 
     final CPBCliente client = CPBCliente.getInstace(this);
 
-//    public static final String PREFS_NAME = "LoginPrefs";
-//    final String EMAIL = "silas_ladislau@yahoo.com.br";
-//    final String SENHA = "spl#e@d";
+    EditText etCaptcha, etEmail, etSenha;
     String recaptchaChallengeField = "";
     String recaptchaResponseField = "";
     String urlImagem, email, senha;
@@ -45,23 +47,30 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        etSenha = (EditText) findViewById(R.id.etSenha);
 
         conecta();
 
     }
 
     private void conecta() {
-        final EditText etCaptcha = (EditText) findViewById(R.id.etCaptcha);
-        final EditText etEmail = (EditText) findViewById(R.id.etEmail);
-        final EditText etSenha = (EditText) findViewById(R.id.etSenha);
+
         etSenha.setTransformationMethod(new PasswordTransformationMethod());
-        SharedPreferences _sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        email = _sharedPreferences.getString("email","");
+        SharedPreferences _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        email = _sharedPreferences.getString("email", "");
         senha = _sharedPreferences.getString("senha", "");
+
         //Log.d("sp", email + "\n" + senha);
         if (email.length() > 0) etEmail.setText(email);
         if (senha.length() > 0) etSenha.setText(senha);
-
+        if (email.isEmpty() || senha.isEmpty()
+                || !email.equalsIgnoreCase(etEmail.getText().toString())
+                || !senha.equalsIgnoreCase(etSenha.getText().toString())) {
+            _sharedPreferences.edit().putString("email", etEmail.getText().toString());
+            _sharedPreferences.edit().putString("senha", etSenha.getText().toString()).apply();
+        }
         cookies();
         recaptcha();
 
@@ -91,11 +100,17 @@ public class LoginActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                break;
+            case R.id.action_refresh:
+                etCaptcha.setText("");
+                recaptcha();
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -109,28 +124,41 @@ public class LoginActivity extends ActionBarActivity {
 
 
     private void recaptcha() {
-
-        client.get("http://www.google.com/recaptcha/api/noscript?k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7",
+//        RequestParams params = new RequestParams("paramName", "");
+        String url = null;
+        try {
+            url = "http://www.google.com/recaptcha/api/noscript?RecaptchaOptions="
+                    + URLEncoder.encode("{theme:red,lang:pt,tabindex:2}", "utf-8") + "&k=6LfGLPkSAAAAAIkbhvitAGElU7VC_LkL2Nog0Pq7";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Log.d("url ", url);
+        client.get(url,
                 null, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                    @Override
+                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
-            }
+                    }
 
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Document html = Jsoup.parse(s);
-                Element challenge = html.select("input#recaptcha_challenge_field").first();
-                recaptchaChallengeField = challenge.attr("value");
+                    @Override
+                    public void onSuccess(int i, Header[] headers, String s) {
+                        for (Header h : headers) {
+                            System.out.println(h.getName() + " " + h.getValue());
 
-                Element imagem = html.select("img").first();
-                setUrlImagem("http://www.google.com/recaptcha/api/" + imagem.attr("src"));
-                Log.d("r", getUrlImagem());
+                        }
+                        Document html = Jsoup.parse(s);
+                        Element challenge = html.select("input#recaptcha_challenge_field").first();
+                        recaptchaChallengeField = challenge.attr("value");
 
-                final ImageView ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
-                new Util().imagemDownload(getUrlImagem(), ivCaptcha);
-            }
-        });
+                        Element imagem = html.select("img").first();
+                        setUrlImagem("http://www.google.com/recaptcha/api/" + imagem.attr("src"));
+                        Log.d("r", getUrlImagem());
+
+                        final ImageView ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
+                        new Util().imagemDownload(getUrlImagem(), ivCaptcha);
+                    }
+                });
+
     }
 
     private void fazLogin() {
@@ -141,35 +169,35 @@ public class LoginActivity extends ActionBarActivity {
         params.add("recaptcha_response_field", recaptchaResponseField);
         client.post("http://cpbmais.cpb.com.br/login/includes/autenticate.php",
                 params, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
-            }
-
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Calendar c = Calendar.getInstance();
-                int iAno = c.get(Calendar.YEAR);
-                String sAno = String.valueOf(iAno);
-                client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" +sAno+ "/frmd" +sAno+ ".php",
-                null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                        conecta();
+
                     }
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
-                        //Log.d("t", s);
-                        new Extracao(getApplicationContext()).extraiMeditacao(s);
+                        Calendar c = Calendar.getInstance();
+                        int iAno = c.get(Calendar.YEAR);
+                        String sAno = String.valueOf(iAno);
+                        client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" + sAno + "/frmd" + sAno + ".php",
+                                null, new TextHttpResponseHandler() {
+                                    @Override
+                                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                                        recaptcha();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(int i, Header[] headers, String s) {
+                                        //Log.d("t", s);
+                                        new Extracao(getApplicationContext()).extraiMeditacao(s);
+                                    }
+                                });
                     }
                 });
-            }
-        });
     }
 
     private void cookies() {
-        client.get("http://cpbmais.cpb.com.br/login/index.php",null, new TextHttpResponseHandler() {
+        client.get("http://cpbmais.cpb.com.br/login/index.php", null, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
@@ -177,7 +205,7 @@ public class LoginActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
-                for(Header h : headers) {
+                for (Header h : headers) {
                     System.out.println(h.getName() + " " + h.getValue());
 
                 }
