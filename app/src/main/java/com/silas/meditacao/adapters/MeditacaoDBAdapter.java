@@ -23,11 +23,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
 	private long add(Meditacao meditacao) {
 		// verifica se o registro já exite no banco
-		/*if (this.meditacao(meditacao.getTrimestreId(), licao.getNumero()) != null) {
+		if (this.meditacao(meditacao.getData()) != null) {
 			Log.w(getClass().getName(),
-                    "A lição já existe e não será gravada.");
+                    "A meditacao já existe e não será gravada.");
 			return -1;
-		}*/
+		}
 		//Log.d("adapter", licao.toString());
 		ContentValues valores = new ContentValues();
 		valores.put(DATA, meditacao.getData());

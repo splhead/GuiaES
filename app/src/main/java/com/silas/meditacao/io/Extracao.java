@@ -93,6 +93,10 @@ public class Extracao {
         }
     }
 
+    public boolean ePaginaMeditacao(String html) {
+        Document doc = Jsoup.parse(html);
+        return !doc.select("title").contains("Login");
+    }
 
     /*
 	 * Sobe o nível até a raiz para buscar os próximos elementos

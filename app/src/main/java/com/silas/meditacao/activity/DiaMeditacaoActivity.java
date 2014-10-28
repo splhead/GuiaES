@@ -29,8 +29,18 @@ public class DiaMeditacaoActivity extends Activity {
         TextView tvTitulo = (TextView) findViewById(R.id.tvTitulo);
         TextView tvTextoBiblico = (TextView) findViewById(R.id.tvTextoBiblico);
         TextView tvTexto = (TextView) findViewById(R.id.tvTexto);
+        TextView tvData = (TextView) findViewById(R.id.tvData);
 
         Calendar ca = Calendar.getInstance();
+        int d = ca.get(Calendar.DAY_OF_MONTH);
+        int m = ca.get(Calendar.MONTH);
+        int a = ca.get(Calendar.YEAR);
+
+        String mes [] = new String[] {"janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
+
+        String data =  d + " de " + mes[m] + " de " + a;
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String sData = sdf.format(ca.getTime());
 
@@ -39,10 +49,12 @@ public class DiaMeditacaoActivity extends Activity {
         try {
             Meditacao meditacao = mdba.buscaMeditacao(sData);
             if(meditacao == null) {
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                this.finish();
             }
             Log.d("meditacao", meditacao.toString());
             tvTitulo.setText(meditacao.getTitulo());
+            tvData.setText(data);
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
             tvTexto.setText(meditacao.getTexto());
         } catch (Exception e) {
@@ -52,8 +64,7 @@ public class DiaMeditacaoActivity extends Activity {
 
     }
 
-
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.dia_meditacao, menu);
@@ -70,5 +81,5 @@ public class DiaMeditacaoActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

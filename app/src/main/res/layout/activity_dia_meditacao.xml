@@ -22,12 +22,24 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="data"
+        android:id="@+id/tvData"
+        android:layout_gravity="center_horizontal"
+        android:background="#ff0099cc"
+        android:textAlignment="center"
+        android:textColor="#ffc5eaf8"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:text="Texto Bíblico"
         android:id="@+id/tvTextoBiblico"
         android:layout_gravity="center_horizontal"
         android:textSize="18dp"
         android:padding="8dp"
-        android:textColor="#ff75a800" />
+        android:textColor="#669900" />
 
     <ScrollView
         android:layout_width="match_parent"

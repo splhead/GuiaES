@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -106,7 +107,6 @@ public class LoginActivity extends ActionBarActivity {
                 startActivity(i);
                 break;
             case R.id.action_refresh:
-                etCaptcha.setText("");
                 recaptcha();
                 break;
         }
@@ -124,7 +124,7 @@ public class LoginActivity extends ActionBarActivity {
 
 
     private void recaptcha() {
-//        RequestParams params = new RequestParams("paramName", "");
+        etCaptcha.setText("");
         String url = null;
         try {
             url = "http://www.google.com/recaptcha/api/noscript?RecaptchaOptions="
@@ -137,7 +137,7 @@ public class LoginActivity extends ActionBarActivity {
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
+                        Toast toast = Toast.makeText(getBaseContext(), "Erro ao capturar captcha!", Toast.LENGTH_LONG);
                     }
 
                     @Override
@@ -188,8 +188,14 @@ public class LoginActivity extends ActionBarActivity {
 
                                     @Override
                                     public void onSuccess(int i, Header[] headers, String s) {
-                                        //Log.d("t", s);
-                                        new Extracao(getApplicationContext()).extraiMeditacao(s);
+                                        Extracao e = new Extracao(getApplicationContext());
+                                        if(e.ePaginaMeditacao(s)) {
+                                            e.extraiMeditacao(s);
+                                            startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
+                                        }
+                                        else {
+                                            conecta();
+                                        }
                                     }
                                 });
                     }
