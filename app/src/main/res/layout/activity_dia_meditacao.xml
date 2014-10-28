@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="Título"
+        android:id="@+id/tvTitulo"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textColor="#ff0099cc"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:textAlignment="center"
+        android:padding="8dp"
+        android:background="#ffc5eaf8" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Texto Bíblico"
+        android:id="@+id/tvTextoBiblico"
+        android:layout_gravity="center_horizontal"
+        android:textSize="18dp"
+        android:padding="8dp"
+        android:textColor="#ff75a800" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_gravity="center_horizontal" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Texto"
+            android:id="@+id/tvTexto"
+            android:padding="8dp"
+            android:typeface="sans"
+            android:textColor="#ff4e4e54" />
+    </ScrollView>
+</LinearLayout>

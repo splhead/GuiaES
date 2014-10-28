@@ -3,6 +3,7 @@ package com.silas.meditacao.adapters;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.silas.meditacao.models.Meditacao;
@@ -57,20 +58,18 @@ public class MeditacaoDBAdapter extends DBAdapter {
 			fechar();
 		}
 	}
-/*
-	private Licao licao(long trimestreID, int numero) {
-		Cursor c = bancoDados.query(true, BD_TABELA, 
-				new String[] {ROWID, DATA, NUMERO, TITULO, TRIMESTREID, CAPA}
-				, TRIMESTREID + "=" + trimestreID + " AND " 
-				+ NUMERO + "=" + numero
+	private Meditacao meditacao(String sData) {
+		Cursor c = bancoDados.query(true, BD_TABELA,
+				new String[] {ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO}
+				, DATA + " like '" + sData + "%'"
 				, null, null, null, null, null);
 		try {			
 			if (c.getCount() > 0) {
 				c.moveToFirst();
-				Licao licao = new Licao(c.getLong(0), c.getString(1), c.getInt(2)
-						, c.getString(3), c.getLong(4), c.getBlob(5));
-				Log.d(getClass().getName(), licao.toString());
-				return licao;
+				Meditacao meditacao = new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
+						, c.getString(3), c.getString(4));
+				Log.d(getClass().getName(), meditacao.toString());
+				return meditacao;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,19 +79,19 @@ public class MeditacaoDBAdapter extends DBAdapter {
 		return null;
 	}
 	
-	*//**
+	/**
 	 * Busca a lição com base em seu número!
-	 * @param número
-	 *//*
-	public Licao buscaLicao(long trimestreId, int numero) {
+	 * @param sData
+	 */
+	public Meditacao buscaMeditacao(String sData) {
 		try {
 			abrir();
-			return licao(trimestreId, numero);
+			return meditacao(sData);
 		} finally {
 			fechar();
 		}
 	}
-	
+	/*
 	private List<Meditacao> meditacoes(long trimestreID) {
 		List<Licao> licoesList = new ArrayList<Licao>();
 		Cursor c = bancoDados.query(BD_TABELA, 

@@ -34,7 +34,7 @@ public class Extracao {
         c.set(Calendar.DAY_OF_MONTH,1);
         int iMes = c.get(Calendar.MONTH);
         int iDia = c.get(Calendar.DAY_OF_MONTH);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         StringBuilder sbTexto = new StringBuilder();
         String sData, sTitulo, sTextoBiblico, sTexto;
         Document doc = Jsoup.parse(html);

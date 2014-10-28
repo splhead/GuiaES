@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Meditação</string>
-
     <string name="action_settings">Configurações</string>
+    <string name="title_activity_dia_meditacao">Hoje</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
