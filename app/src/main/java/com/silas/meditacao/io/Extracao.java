@@ -43,7 +43,6 @@ public class Extracao {
         for (Element eTitulo: h2Titulos) {
             //System.out.println(iDia + " " + titulo.text());
 
-
             Element prox = proximo(eTitulo, raiz);
             int contaHR = 0;
 

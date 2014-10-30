@@ -37,4 +37,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Entrar" />
+    <TextView
+        android:id="@+id/tvCriar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:layout_marginTop="48dp"
+        android:layout_gravity="center"
+        android:text="@string/tvCriar"/>
+    <TextView
+        android:id="@+id/tvEsqueceu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:text="@string/tvEsqueceu"/>
 </LinearLayout>

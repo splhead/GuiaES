@@ -3,6 +3,7 @@ package com.silas.meditacao.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,9 @@ public class DiaMeditacaoActivity extends Activity {
         TextView tvTitulo = (TextView) findViewById(R.id.tvTitulo);
         TextView tvTextoBiblico = (TextView) findViewById(R.id.tvTextoBiblico);
         TextView tvTexto = (TextView) findViewById(R.id.tvTexto);
+        TextView tvLink = (TextView) findViewById(R.id.tvLinks);
+        tvLink.setMovementMethod(LinkMovementMethod.getInstance());
+
         TextView tvData = (TextView) findViewById(R.id.tvData);
 
         Calendar ca = Calendar.getInstance();

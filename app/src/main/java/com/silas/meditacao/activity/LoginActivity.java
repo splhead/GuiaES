@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
@@ -40,52 +42,77 @@ public class LoginActivity extends ActionBarActivity {
     final CPBCliente client = CPBCliente.getInstace(this);
 
     EditText etCaptcha, etEmail, etSenha;
+    TextView tvCriar,tvEsqueceu;
     String recaptchaChallengeField = "";
     String recaptchaResponseField = "";
     String urlImagem, email, senha;
+    SharedPreferences _sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+        etCaptcha.requestFocus();
         etEmail = (EditText) findViewById(R.id.etEmail);
         etSenha = (EditText) findViewById(R.id.etSenha);
+        etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        tvCriar = (TextView) findViewById(R.id.tvCriar);
+        tvCriar.setMovementMethod(LinkMovementMethod.getInstance());
+        tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
+        tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
 
         conecta();
 
-    }
+        _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-    private void conecta() {
 
-        etSenha.setTransformationMethod(new PasswordTransformationMethod());
-        SharedPreferences _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         email = _sharedPreferences.getString("email", "");
         senha = _sharedPreferences.getString("senha", "");
 
-        //Log.d("sp", email + "\n" + senha);
-        if (email.length() > 0) etEmail.setText(email);
-        if (senha.length() > 0) etSenha.setText(senha);
-        if (email.isEmpty() || senha.isEmpty()
-                || !email.equalsIgnoreCase(etEmail.getText().toString())
-                || !senha.equalsIgnoreCase(etSenha.getText().toString())) {
-            _sharedPreferences.edit().putString("email", etEmail.getText().toString());
-            _sharedPreferences.edit().putString("senha", etSenha.getText().toString()).apply();
+        if (!email.matches("")) {
+            etEmail.setText(email);
         }
-        cookies();
-        recaptcha();
+        if (!senha.matches("")) {
+            etSenha.setText(senha);
+        }
 
         final Button button = (Button) findViewById(R.id.bEntrar);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 recaptchaResponseField = etCaptcha.getText().toString();
-                Log.d("cliquei", recaptchaResponseField);
-                if (recaptchaResponseField.length() > 0)
-                    fazLogin(); //teste();
+                if(!etEmail.getText().toString().matches("")
+                        || !etSenha.getText().toString().matches("")
+                        || !recaptchaResponseField.matches("")) {
+                    Log.d("cliquei", recaptchaResponseField);
 
+                    SharedPreferences.Editor editor = _sharedPreferences.edit();
+//                    Log.d("pmail", email);
+                    if(email.matches("")) {
+                        editor.putString("email", etEmail.getText().toString());
+                        editor.commit();
+                    }
+
+//                    Log.d("ppass", senha);
+                    if(senha.matches("")) {
+                        editor.putString("senha", etSenha.getText().toString());
+                        editor.commit();
+                    }
+
+                    fazLogin();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Informações necessárias!", Toast.LENGTH_SHORT);
+                }
             }
         });
+
+    }
+
+    private void conecta() {
+        cookies();
+        recaptcha();
     }
 
     @Override
@@ -137,7 +164,7 @@ public class LoginActivity extends ActionBarActivity {
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                        Toast toast = Toast.makeText(getBaseContext(), "Erro ao capturar captcha!", Toast.LENGTH_LONG);
+                        Toast.makeText(getBaseContext(), "Erro ao capturar captcha!", Toast.LENGTH_LONG);
                     }
 
                     @Override
@@ -194,6 +221,7 @@ public class LoginActivity extends ActionBarActivity {
                                             startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
                                         }
                                         else {
+                                            Toast.makeText(getBaseContext(), "Erro!", Toast.LENGTH_LONG);
                                             conecta();
                                         }
                                     }

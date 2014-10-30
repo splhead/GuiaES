@@ -41,20 +41,35 @@
         android:padding="8dp"
         android:textColor="#669900" />
 
-    <ScrollView
+     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
         android:layout_gravity="center_horizontal" >
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Texto"
-            android:id="@+id/tvTexto"
-            android:padding="8dp"
-            android:typeface="sans"
-            android:textColor="#ff4e4e54" />
-    </ScrollView>
+
+         <LinearLayout
+             android:orientation="vertical"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
+             <TextView
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:textAppearance="?android:attr/textAppearanceMedium"
+                 android:text="Texto"
+                 android:id="@+id/tvTexto"
+                 android:padding="8dp"
+                 android:typeface="sans"
+                 android:textColor="#ff4e4e54" />
+             <TextView
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:textAppearance="?android:attr/textAppearanceMedium"
+                 android:text="@string/tvLink"
+                 android:id="@+id/tvLinks"
+                 android:textColor="#A750D3"
+                 android:padding="8dp"
+                 android:typeface="sans" />
+             </LinearLayout>
+     </ScrollView>
 </LinearLayout>
