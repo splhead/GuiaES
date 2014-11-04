@@ -2,11 +2,12 @@ package com.silas.meditacao.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -19,6 +20,25 @@ import java.util.Calendar;
 
 public class DiaMeditacaoActivity extends Activity {
     private MeditacaoDBAdapter mdba;
+    private Meditacao meditacao;
+    private Calendar ca = Calendar.getInstance();
+
+    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        public void onLongPress(MotionEvent e) {
+//            Log.i("", "Longpress detected");
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, meditacao.getTitulo() + "\n\n"
+                    + dataPorExtenso(ca) + "\n\n" + meditacao.getTextoBiblico()
+                    + "\n\n" + meditacao.getTexto());
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+        }
+    });
+
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +55,7 @@ public class DiaMeditacaoActivity extends Activity {
 
         TextView tvData = (TextView) findViewById(R.id.tvData);
 
-        Calendar ca = Calendar.getInstance();
-        int d = ca.get(Calendar.DAY_OF_MONTH);
-        int m = ca.get(Calendar.MONTH);
-        int a = ca.get(Calendar.YEAR);
-
-        String mes [] = new String[] {"janeiro", "fevereiro", "março", "abril", "maio", "junho",
-        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
-
-        String data =  d + " de " + mes[m] + " de " + a;
+        String data =  dataPorExtenso(ca);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String sData = sdf.format(ca.getTime());
@@ -51,21 +63,48 @@ public class DiaMeditacaoActivity extends Activity {
         mdba = new MeditacaoDBAdapter(getApplicationContext());
 
         try {
-            Meditacao meditacao = mdba.buscaMeditacao(sData);
+            meditacao = mdba.buscaMeditacao(sData);
             if(meditacao == null) {
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                this.finish();
+                //se for dia 30, 31 de qualquer mẽs ou 28 de fevereiro não atualiza
+                if((ca.get(Calendar.MONTH) == 2 && ca.get(Calendar.DAY_OF_MONTH) < 28)
+                        || ca.get(Calendar.DAY_OF_MONTH) < 30) {
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    this.finish();
+                }
+                else {
+                    tvTitulo.setText("Erro!");
+                    tvTitulo.setTextColor(Color.parseColor("#CC0000"));
+                    tvTitulo.setBackgroundColor(Color.parseColor("#FFCACA"));
+                    tvData.setText(data);
+                    tvData.setTextColor(Color.parseColor("#FFCACA"));
+                    tvData.setBackgroundColor(Color.parseColor("#CC0000"));
+                    tvTextoBiblico.setText("Tente atualizar no início do próximo mês!");
+                    tvTextoBiblico.setTextColor(Color.parseColor("#CC0000"));
+                    tvTexto.setText("");
+                }
             }
-            Log.d("meditacao", meditacao.toString());
-            tvTitulo.setText(meditacao.getTitulo());
-            tvData.setText(data);
-            tvTextoBiblico.setText(meditacao.getTextoBiblico());
-            tvTexto.setText(meditacao.getTexto());
+            else {
+                Log.d("meditacao", meditacao.toString());
+                tvTitulo.setText(meditacao.getTitulo());
+                tvData.setText(data);
+                tvTextoBiblico.setText(meditacao.getTextoBiblico());
+                tvTexto.setText(meditacao.getTexto());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    private String dataPorExtenso(Calendar ca) {
+        int d = ca.get(Calendar.DAY_OF_MONTH);
+        int m = ca.get(Calendar.MONTH);
+        int a = ca.get(Calendar.YEAR);
+
+        String mes [] = new String[] {"janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
+        return d + " de " + mes[m] + " de " + a;
     }
 
     /*@Override

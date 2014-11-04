@@ -7,5 +7,6 @@
     <string name="title_activity_dia_meditacao">Hoje</string>
     <string name="tvCriar"><a href='http://www.cpb.com.br//meu-cadastro'>Criar Conta</a></string>
     <string name="tvEsqueceu"><a href='http://www.cpb.com.br/login/esqueciSenha'>Esqueci minha senha</a></string>
-    <string name="tvLink">Ouça os pocast\'s:\n<a href='http://biblecast.com.br'>Biblecast</a><a href='http://www.mcast.com.br'>\nMcast</a><a href='http://www.connectcast.com.br'>\nConnectcast</a><a href='http://cristaoscansados.net/category/podcasts/cronicast-podcasts/'>\nCrônicast</a><a href='http://pupilasembrasas.com.br/'>\nPupílas em brasa</a>\n\n Acesse:<a href='http://www.comentariojovem.com.br/'>\nComentário Jovem</a><a href='http://missaoposmoderna.com.br/'>\nMissão pós-moderna</a></string>
+    <string name="tvLink">Ouça os pocast\'s:<a href='http://biblecast.com.br'>\nBiblecast</a><a href='http://www.mcast.com.br'>\nMcast</a><a href='http://www.connectcast.com.br'>\nConnectcast</a><a href='http://cristaoscansados.net/category/podcasts/cronicast-podcasts/'>\nCrônicast</a><a href='http://pupilasembrasas.com.br/'>\nPupílas em brasa</a>\n\n Acesse:<a href='http://www.comentariojovem.com.br/'>\nComentário Jovem</a><a href='http://missaoposmoderna.com.br/'>\nMissão pós-moderna</a></string>
+    <string name="send_to">Enviar para</string>
 </resources>

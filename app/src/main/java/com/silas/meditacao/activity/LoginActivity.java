@@ -198,7 +198,7 @@ public class LoginActivity extends ActionBarActivity {
                 params, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
+                        recaptcha();
                     }
 
                     @Override
