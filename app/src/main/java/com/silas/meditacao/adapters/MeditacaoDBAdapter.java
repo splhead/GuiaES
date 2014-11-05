@@ -68,7 +68,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 				c.moveToFirst();
 				Meditacao meditacao = new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
 						, c.getString(3), c.getString(4));
-				Log.d(getClass().getName(), meditacao.toString());
+				Log.i(getClass().getName(), meditacao.toString());
 				return meditacao;
 			}
 		} catch (Exception e) {

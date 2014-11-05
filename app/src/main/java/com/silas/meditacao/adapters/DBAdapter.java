@@ -27,13 +27,13 @@ public class DBAdapter {
 	{
 		dbHelper = new DBHelper(contexto);
 		bancoDados  = dbHelper.getWritableDatabase();
-		Log.i(getClass().getName(), "Conectando com banco de dados");
+//		Log.i(getClass().getName(), "Conectando com banco de dados");
 		return this;
 	}
 	
 	public void fechar() throws SQLException
 	{
-		Log.i(getClass().getName(), "Fechando conexão com banco de dados");
+//		Log.i(getClass().getName(), "Fechando conexão com banco de dados");
 		dbHelper.close();
 	}
 }

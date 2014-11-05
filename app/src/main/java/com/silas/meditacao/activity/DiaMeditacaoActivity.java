@@ -84,7 +84,7 @@ public class DiaMeditacaoActivity extends Activity {
                 }
             }
             else {
-                Log.d("meditacao", meditacao.toString());
+//                Log.i(getClass().getSimpleName(), meditacao.toString());
                 tvTitulo.setText(meditacao.getTitulo());
                 tvData.setText(data);
                 tvTextoBiblico.setText(meditacao.getTextoBiblico());

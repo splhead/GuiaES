@@ -4,6 +4,12 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_gravity="center_horizontal" />
+
     <ImageView
         android:id="@+id/ivCaptcha"
         android:layout_width="fill_parent"
@@ -11,6 +17,17 @@
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true"
         />
+
+    <TextView
+        android:id="@+id/tvDica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:text="@string/tvDica"
+        android:textColor="#ffff4444"
+        android:gravity="center_horizontal" />
 
     <EditText
         android:id="@+id/etCaptcha"
@@ -36,13 +53,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Entrar" />
+        android:text="Baixar" />
     <TextView
         android:id="@+id/tvCriar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="18dp"
         android:layout_gravity="center"
         android:text="@string/tvCriar"/>
     <TextView

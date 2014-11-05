@@ -83,7 +83,7 @@ public class Extracao {
 
 
             meditacao.setTexto(sTexto);
-            Log.d(this.getClass().getSimpleName(),meditacao.toString());
+//            Log.d(this.getClass().getSimpleName(),meditacao.toString());
 
             mdba.addMeditacao(meditacao);
 

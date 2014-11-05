@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,8 @@ public class LoginActivity extends ActionBarActivity {
     final CPBCliente client = CPBCliente.getInstace(this);
 
     EditText etCaptcha, etEmail, etSenha;
+    ImageView ivCaptcha;
+    ProgressBar pb;
     TextView tvCriar,tvEsqueceu;
     String recaptchaChallengeField = "";
     String recaptchaResponseField = "";
@@ -52,6 +55,9 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
+        ivCaptcha.setVisibility(View.GONE);
+
         etCaptcha = (EditText) findViewById(R.id.etCaptcha);
         etCaptcha.requestFocus();
         etEmail = (EditText) findViewById(R.id.etEmail);
@@ -83,9 +89,9 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View v) {
                 recaptchaResponseField = etCaptcha.getText().toString();
                 if(!etEmail.getText().toString().matches("")
-                        || !etSenha.getText().toString().matches("")
-                        || !recaptchaResponseField.matches("")) {
-                    Log.d("cliquei", recaptchaResponseField);
+                        && !etSenha.getText().toString().matches("")
+                        && !recaptchaResponseField.matches("")) {
+                    Log.i("cliquei", recaptchaResponseField);
 
                     SharedPreferences.Editor editor = _sharedPreferences.edit();
 //                    Log.d("pmail", email);
@@ -103,7 +109,7 @@ public class LoginActivity extends ActionBarActivity {
                     fazLogin();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(),"Informações necessárias!", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(),"Todos os campos são necessários!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -151,6 +157,9 @@ public class LoginActivity extends ActionBarActivity {
 
 
     private void recaptcha() {
+        etCaptcha.requestFocus();
+        ivCaptcha.setVisibility(View.VISIBLE);
+
         etCaptcha.setText("");
         String url = null;
         try {
@@ -159,12 +168,12 @@ public class LoginActivity extends ActionBarActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.d("url ", url);
+        Log.i("url ", url);
         client.get(url,
                 null, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                        Toast.makeText(getBaseContext(), "Erro ao capturar captcha!", Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(), "Erro ao capturar captcha!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -179,16 +188,21 @@ public class LoginActivity extends ActionBarActivity {
 
                         Element imagem = html.select("img").first();
                         setUrlImagem("http://www.google.com/recaptcha/api/" + imagem.attr("src"));
-                        Log.d("r", getUrlImagem());
+                        Log.i("r", getUrlImagem());
 
-                        final ImageView ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
+
                         new Util().imagemDownload(getUrlImagem(), ivCaptcha);
+
+                        pb = (ProgressBar) findViewById(R.id.progressBar);
+                        pb.setVisibility(View.GONE);
                     }
                 });
 
     }
 
     private void fazLogin() {
+        ivCaptcha.setVisibility(View.GONE);
+        pb.setVisibility(View.VISIBLE);
         RequestParams params = new RequestParams();
         params.add("email", email);
         params.add("senha", senha);
@@ -198,6 +212,10 @@ public class LoginActivity extends ActionBarActivity {
                 params, new TextHttpResponseHandler() {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+
+                        Toast.makeText(getApplicationContext(), "Ops! Deu zica!\n" +
+                                "Tente novamente", Toast.LENGTH_SHORT).show();
+
                         recaptcha();
                     }
 
@@ -210,18 +228,25 @@ public class LoginActivity extends ActionBarActivity {
                                 null, new TextHttpResponseHandler() {
                                     @Override
                                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                                        Toast.makeText(getApplicationContext(), "ihh! Você errou!", Toast.LENGTH_SHORT).show();
+
                                         recaptcha();
                                     }
 
                                     @Override
                                     public void onSuccess(int i, Header[] headers, String s) {
+
+
+
                                         Extracao e = new Extracao(getApplicationContext());
                                         if(e.ePaginaMeditacao(s)) {
                                             e.extraiMeditacao(s);
+                                            pb.setVisibility(View.GONE);
                                             startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
                                         }
                                         else {
-                                            Toast.makeText(getBaseContext(), "Erro!", Toast.LENGTH_LONG);
+                                            client.cancelAllRequests(true);
+                                            Toast.makeText(getApplicationContext(), "Erro!", Toast.LENGTH_SHORT).show();
                                             conecta();
                                         }
                                     }
