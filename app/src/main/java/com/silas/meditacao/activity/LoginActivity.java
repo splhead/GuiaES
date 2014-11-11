@@ -180,7 +180,7 @@ public class LoginActivity extends ActionBarActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.i("url ", url);
+//        Log.i("url ", url);
         client.get(url,
                 null, new TextHttpResponseHandler() {
                     @Override
@@ -217,8 +217,8 @@ public class LoginActivity extends ActionBarActivity {
         pb.setVisibility(View.VISIBLE);
         RequestParams params = new RequestParams();
         params.add("email", email);
-        Log.i("email", email);
-        Log.i("senha",senha);
+//        Log.i("email", email);
+//        Log.i("senha",senha);
         params.add("senha", senha);
         params.add("recaptcha_challenge_field", recaptchaChallengeField);
         params.add("recaptcha_response_field", recaptchaResponseField);
