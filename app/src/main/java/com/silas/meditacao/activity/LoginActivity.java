@@ -72,7 +72,16 @@ public class LoginActivity extends ActionBarActivity {
         conecta();
 
         _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                email = _sharedPreferences.getString("email", "");
+                senha = _sharedPreferences.getString("senha", "");
+                etEmail.setText(email);
+                etSenha.setText(senha);
+            }
+        };
 
+        _sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
         email = _sharedPreferences.getString("email", "");
         senha = _sharedPreferences.getString("senha", "");
@@ -96,13 +105,16 @@ public class LoginActivity extends ActionBarActivity {
                     SharedPreferences.Editor editor = _sharedPreferences.edit();
 //                    Log.d("pmail", email);
                     if(email.matches("")) {
-                        editor.putString("email", etEmail.getText().toString());
+                        email = etEmail.getText().toString();
+                        editor.putString("email", email);
                         editor.commit();
+
                     }
 
 //                    Log.d("ppass", senha);
                     if(senha.matches("")) {
-                        editor.putString("senha", etSenha.getText().toString());
+                        senha = etSenha.getText().toString();
+                        editor.putString("senha", senha);
                         editor.commit();
                     }
 
@@ -205,6 +217,8 @@ public class LoginActivity extends ActionBarActivity {
         pb.setVisibility(View.VISIBLE);
         RequestParams params = new RequestParams();
         params.add("email", email);
+        Log.i("email", email);
+        Log.i("senha",senha);
         params.add("senha", senha);
         params.add("recaptcha_challenge_field", recaptchaChallengeField);
         params.add("recaptcha_response_field", recaptchaResponseField);
@@ -213,7 +227,7 @@ public class LoginActivity extends ActionBarActivity {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
-                        Toast.makeText(getApplicationContext(), "Ops! Deu zica!\n" +
+                        Toast.makeText(getApplicationContext(), "Ops! Deu zica! na senha ou email\n" +
                                 "Tente novamente", Toast.LENGTH_SHORT).show();
 
                         recaptcha();
@@ -224,10 +238,13 @@ public class LoginActivity extends ActionBarActivity {
                         Calendar c = Calendar.getInstance();
                         int iAno = c.get(Calendar.YEAR);
                         String sAno = String.valueOf(iAno);
-                        client.get("http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" + sAno + "/frmd" + sAno + ".php",
+                        String url = "http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" + sAno + "/frmd" + sAno + ".php";
+                        Log.w(getClass().getSimpleName(),url);
+                        client.get(url,
                                 null, new TextHttpResponseHandler() {
                                     @Override
                                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+
                                         Toast.makeText(getApplicationContext(), "ihh! Você errou!", Toast.LENGTH_SHORT).show();
 
                                         recaptcha();

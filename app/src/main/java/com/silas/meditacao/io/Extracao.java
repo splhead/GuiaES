@@ -20,7 +20,8 @@ import java.util.GregorianCalendar;
  * Created by silas on 08/09/14.
  */
 public class Extracao {
-    private Meditacao meditacao = new Meditacao("","","","");;
+    private Meditacao meditacao = new Meditacao("", "", "", "");
+    ;
     private Context mContext;
     private MeditacaoDBAdapter mdba;
 
@@ -31,7 +32,7 @@ public class Extracao {
 
     public void extraiMeditacao(String html) {
         Calendar c = GregorianCalendar.getInstance();
-        c.set(Calendar.DAY_OF_MONTH,1);
+        c.set(Calendar.DAY_OF_MONTH, 1);
         int iMes = c.get(Calendar.MONTH);
         int iDia = c.get(Calendar.DAY_OF_MONTH);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -40,8 +41,11 @@ public class Extracao {
         Document doc = Jsoup.parse(html);
         Element raiz = doc.select("div#conteudo").first();
         Elements h2Titulos = doc.select("div#conteudo h2");
-        for (Element eTitulo: h2Titulos) {
+        for (Element eTitulo : h2Titulos) {
             //System.out.println(iDia + " " + titulo.text());
+            if(eTitulo.nextElementSibling() != null) {
+                continue;
+            }
 
             Element prox = proximo(eTitulo, raiz);
             int contaHR = 0;
@@ -53,22 +57,28 @@ public class Extracao {
                 }
                 //Log.d("eM", prox.tagName() + ' ' + prox.text());
                 try {
-                    if(prox.previousElementSibling().tagName().equalsIgnoreCase("hr")) {
+                    if (prox.previousElementSibling().tagName().equalsIgnoreCase("hr")) {
                         if (prox.text().length() < 2) {
                             prox = prox.nextElementSibling();
                         }
                         sData = sdf.format(c.getTime());
-                        sTitulo = eTitulo.text();
+                        //correção do titulo em dois h2
+                        if (eTitulo.previousElementSibling() != null) {
+                            sTitulo = eTitulo.previousElementSibling().text() + " " + eTitulo.text();
+                        } else {
+                            sTitulo = eTitulo.text();
+                        }
+                        Log.d("titulo", sTitulo);
                         sTextoBiblico = prox.text();
-//                        System.out.println( sData + " " +
-//                                 sTitulo +"\ntexto_biblico: " + sTextoBiblico);
+                        //                        System.out.println( sData + " " +
+                        //                                 sTitulo +"\ntexto_biblico: " + sTextoBiblico);
 
                         meditacao.setData(sData);
                         meditacao.setTitulo(sTitulo);
                         meditacao.setTextoBiblico(sTextoBiblico);
 
-                    } else if(prox.text().length() > 1 && prox.tagName().equalsIgnoreCase("p")){
-                        sbTexto.append(prox.text());
+                    } else if (prox.text().length() > 1 && prox.tagName().equalsIgnoreCase("p")) {
+                        sbTexto.append(prox.text() + "\n\n");
                     }
 
                 } catch (Exception e) {
@@ -87,8 +97,9 @@ public class Extracao {
 
             mdba.addMeditacao(meditacao);
 
-            sbTexto.delete(0,sbTexto.length());
+            sbTexto.delete(0, sbTexto.length());
             c.add(Calendar.DAY_OF_MONTH, 1);
+
         }
     }
 
@@ -98,7 +109,7 @@ public class Extracao {
     }
 
     /*
-	 * Sobe o nível até a raiz para buscar os próximos elementos
+     * Sobe o nível até a raiz para buscar os próximos elementos
 	 */
     private Element proximo(Element irmao, Element raiz) {
         Element proximo = irmao;
