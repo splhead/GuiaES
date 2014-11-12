@@ -68,7 +68,7 @@ public class Extracao {
                         } else {
                             sTitulo = eTitulo.text();
                         }
-                        Log.d("titulo", sTitulo);
+//                        Log.d("titulo", sTitulo);
                         sTextoBiblico = prox.text();
                         //                        System.out.println( sData + " " +
                         //                                 sTitulo +"\ntexto_biblico: " + sTextoBiblico);
