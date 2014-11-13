@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				bancodados.beginTransaction();
 				bancodados.execSQL(SQL_BANCO_DADOS[i]);
 				bancodados.setTransactionSuccessful();
-                Log.d(getClass().getSimpleName(), "BD criado");
+//                Log.d(getClass().getSimpleName(), "BD criado");
 
 			} finally {
 				bancodados.endTransaction();

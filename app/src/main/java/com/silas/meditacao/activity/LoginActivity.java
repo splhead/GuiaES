@@ -2,13 +2,15 @@ package com.silas.meditacao.activity;
 
 import org.apache.http.Header;
 
-import org.apache.http.entity.StringEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -23,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,76 +57,87 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
-        ivCaptcha.setVisibility(View.GONE);
 
-        etCaptcha = (EditText) findViewById(R.id.etCaptcha);
-        etCaptcha.requestFocus();
-        etEmail = (EditText) findViewById(R.id.etEmail);
-        etSenha = (EditText) findViewById(R.id.etSenha);
-        etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
+            ivCaptcha.setVisibility(View.GONE);
 
-        tvCriar = (TextView) findViewById(R.id.tvCriar);
-        tvCriar.setMovementMethod(LinkMovementMethod.getInstance());
-        tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
-        tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
+            pb = (ProgressBar) findViewById(R.id.progressBar);
 
-        conecta();
+            etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+            etCaptcha.requestFocus();
+            etEmail = (EditText) findViewById(R.id.etEmail);
+            etSenha = (EditText) findViewById(R.id.etSenha);
+            etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
-        _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                email = _sharedPreferences.getString("email", "");
-                senha = _sharedPreferences.getString("senha", "");
+            tvCriar = (TextView) findViewById(R.id.tvCriar);
+            tvCriar.setMovementMethod(LinkMovementMethod.getInstance());
+            tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
+            tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (internetDisponivel(getApplicationContext())) {
+            conecta();
+
+            _sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+                public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                    email = _sharedPreferences.getString("email", "");
+                    senha = _sharedPreferences.getString("senha", "");
+                    etEmail.setText(email);
+                    etSenha.setText(senha);
+                }
+            };
+
+            _sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+
+            email = _sharedPreferences.getString("email", "");
+            senha = _sharedPreferences.getString("senha", "");
+
+            if (!email.matches("")) {
                 etEmail.setText(email);
+            }
+            if (!senha.matches("")) {
                 etSenha.setText(senha);
             }
-        };
 
-        _sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+            final Button button = (Button) findViewById(R.id.bEntrar);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    recaptchaResponseField = etCaptcha.getText().toString();
+                    if(!etEmail.getText().toString().matches("")
+                            && !etSenha.getText().toString().matches("")
+                            && !recaptchaResponseField.matches("")) {
+                        Log.i("cliquei", recaptchaResponseField);
 
-        email = _sharedPreferences.getString("email", "");
-        senha = _sharedPreferences.getString("senha", "");
+                        SharedPreferences.Editor editor = _sharedPreferences.edit();
+    //                    Log.d("pmail", email);
+                        if(email.matches("")) {
+                            email = etEmail.getText().toString();
+                            editor.putString("email", email);
+                            editor.commit();
 
-        if (!email.matches("")) {
-            etEmail.setText(email);
-        }
-        if (!senha.matches("")) {
-            etSenha.setText(senha);
-        }
+                        }
 
-        final Button button = (Button) findViewById(R.id.bEntrar);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                recaptchaResponseField = etCaptcha.getText().toString();
-                if(!etEmail.getText().toString().matches("")
-                        && !etSenha.getText().toString().matches("")
-                        && !recaptchaResponseField.matches("")) {
-                    Log.i("cliquei", recaptchaResponseField);
+    //                    Log.d("ppass", senha);
+                        if(senha.matches("")) {
+                            senha = etSenha.getText().toString();
+                            editor.putString("senha", senha);
+                            editor.commit();
+                        }
 
-                    SharedPreferences.Editor editor = _sharedPreferences.edit();
-//                    Log.d("pmail", email);
-                    if(email.matches("")) {
-                        email = etEmail.getText().toString();
-                        editor.putString("email", email);
-                        editor.commit();
-
+                        fazLogin();
                     }
-
-//                    Log.d("ppass", senha);
-                    if(senha.matches("")) {
-                        senha = etSenha.getText().toString();
-                        editor.putString("senha", senha);
-                        editor.commit();
+                    else {
+                        Toast.makeText(getApplicationContext(),"Todos os campos são necessários!", Toast.LENGTH_SHORT).show();
                     }
-
-                    fazLogin();
                 }
-                else {
-                    Toast.makeText(getApplicationContext(),"Todos os campos são necessários!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+            });
+        }
+        else {
+            pb.setVisibility(View.GONE);
+            TextView tvDica = (TextView) findViewById(R.id.tvDica);
+            tvDica.setText("Sem internet!!!");
+            Toast.makeText(getApplicationContext(),"Sem internet", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -190,22 +203,21 @@ public class LoginActivity extends ActionBarActivity {
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
-                        for (Header h : headers) {
+                       /* for (Header h : headers) {
                             System.out.println(h.getName() + " " + h.getValue());
 
-                        }
+                        }*/
                         Document html = Jsoup.parse(s);
                         Element challenge = html.select("input#recaptcha_challenge_field").first();
                         recaptchaChallengeField = challenge.attr("value");
 
                         Element imagem = html.select("img").first();
                         setUrlImagem("http://www.google.com/recaptcha/api/" + imagem.attr("src"));
-                        Log.i("r", getUrlImagem());
+//                        Log.i("r", getUrlImagem());
 
 
                         new Util().imagemDownload(getUrlImagem(), ivCaptcha);
 
-                        pb = (ProgressBar) findViewById(R.id.progressBar);
                         pb.setVisibility(View.GONE);
                     }
                 });
@@ -239,7 +251,7 @@ public class LoginActivity extends ActionBarActivity {
                         int iAno = c.get(Calendar.YEAR);
                         String sAno = String.valueOf(iAno);
                         String url = "http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" + sAno + "/frmd" + sAno + ".php";
-                        Log.w(getClass().getSimpleName(),url);
+//                        Log.w(getClass().getSimpleName(),url);
                         client.get(url,
                                 null, new TextHttpResponseHandler() {
                                     @Override
@@ -281,15 +293,35 @@ public class LoginActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
-                for (Header h : headers) {
-                    System.out.println(h.getName() + " " + h.getValue());
-
-                }
+//                for (Header h : headers) {
+//                    System.out.println(h.getName() + " " + h.getValue());
+//
+//                }
                 /*for (Cookie c : myCookieStore.getCookies()) {
                     System.out.println(c.getName() + " " + c.getValue());
                 }*/
 //                Log.d("cookies", s );
             }
         });
+    }
+
+    public Boolean internetDisponivel(Context con) {
+
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) con
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifiInfo = connectivityManager
+                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo mobileInfo = connectivityManager
+                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (wifiInfo.isConnected() || mobileInfo.isConnected()) {
+//                Log.i("TestaInternet", "Está conectado.");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        Log.i("TestaInternet", "Não está conectado.");
+        return false;
     }
 }

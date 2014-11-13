@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -20,10 +21,11 @@ import java.util.GregorianCalendar;
  * Created by silas on 08/09/14.
  */
 public class Extracao {
-    private Meditacao meditacao = new Meditacao("", "", "", "");
-    ;
+    private Meditacao meditacao;
+
     private Context mContext;
     private MeditacaoDBAdapter mdba;
+    private ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
 
     public Extracao(Context context) {
         mContext = context;
@@ -46,6 +48,8 @@ public class Extracao {
             if(eTitulo.nextElementSibling() != null) {
                 continue;
             }
+
+            meditacao = new Meditacao("", "", "", "");
 
             Element prox = proximo(eTitulo, raiz);
             int contaHR = 0;
@@ -95,12 +99,13 @@ public class Extracao {
             meditacao.setTexto(sTexto);
 //            Log.d(this.getClass().getSimpleName(),meditacao.toString());
 
-            mdba.addMeditacao(meditacao);
+//            mdba.addMeditacao(meditacao);
+            meditacoes.add(meditacao);
 
             sbTexto.delete(0, sbTexto.length());
             c.add(Calendar.DAY_OF_MONTH, 1);
-
         }
+        mdba.addMeditacoes(meditacoes);
     }
 
     public boolean ePaginaMeditacao(String html) {
