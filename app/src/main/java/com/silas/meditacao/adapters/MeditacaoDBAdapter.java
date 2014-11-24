@@ -16,6 +16,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
     public static final String TITULO = "titulo";
     public static final String TEXTO_BIBLICO = "texto_biblico";
     public static final String TEXTO = "texto";
+    public static final String TIPO = "tipo";
 
     private static final String BD_TABELA = "meditacao";
 
@@ -25,7 +26,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     private long add(Meditacao meditacao) {
         // verifica se o registro já exite no banco
-        if (this.meditacao(meditacao.getData()) != null) {
+        if (this.meditacao(meditacao.getData(), meditacao.getTipo()) != null) {
             Log.w(getClass().getName(),
                     "A meditacao já existe e não será gravada.");
             return -1;
@@ -36,6 +37,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         valores.put(TITULO, meditacao.getTitulo());
         valores.put(TEXTO_BIBLICO, meditacao.getTextoBiblico());
         valores.put(TEXTO, meditacao.getTexto());
+        valores.put(TIPO, meditacao.getTipo());
 
         Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
         try {
@@ -69,16 +71,16 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             for (Meditacao meditacao : meditacoes) {
                 // verifica se o registro já exite no banco
-                if (this.meditacao(meditacao.getData()) != null) {
+                if (this.meditacao(meditacao.getData(), meditacao.getTipo()) != null) {
                     Log.w(getClass().getName(),
-                            "A meditacao já existe e não será");
+                            "A meditacao já existe e não será gravada");
                 }
                 ContentValues valores = new ContentValues();
                 valores.put(DATA, meditacao.getData());
                 valores.put(TITULO, meditacao.getTitulo());
                 valores.put(TEXTO_BIBLICO, meditacao.getTextoBiblico());
                 valores.put(TEXTO, meditacao.getTexto());
-
+                valores.put(TIPO, meditacao.getTipo());
 
 
                 bancoDados.insert(BD_TABELA, null, valores);
@@ -102,16 +104,16 @@ public class MeditacaoDBAdapter extends DBAdapter {
     }
 
 
-    private Meditacao meditacao(String sData) {
+    private Meditacao meditacao(String sData, int tipo) {
         Cursor c = bancoDados.query(true, BD_TABELA,
-                new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO}
-                , DATA + " like '" + sData + "%'"
+                new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
+                , DATA + " like '" + sData + "%' AND " + TIPO + " = " + tipo
                 , null, null, null, null, null);
         try {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 Meditacao meditacao = new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
-                        , c.getString(3), c.getString(4));
+                        , c.getString(3), c.getString(4), c.getInt(5));
                 Log.i(getClass().getName(), meditacao.toString());
                 return meditacao;
             }
@@ -128,10 +130,10 @@ public class MeditacaoDBAdapter extends DBAdapter {
      *
      * @param sData
      */
-    public Meditacao buscaMeditacao(String sData) {
+    public Meditacao buscaMeditacao(String sData, int iTipo) {
         try {
             abrir();
-            return meditacao(sData);
+            return meditacao(sData, iTipo);
         } finally {
             fechar();
         }

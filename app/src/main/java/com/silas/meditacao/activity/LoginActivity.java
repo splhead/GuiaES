@@ -35,6 +35,7 @@ import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.CPBCliente;
 import com.silas.meditacao.io.Extracao;
 import com.silas.meditacao.io.Util;
+import com.silas.meditacao.models.Meditacao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -44,14 +45,15 @@ public class LoginActivity extends ActionBarActivity {
 
     final CPBCliente client = CPBCliente.getInstace(this);
 
-    EditText etCaptcha, etEmail, etSenha;
-    ImageView ivCaptcha;
-    ProgressBar pb;
-    TextView tvCriar,tvEsqueceu;
-    String recaptchaChallengeField = "";
-    String recaptchaResponseField = "";
-    String urlImagem, email, senha;
-    SharedPreferences _sharedPreferences;
+    private EditText etCaptcha, etEmail, etSenha;
+    private ImageView ivCaptcha;
+    private ProgressBar pb;
+    private TextView tvCriar,tvEsqueceu;
+    private String recaptchaChallengeField = "";
+    private String recaptchaResponseField = "";
+    private String urlImagem, email, senha;
+    private SharedPreferences _sharedPreferences;
+    private int tipo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class LoginActivity extends ActionBarActivity {
             tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
             tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
 
+
         if (internetDisponivel(getApplicationContext())) {
             conecta();
 
@@ -91,6 +94,7 @@ public class LoginActivity extends ActionBarActivity {
 
             email = _sharedPreferences.getString("email", "");
             senha = _sharedPreferences.getString("senha", "");
+            tipo = Integer.parseInt(_sharedPreferences.getString("tipo", "1"));
 
             if (!email.matches("")) {
                 etEmail.setText(email);
@@ -229,7 +233,7 @@ public class LoginActivity extends ActionBarActivity {
         pb.setVisibility(View.VISIBLE);
         RequestParams params = new RequestParams();
         params.add("email", email);
-//        Log.i("email", email);
+        Log.i("email", email);
 //        Log.i("senha",senha);
         params.add("senha", senha);
         params.add("recaptcha_challenge_field", recaptchaChallengeField);
@@ -241,16 +245,13 @@ public class LoginActivity extends ActionBarActivity {
 
                         Toast.makeText(getApplicationContext(), "Ops! Deu zica! na senha ou email\n" +
                                 "Tente novamente", Toast.LENGTH_SHORT).show();
-
+                        client.cancelAllRequests(true);
                         recaptcha();
                     }
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
-                        Calendar c = Calendar.getInstance();
-                        int iAno = c.get(Calendar.YEAR);
-                        String sAno = String.valueOf(iAno);
-                        String url = "http://cpbmais.cpb.com.br/htdocs/periodicos/medmat/" + sAno + "/frmd" + sAno + ".php";
+                        String url = getURL();
 //                        Log.w(getClass().getSimpleName(),url);
                         client.get(url,
                                 null, new TextHttpResponseHandler() {
@@ -258,7 +259,7 @@ public class LoginActivity extends ActionBarActivity {
                                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
                                         Toast.makeText(getApplicationContext(), "ihh! Você errou!", Toast.LENGTH_SHORT).show();
-
+                                        client.cancelAllRequests(true);
                                         recaptcha();
                                     }
 
@@ -269,7 +270,7 @@ public class LoginActivity extends ActionBarActivity {
 
                                         Extracao e = new Extracao(getApplicationContext());
                                         if(e.ePaginaMeditacao(s)) {
-                                            e.extraiMeditacao(s);
+                                            e.extraiMeditacao(s, tipo);
                                             pb.setVisibility(View.GONE);
                                             startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
                                         }
@@ -282,6 +283,26 @@ public class LoginActivity extends ActionBarActivity {
                                 });
                     }
                 });
+    }
+
+    private String getURL() {
+        Calendar c = Calendar.getInstance();
+        int iAno = c.get(Calendar.YEAR);
+        String sAno = String.valueOf(iAno);
+        String url = "http://cpbmais.cpb.com.br/htdocs/periodicos/"; //
+
+        switch (tipo) {
+            case Meditacao.MULHER:
+                url +=  "medmulher/" + sAno + "/frmmul" + sAno + ".php";
+                break;
+            case Meditacao.JUVENIL:
+                url += "ij/" + sAno + "/frij" + sAno +".php";
+                break;
+            default:
+                url += "medmat/" + sAno + "/frmd" + sAno + ".php";
+        }
+        Log.d("getUrl", url);
+        return url;
     }
 
     private void cookies() {

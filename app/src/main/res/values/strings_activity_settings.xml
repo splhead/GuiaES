@@ -14,6 +14,18 @@
     <string name="pref_senha">Senha</string>
     <string name="pref_senha_exemplo">senha</string>
     <string name="pref_conta">Conta</string>
+    <string name="pref_tipo">Tipo de Meditação</string>
+
+    <string-array name="pref_tipo_list">
+        <item>Adulto</item>
+        <item>Mulher</item>
+        <item>Juvenil</item>
+    </string-array>
+    <string-array name="pref_tipo_list_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
     <!-- <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>

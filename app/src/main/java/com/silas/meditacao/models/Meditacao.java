@@ -9,20 +9,26 @@ public class Meditacao {
     private String titulo;
     private String textoBiblico;
     private String texto;
+    private int tipo;
+    public static final int ADULTO = 1;
+    public static final int MULHER = 2;
+    public static final int JUVENIL = 3;
 
-    public Meditacao(long id, String titulo, String data, String textoBiblico, String texto) {
+    public Meditacao(long id, String titulo, String data, String textoBiblico, String texto, int tipo) {
         this.id = id;
         this.titulo = titulo;
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
+        this.tipo = tipo;
     }
 
-    public Meditacao(String titulo, String data, String textoBiblico, String texto) {
+    public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
         this.titulo = titulo;
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
+        this.tipo = tipo;
     }
 
 
@@ -70,4 +76,11 @@ public class Meditacao {
         return this.getTitulo() + " " + this.getData();
     }
 
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
 }

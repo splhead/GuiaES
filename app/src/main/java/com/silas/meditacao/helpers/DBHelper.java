@@ -21,7 +21,8 @@ public class DBHelper extends SQLiteOpenHelper {
 					+ MeditacaoDBAdapter.TITULO + " TEXT NOT NULL,"
 					+ MeditacaoDBAdapter.DATA + " TEXT NOT NULL,"
 					+ MeditacaoDBAdapter.TEXTO_BIBLICO + " TEXT NOT NULL,"
-					+ MeditacaoDBAdapter.TEXTO + " TEXT NOT NULL"
+					+ MeditacaoDBAdapter.TEXTO + " TEXT NOT NULL,"
+                    + MeditacaoDBAdapter.TIPO + " INTEGER NOT NULL"
 					+ ");"
 	};
 

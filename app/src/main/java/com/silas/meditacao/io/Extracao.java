@@ -32,7 +32,7 @@ public class Extracao {
         mdba = new MeditacaoDBAdapter(mContext);
     }
 
-    public void extraiMeditacao(String html) {
+    public void extraiMeditacao(String html, int tipo) {
         Calendar c = GregorianCalendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, 1);
         int iMes = c.get(Calendar.MONTH);
@@ -49,7 +49,7 @@ public class Extracao {
                 continue;
             }
 
-            meditacao = new Meditacao("", "", "", "");
+            meditacao = new Meditacao("", "", "", "", tipo);
 
             Element prox = proximo(eTitulo, raiz);
             int contaHR = 0;
