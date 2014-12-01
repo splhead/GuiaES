@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -68,6 +69,7 @@ public class LoginActivity extends ActionBarActivity {
             etCaptcha = (EditText) findViewById(R.id.etCaptcha);
             etCaptcha.requestFocus();
             etEmail = (EditText) findViewById(R.id.etEmail);
+            etEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
             etSenha = (EditText) findViewById(R.id.etSenha);
             etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
