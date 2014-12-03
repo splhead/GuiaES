@@ -2,6 +2,7 @@ package com.silas.meditacao.activity;
 
 import org.apache.http.Header;
 
+import org.apache.http.client.params.ClientPNames;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,6 +41,7 @@ import com.silas.meditacao.models.Meditacao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class LoginActivity extends ActionBarActivity {
@@ -49,34 +51,35 @@ public class LoginActivity extends ActionBarActivity {
     private EditText etCaptcha, etEmail, etSenha;
     private ImageView ivCaptcha;
     private ProgressBar pb;
-    private TextView tvCriar,tvEsqueceu;
+    private TextView tvCriar, tvEsqueceu;
     private String recaptchaChallengeField = "";
     private String recaptchaResponseField = "";
     private String urlImagem, email, senha;
     private SharedPreferences _sharedPreferences;
-    private int tipo = 0;
+    private int j, tipo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-            ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
-            ivCaptcha.setVisibility(View.GONE);
+        client.getHttpClient().getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
+        ivCaptcha = (ImageView) findViewById(R.id.ivCaptcha);
+        ivCaptcha.setVisibility(View.GONE);
 
-            pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb = (ProgressBar) findViewById(R.id.progressBar);
 
-            etCaptcha = (EditText) findViewById(R.id.etCaptcha);
-            etCaptcha.requestFocus();
-            etEmail = (EditText) findViewById(R.id.etEmail);
-            etEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-            etSenha = (EditText) findViewById(R.id.etSenha);
-            etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        etCaptcha = (EditText) findViewById(R.id.etCaptcha);
+        etCaptcha.requestFocus();
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        etEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        etSenha = (EditText) findViewById(R.id.etSenha);
+        etSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
-            tvCriar = (TextView) findViewById(R.id.tvCriar);
-            tvCriar.setMovementMethod(LinkMovementMethod.getInstance());
-            tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
-            tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
+        tvCriar = (TextView) findViewById(R.id.tvCriar);
+        tvCriar.setMovementMethod(LinkMovementMethod.getInstance());
+        tvEsqueceu = (TextView) findViewById(R.id.tvEsqueceu);
+        tvEsqueceu.setMovementMethod(LinkMovementMethod.getInstance());
 
 
         if (internetDisponivel(getApplicationContext())) {
@@ -96,7 +99,13 @@ public class LoginActivity extends ActionBarActivity {
 
             email = _sharedPreferences.getString("email", "");
             senha = _sharedPreferences.getString("senha", "");
-            tipo = Integer.parseInt(_sharedPreferences.getString("tipo", "1"));
+            //ADULTO como padrão
+            tipo = Integer.parseInt(_sharedPreferences.getString("tipo", "0"));
+            if (tipo == 0) {
+                SharedPreferences.Editor editor = _sharedPreferences.edit();
+                editor.putString("tipo", "1").commit();
+                tipo = 1;
+            }
 
             if (!email.matches("")) {
                 etEmail.setText(email);
@@ -109,40 +118,38 @@ public class LoginActivity extends ActionBarActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     recaptchaResponseField = etCaptcha.getText().toString();
-                    if(!etEmail.getText().toString().matches("")
+                    if (!etEmail.getText().toString().matches("")
                             && !etSenha.getText().toString().matches("")
                             && !recaptchaResponseField.matches("")) {
                         Log.i("cliquei", recaptchaResponseField);
 
                         SharedPreferences.Editor editor = _sharedPreferences.edit();
-    //                    Log.d("pmail", email);
-                        if(email.matches("")) {
+                        //                    Log.d("pmail", email);
+                        if (email.matches("")) {
                             email = etEmail.getText().toString();
                             editor.putString("email", email);
                             editor.commit();
 
                         }
 
-    //                    Log.d("ppass", senha);
-                        if(senha.matches("")) {
+                        //                    Log.d("ppass", senha);
+                        if (senha.matches("")) {
                             senha = etSenha.getText().toString();
                             editor.putString("senha", senha);
                             editor.commit();
                         }
 
                         fazLogin();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(),"Todos os campos são necessários!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Todos os campos são necessários!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-        }
-        else {
+        } else {
             pb.setVisibility(View.GONE);
             TextView tvDica = (TextView) findViewById(R.id.tvDica);
             tvDica.setText("Sem internet!!!");
-            Toast.makeText(getApplicationContext(),"Sem internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Sem internet", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -245,7 +252,7 @@ public class LoginActivity extends ActionBarActivity {
                     @Override
                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
-                        Toast.makeText(getApplicationContext(), "Ops! Deu zica! na senha ou email\n" +
+                        Toast.makeText(getApplicationContext(), "Ops! Deu zica!\n" +
                                 "Tente novamente", Toast.LENGTH_SHORT).show();
                         client.cancelAllRequests(true);
                         recaptcha();
@@ -253,36 +260,86 @@ public class LoginActivity extends ActionBarActivity {
 
                     @Override
                     public void onSuccess(int i, Header[] headers, String s) {
-                        String url = getURL();
+//                        String url = getURL();
 //                        Log.w(getClass().getSimpleName(),url);
-                        client.get(url,
+                        ArrayList<String> urls = getURLs();
+
+//                          Adultos
+                            client.get(urls.get(0),
+                                    null, new TextHttpResponseHandler() {
+                                        @Override
+                                        public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+
+                                            Toast.makeText(getApplicationContext(), "ihh! Algo estranho ocorreu \ncom a meditação dos Adultos", Toast.LENGTH_SHORT).show();
+
+                                            recaptcha();
+                                        }
+
+                                        @Override
+                                        public void onSuccess(int i, Header[] headers, String s) {
+                                            Extracao e = new Extracao(getApplicationContext());
+                                            if (e.ePaginaMeditacao(s)) {
+                                                e.extraiMeditacao(s, 1);
+                                                pb.setVisibility(View.GONE);
+//                                                startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Erro!", Toast.LENGTH_SHORT).show();
+                                                conecta();
+                                            }
+                                        }
+                             });
+//                      Mulheres
+                        client.get(urls.get(1),
                                 null, new TextHttpResponseHandler() {
                                     @Override
                                     public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
-                                        Toast.makeText(getApplicationContext(), "ihh! Você errou!", Toast.LENGTH_SHORT).show();
-                                        client.cancelAllRequests(true);
+                                        Toast.makeText(getApplicationContext(), "ihh! Algo estranho ocorreu!\n" +
+                                                "com a meditação das Mulheres", Toast.LENGTH_SHORT).show();
+
                                         recaptcha();
                                     }
 
                                     @Override
                                     public void onSuccess(int i, Header[] headers, String s) {
-
-
-
                                         Extracao e = new Extracao(getApplicationContext());
-                                        if(e.ePaginaMeditacao(s)) {
-                                            e.extraiMeditacao(s, tipo);
+                                        if (e.ePaginaMeditacao(s)) {
+                                            e.extraiMeditacao(s, 2);
                                             pb.setVisibility(View.GONE);
-                                            startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
-                                        }
-                                        else {
-                                            client.cancelAllRequests(true);
+//                                                startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
+                                        } else {
                                             Toast.makeText(getApplicationContext(), "Erro!", Toast.LENGTH_SHORT).show();
                                             conecta();
                                         }
                                     }
                                 });
+//                      Juvenil
+                        client.get(urls.get(2),
+                                null, new TextHttpResponseHandler() {
+                                    @Override
+                                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+
+                                        Toast.makeText(getApplicationContext(), "ihh! Algo estranho ocorreu!\n" +
+                                                "com a meditação dos Juvenil", Toast.LENGTH_SHORT).show();
+
+                                        recaptcha();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(int i, Header[] headers, String s) {
+                                        Extracao e = new Extracao(getApplicationContext());
+                                        if (e.ePaginaMeditacao(s)) {
+                                            e.extraiMeditacao(s, 3);
+                                            pb.setVisibility(View.GONE);
+//                                                startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Erro!", Toast.LENGTH_SHORT).show();
+                                            conecta();
+                                        }
+                                    }
+                                });
+
+                        startActivity(new Intent(getApplicationContext(), DiaMeditacaoActivity.class));
                     }
                 });
     }
@@ -295,16 +352,29 @@ public class LoginActivity extends ActionBarActivity {
 
         switch (tipo) {
             case Meditacao.MULHER:
-                url +=  "medmulher/" + sAno + "/frmmul" + sAno + ".php";
+                url += "medmulher/" + sAno + "/frmmul" + sAno + ".php";
                 break;
             case Meditacao.JUVENIL:
-                url += "ij/" + sAno + "/frij" + sAno +".php";
+                url += "ij/" + sAno + "/frij" + sAno + ".php";
                 break;
             default:
                 url += "medmat/" + sAno + "/frmd" + sAno + ".php";
         }
         Log.d("getUrl", url);
         return url;
+    }
+
+    private ArrayList<String> getURLs() {
+        Calendar c = Calendar.getInstance();
+        int iAno = c.get(Calendar.YEAR);
+        String sAno = String.valueOf(iAno);
+        String url = "http://cpbmais.cpb.com.br/htdocs/periodicos/"; //
+        ArrayList<String> urls = new ArrayList<String>();
+        urls.add(url + "medmat/" + sAno + "/frmd" + sAno + ".php");
+        urls.add(url + "medmulher/" + sAno + "/frmmul" + sAno + ".php");
+        urls.add(url + "ij/" + sAno + "/frij" + sAno + ".php");
+
+        return urls;
     }
 
     private void cookies() {

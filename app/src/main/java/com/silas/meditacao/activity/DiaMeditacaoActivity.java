@@ -1,12 +1,13 @@
 package com.silas.meditacao.activity;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -23,7 +24,7 @@ import com.silas.meditacao.models.Meditacao;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class DiaMeditacaoActivity extends Activity {
+public class DiaMeditacaoActivity extends ActionBarActivity {
     private MeditacaoDBAdapter mdba;
     private Meditacao meditacao;
     private Calendar ca = Calendar.getInstance();
@@ -32,11 +33,11 @@ public class DiaMeditacaoActivity extends Activity {
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
         public void onLongPress(MotionEvent e) {
 //            Log.i("", "Longpress detected");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 
-                getActionBar().show();
+                getSupportActionBar().hide();
 
-            }
+//            }
 
         }
     });
@@ -50,10 +51,10 @@ public class DiaMeditacaoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            getActionBar().hide();
-        }
+       /* getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            getSupportActionBar().hide();
+//        }*/
 
         setContentView(R.layout.activity_dia_meditacao);
 
