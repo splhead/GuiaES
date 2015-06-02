@@ -20,14 +20,14 @@ import java.util.GregorianCalendar;
 /**
  * Created by silas on 08/09/14.
  */
-public class Extracao {
+public class ExtracaoCPB {
     private Meditacao meditacao;
 
     private Context mContext;
     private MeditacaoDBAdapter mdba;
     private ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
 
-    public Extracao(Context context) {
+    public ExtracaoCPB(Context context) {
         mContext = context;
         mdba = new MeditacaoDBAdapter(mContext);
     }

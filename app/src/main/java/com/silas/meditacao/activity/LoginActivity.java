@@ -34,8 +34,8 @@ import android.widget.Toast;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.silas.guiaes.activity.R;
-import com.silas.meditacao.io.CPBCliente;
-import com.silas.meditacao.io.Extracao;
+import com.silas.meditacao.io.HTTPCliente;
+import com.silas.meditacao.io.ExtracaoCPB;
 import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
@@ -46,7 +46,7 @@ import java.util.Calendar;
 
 public class LoginActivity extends ActionBarActivity {
 
-    final CPBCliente client = CPBCliente.getInstace(this);
+    final HTTPCliente client = HTTPCliente.getInstace(this);
 
     private EditText etCaptcha, etEmail, etSenha;
     private ImageView ivCaptcha;
@@ -277,7 +277,7 @@ public class LoginActivity extends ActionBarActivity {
 
                                         @Override
                                         public void onSuccess(int i, Header[] headers, String s) {
-                                            Extracao e = new Extracao(getApplicationContext());
+                                            ExtracaoCPB e = new ExtracaoCPB(getApplicationContext());
                                             if (e.ePaginaMeditacao(s)) {
                                                 e.extraiMeditacao(s, 1);
                                                 pb.setVisibility(View.GONE);
@@ -302,7 +302,7 @@ public class LoginActivity extends ActionBarActivity {
 
                                     @Override
                                     public void onSuccess(int i, Header[] headers, String s) {
-                                        Extracao e = new Extracao(getApplicationContext());
+                                        ExtracaoCPB e = new ExtracaoCPB(getApplicationContext());
                                         if (e.ePaginaMeditacao(s)) {
                                             e.extraiMeditacao(s, 2);
                                             pb.setVisibility(View.GONE);
@@ -327,7 +327,7 @@ public class LoginActivity extends ActionBarActivity {
 
                                     @Override
                                     public void onSuccess(int i, Header[] headers, String s) {
-                                        Extracao e = new Extracao(getApplicationContext());
+                                        ExtracaoCPB e = new ExtracaoCPB(getApplicationContext());
                                         if (e.ePaginaMeditacao(s)) {
                                             e.extraiMeditacao(s, 3);
                                             pb.setVisibility(View.GONE);

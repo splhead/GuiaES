@@ -10,23 +10,23 @@ import com.loopj.android.http.RequestParams;
 /**
  * Created by silas on 09/09/14.
  */
-public class CPBCliente extends AsyncHttpClient {
-    private volatile static CPBCliente cpb = new CPBCliente();
+public class HTTPCliente extends AsyncHttpClient {
+    private volatile static HTTPCliente cpb = new HTTPCliente();
 
     private static PersistentCookieStore myCookieStore;
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
-    private CPBCliente() { }
+    private HTTPCliente() { }
 
-    public static CPBCliente getInstace(Context c) {
+    public static HTTPCliente getInstace(Context c) {
         if(cpb == null) {
-            synchronized (CPBCliente.class) {
+            synchronized (HTTPCliente.class) {
                 if(cpb == null) {
-                    cpb = new CPBCliente();
+                    cpb = new HTTPCliente();
                     myCookieStore = new PersistentCookieStore(c.getApplicationContext());
                     client.setCookieStore(myCookieStore);
-                    client.setUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0");
+                    client.setUserAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
                 }
             }
         }
