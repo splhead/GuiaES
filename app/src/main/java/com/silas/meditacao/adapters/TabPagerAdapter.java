@@ -1,4 +1,4 @@
-package com.silas.meditacao.classes;
+package com.silas.meditacao.adapters;
 
 /**
  * Created by splhead on 01/06/15.

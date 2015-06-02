@@ -11,7 +11,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by silas on 02/06/15.
@@ -28,7 +31,12 @@ public class ExtraiMeditacao {
         mdba = new MeditacaoDBAdapter(mContext);
     }
 
-    private processaExtracao(String html, int tipo) {
+    public void processaExtracao(String html, int tipo) {
+        Calendar c = GregorianCalendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        int iMes = c.get(Calendar.MONTH);
+        int iDia = c.get(Calendar.DAY_OF_MONTH);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         StringBuilder sbTexto = new StringBuilder();
         String sData, sTitulo, sTextoBiblico, sTexto;
         Document doc = Jsoup.parse(html);
@@ -36,12 +44,48 @@ public class ExtraiMeditacao {
         Elements titulos = doc.select("div[style^=width: 74%] td[style^=width:67.0%]");
         for(Element eTitulo:titulos) {
             meditacao = new Meditacao("", "", "", "", tipo);
+
+            sTitulo = eTitulo.text();
+//            Log.d("titulo", sTitulo);
+
+            sData = sdf.format(c.getTime());
+
             Element prox = proximo(eTitulo, raiz);
-            if(prox.tagName().equalsIgnoreCase('p')) {
-
+            //procura pelo proximo <p>
+            while(!prox.tagName().equalsIgnoreCase("p")) {
+                prox = prox.nextElementSibling();
             }
-        }
 
+            sTextoBiblico = prox.text();
+//            Log.d("textoBiblico", sTextoBiblico);
+
+            //passa para texto da meditacao
+            prox = prox.nextElementSibling();
+
+            while (prox.tagName().equalsIgnoreCase("p")) {
+                if(!prox.hasAttr("style")) {
+                    sbTexto.append(prox.text() + "\n\n");
+                }
+                //passa para o proximo elemento
+                prox = prox.nextElementSibling();
+            }
+
+            sTexto = sbTexto.toString();
+//            Log.d("texto", sTexto);
+
+            meditacao.setTitulo(sTitulo);
+            meditacao.setData(sData);
+            meditacao.setTextoBiblico(sTextoBiblico);
+            meditacao.setTexto(sTexto);
+
+            Log.d("Meditacao", meditacao.toString());
+
+            meditacoes.add(meditacao);
+
+            sbTexto.delete(0, sbTexto.length());
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        mdba.addMeditacoes(meditacoes);
     }
 
     /*
@@ -50,7 +94,7 @@ public class ExtraiMeditacao {
     private Element proximo(Element irmao, Element raiz) {
         Element proximo = irmao;
         //Log.d("oL", "pProximo: " + proximo.tagName() + " " + proximo.id());
-        while (!proximo.parent().id().equals(raiz.id())) {
+        while (!proximo.parent().equals(raiz)) {
             proximo = proximo.parent();
 //            Log.d("oL", "proximo: " + proximo.tagName() + " " + proximo.id());
         }
@@ -58,7 +102,7 @@ public class ExtraiMeditacao {
         return proximo.nextElementSibling();
     }
 
-    private String getURL(int tipo) {
+    /*private String getURL(int tipo) {
         //inspiracao-juvenil/mensal
         String url = "http://iasdcolonial.org.br/index.php/";
 
@@ -87,5 +131,5 @@ public class ExtraiMeditacao {
         urls.add(url + "inspiracao-juvenil/mensal");
 
         return urls;
-    }
+    }*/
 }

@@ -1,5 +1,6 @@
 package com.silas.meditacao.activity;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -9,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.silas.guiaes.activity.R;
-import com.silas.meditacao.classes.TabPagerAdapter;
+import com.silas.meditacao.adapters.TabPagerAdapter;
 
 public class MainActivity extends ActionBarActivity implements
         ActionBar.TabListener {
@@ -54,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.dia_meditacao, menu);
         return true;
     }
 
@@ -65,11 +66,21 @@ public class MainActivity extends ActionBarActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                break;
+            case R.id.action_share:
+                /*Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, meditacao.getTitulo() + "\n\n"
+                        + dataPorExtenso(ca) + "\n\n" + meditacao.getTextoBiblico()
+                        + "\n\n" + meditacao.getTexto());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));*/
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -77,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
+        viewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
