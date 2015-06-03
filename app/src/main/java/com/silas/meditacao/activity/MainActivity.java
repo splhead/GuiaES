@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private void preparaMeditacoesParaCompartilhar() {
         ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
-        Iterator<Meditacao> it = meditacoes.iterator();
+
 
         mAdulto = mdba.buscaMeditacao(hoje, Meditacao.ADULTO);
         meditacoes.add(mAdulto);
@@ -94,19 +94,30 @@ public class MainActivity extends ActionBarActivity implements
         mJuvenil = mdba.buscaMeditacao(hoje, Meditacao.JUVENIL);
         meditacoes.add(mJuvenil);
 
+        Iterator<Meditacao> it = meditacoes.iterator();
+
         try {
             while (it.hasNext()) {
                 meditacao = it.next();
-                sbMeditacoes.append(meditacao.getTitulo() + "\n\n"
-                        + dataPorExtenso(ca) + "\n\n" + meditacao.getTextoBiblico()
-                        + "\n\n" + meditacao.getTexto() + "\n\n\n\n");
-                Log.d("mainteste", meditacao.toString());
+                if (meditacao != null) {
+                    sbMeditacoes.append(meditacao.getTitulo());
+                    sbMeditacoes.append("\n\n");
+                    sbMeditacoes.append(dataPorExtenso(ca));
+                    sbMeditacoes.append("\n\n");
+                    sbMeditacoes.append(meditacao.getTextoBiblico());
+                    sbMeditacoes.append("\n\n");
+                    sbMeditacoes.append(meditacao.getTexto());
+                    sbMeditacoes.append("\n\n\n\n");
+
+                    Log.d("mainteste", meditacao.toString());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         share = sbMeditacoes.toString();
+        sbMeditacoes.delete(0,sbMeditacoes.length());
         Log.d("share", share);
     }
 
