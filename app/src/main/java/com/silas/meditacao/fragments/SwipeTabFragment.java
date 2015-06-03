@@ -1,5 +1,6 @@
 package com.silas.meditacao.fragments;
 
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,20 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.loopj.android.http.TextHttpResponseHandler;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
-import com.silas.meditacao.io.ExtraiMeditacao;
-import com.silas.meditacao.io.HTTPCliente;
 import com.silas.meditacao.models.Meditacao;
-
-import org.apache.http.Header;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +25,7 @@ import java.util.Map;
 
 
 public class SwipeTabFragment extends Fragment {
-    final HTTPCliente client = HTTPCliente.getInstace(getActivity());
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TIPO = "tipo";
@@ -86,21 +76,20 @@ public class SwipeTabFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mdba = new MeditacaoDBAdapter(getActivity());
         try {
+            TextView tvTitulo = (TextView) getView().findViewById(R.id.tvTitulo);
+            TextView tvData = (TextView) getView().findViewById(R.id.tvData);
+            TextView tvTextoBiblico = (TextView) getView().findViewById(R.id.tvTextoBiblico);
+            TextView tvTexto = (TextView) getView().findViewById(R.id.tvTexto);
+            TextView tvLinks = (TextView) getView().findViewById(R.id.tvLinks);
+            tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
+
             meditacao = mdba.buscaMeditacao(sData, iTipo);
             if(meditacao != null) {
-                TextView tvTitulo = (TextView) getView().findViewById(R.id.tvTitulo);
-                TextView tvData = (TextView) getView().findViewById(R.id.tvData);
-                TextView tvTextoBiblico = (TextView) getView().findViewById(R.id.tvTextoBiblico);
-                TextView tvTexto = (TextView) getView().findViewById(R.id.tvTexto);
-                TextView tvLinks = (TextView) getView().findViewById(R.id.tvLinks);
-                tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
 
                 tvTitulo.setText(meditacao.getTitulo());
                 tvData.setText(revertData(meditacao.getData()));
                 tvTextoBiblico.setText(meditacao.getTextoBiblico());
                 tvTexto.setText(meditacao.getTexto());
-            } else {
-                baixaMeditacoes();
             }
 
 
@@ -110,46 +99,7 @@ public class SwipeTabFragment extends Fragment {
 
     }
 
-    private HashMap<Integer,String> getURLs() {
-        String url = "http://iasdcolonial.org.br/index.php/"; //
-        HashMap<Integer,String> urls = new HashMap<Integer,String>();
-        //adultos
-        urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
-        //mulher
-        urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal");
-        //juvenil
-        urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
 
-        return urls;
-    }
-
-    private void baixaMeditacoes() {
-        HashMap<Integer,String> urls = getURLs();
-        Iterator it = urls.entrySet().iterator();
-
-        while (it.hasNext()) {
-            final Map.Entry<Integer,String> par = (Map.Entry<Integer,String>) it.next();
-
-            client.get(par.getValue(),
-                    null, new TextHttpResponseHandler() {
-                        @Override
-                        public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-
-                            Toast.makeText(getActivity(), "ZICA", Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        @Override
-                        public void onSuccess(int i, Header[] headers, String s) {
-
-                            ExtraiMeditacao e = new ExtraiMeditacao(getActivity());
-                            e.processaExtracao(s, par.getKey());
-
-                        }
-                    });
-        }
-
-    }
 
     private String revertData(String data) {
         //yyyy-MM-dd
@@ -167,12 +117,12 @@ public class SwipeTabFragment extends Fragment {
         return inflater.inflate(R.layout.activity_dia_meditacao, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    /*
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
+    }*/
 
    /* @Override
     public void onAttach(Activity activity) {
