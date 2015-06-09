@@ -2,6 +2,8 @@ package com.silas.meditacao.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.FragmentTransaction;
@@ -60,6 +62,8 @@ public class MainActivity extends ActionBarActivity implements
         viewPager.setAdapter(tabPagerAdapter);
         actionBar = getSupportActionBar(); //getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFC107")));
+
         for (String tab_name : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab_name)
                     .setTabListener(this));
@@ -99,6 +103,19 @@ public class MainActivity extends ActionBarActivity implements
         try {
             while (it.hasNext()) {
                 meditacao = it.next();
+
+                switch (meditacao.getTipo()) {
+                    case Meditacao.ADULTO:
+                        sbMeditacoes.append("\n\nMeditação Matinal\n\n");
+                        break;
+                    case Meditacao.MULHER:
+                        sbMeditacoes.append("\n\nMeditação da Mulher\n\n");
+                        break;
+                    case Meditacao.JUVENIL:
+                        sbMeditacoes.append("\n\nInspiração Juvenil\n\n");
+                        break;
+                }
+
                 if (meditacao != null) {
                     sbMeditacoes.append(meditacao.getTitulo());
                     sbMeditacoes.append("\n\n");
@@ -109,7 +126,7 @@ public class MainActivity extends ActionBarActivity implements
                     sbMeditacoes.append(meditacao.getTexto());
                     sbMeditacoes.append("\n\n\n\n");
 
-                    Log.d("mainteste", meditacao.toString());
+//                    Log.d("mainteste", meditacao.toString());
                 }
             }
         } catch (Exception e) {
@@ -118,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements
 
         share = sbMeditacoes.toString();
         sbMeditacoes.delete(0,sbMeditacoes.length());
-        Log.d("share", share);
+//        Log.d("share", share);
     }
 
     private String dataPorExtenso(Calendar ca) {
@@ -194,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements
                         @Override
                         public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
 
-                            Toast.makeText(getApplication(), "ZICA", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplication(), "Ops! Não foi possível baixar as Meditações", Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -225,9 +242,9 @@ public class MainActivity extends ActionBarActivity implements
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
+            case R.id.action_about:
+                /*Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);*/
                 break;
             case R.id.action_share:
                 Intent sendIntent = new Intent();

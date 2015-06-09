@@ -3,7 +3,6 @@ package com.silas.meditacao.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -17,7 +16,7 @@ import com.silas.meditacao.models.Meditacao;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SwipeTabFragment.OnFragmentInteractionListener} interface
+ * {link SwipeTabFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link SwipeTabFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -38,7 +37,7 @@ public class SwipeTabFragment extends Fragment {
     private int iTipo;
     private String sData;
 
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -72,7 +71,7 @@ public class SwipeTabFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mdba = new MeditacaoDBAdapter(getActivity());
         try {
@@ -135,11 +134,11 @@ public class SwipeTabFragment extends Fragment {
         }
     }
 */
-    @Override
+   /* @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
+    }*/
 
     /**
      * This interface must be implemented by activities that contain this
@@ -151,9 +150,9 @@ public class SwipeTabFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+   /* public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
-    }
+    }*/
 
 }
