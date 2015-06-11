@@ -6,16 +6,20 @@ package com.silas.meditacao.adapters;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.silas.meditacao.fragments.SwipeTabFragment;
 import com.silas.meditacao.models.Meditacao;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+/*import java.util.HashMap;
+import java.util.Map;*/
 
-public class TabPagerAdapter extends FragmentPagerAdapter {
+public class TabPagerAdapter extends FragmentStatePagerAdapter {
     private Calendar ca = Calendar.getInstance();
+    /*private FragmentManager mFragmentManager;
+    private Map<Integer,String> mFragments = new HashMap<>();*/
 
     public TabPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -50,4 +54,27 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 3;
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+   /* @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Object obj = super.instantiateItem(container, position);
+        if(obj instanceof Fragment) {
+            Fragment fragment = (Fragment)obj;
+            mFragments.put(position,fragment.getTag());
+        }
+        return obj;
+    }
+
+    public Fragment getFragment(int postition) {
+        String tag = mFragments.get(postition);
+        if(tag == null) {
+            return null;
+        }
+        return mFragmentManager.findFragmentByTag(tag);
+    }*/
 }

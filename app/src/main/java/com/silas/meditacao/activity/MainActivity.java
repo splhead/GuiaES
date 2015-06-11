@@ -1,31 +1,31 @@
 package com.silas.meditacao.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.loopj.android.http.TextHttpResponseHandler;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabPagerAdapter;
 import com.silas.meditacao.io.ExtraiMeditacao;
-import com.silas.meditacao.io.HTTPCliente;
 import com.silas.meditacao.models.Meditacao;
 
-import org.apache.http.Header;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,13 +35,14 @@ import java.util.Map;
 
 public class MainActivity extends ActionBarActivity implements
         ActionBar.TabListener {
-    final HTTPCliente client = HTTPCliente.getInstace(getApplication());
+
+    ProgressDialog progress;
     private MeditacaoDBAdapter mdba;
     private Meditacao meditacao, mAdulto, mMulher, mJuvenil;
     private ViewPager viewPager;
     private ActionBar actionBar;
     private TabPagerAdapter tabPagerAdapter;
-    private String[] tabs = { "Adulto", "Mulher", "Juvenil" };
+    private String[] tabs = {"Adulto", "Mulher", "Juvenil"};
     private StringBuilder sbMeditacoes = new StringBuilder();
     private Calendar ca = Calendar.getInstance();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,12 +52,17 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         mdba = new MeditacaoDBAdapter(getApplication());
 
-        verificaMeditacao();
-        preparaMeditacoesParaCompartilhar();
+        progress = new ProgressDialog(this);
+        progress.setIndeterminate(true);
+        progress.setTitle("Atualizando");
+        progress.setMessage("Aguarde...");
 
-        setContentView(R.layout.activity_main);
+        verificaMeditacao();
+
         viewPager = (ViewPager) findViewById(R.id.pager);
         tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
@@ -80,62 +86,13 @@ public class MainActivity extends ActionBarActivity implements
             }
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) { }
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
 
             @Override
-            public void onPageScrollStateChanged(int arg0) { }
-        });
-    }
-
-    private void preparaMeditacoesParaCompartilhar() {
-        ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
-
-
-        mAdulto = mdba.buscaMeditacao(hoje, Meditacao.ADULTO);
-        meditacoes.add(mAdulto);
-        mMulher = mdba.buscaMeditacao(hoje, Meditacao.MULHER);
-        meditacoes.add(mMulher);
-        mJuvenil = mdba.buscaMeditacao(hoje, Meditacao.JUVENIL);
-        meditacoes.add(mJuvenil);
-
-        Iterator<Meditacao> it = meditacoes.iterator();
-
-        try {
-            while (it.hasNext()) {
-                meditacao = it.next();
-
-                switch (meditacao.getTipo()) {
-                    case Meditacao.ADULTO:
-                        sbMeditacoes.append("\n\nMeditação Matinal\n\n");
-                        break;
-                    case Meditacao.MULHER:
-                        sbMeditacoes.append("\n\nMeditação da Mulher\n\n");
-                        break;
-                    case Meditacao.JUVENIL:
-                        sbMeditacoes.append("\n\nInspiração Juvenil\n\n");
-                        break;
-                }
-
-                if (meditacao != null) {
-                    sbMeditacoes.append(meditacao.getTitulo());
-                    sbMeditacoes.append("\n\n");
-                    sbMeditacoes.append(dataPorExtenso(ca));
-                    sbMeditacoes.append("\n\n");
-                    sbMeditacoes.append(meditacao.getTextoBiblico());
-                    sbMeditacoes.append("\n\n");
-                    sbMeditacoes.append(meditacao.getTexto());
-                    sbMeditacoes.append("\n\n\n\n");
-
-//                    Log.d("mainteste", meditacao.toString());
-                }
+            public void onPageScrollStateChanged(int arg0) {
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        share = sbMeditacoes.toString();
-        sbMeditacoes.delete(0,sbMeditacoes.length());
-//        Log.d("share", share);
+        });
     }
 
     private String dataPorExtenso(Calendar ca) {
@@ -149,16 +106,62 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * Testa se existe pelo menos a dos adultos caso não encontre tenta baixar!
+     * Testa se esta gravada as meditacoes do dia
+     * e prepara para compartilha-las
+     * caso não as encontre tenta baixa-las!
      */
 
     private void verificaMeditacao() {
+        ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
+        mAdulto = mdba.buscaMeditacao(hoje, Meditacao.ADULTO);
+        meditacoes.add(mAdulto);
+        mMulher = mdba.buscaMeditacao(hoje, Meditacao.MULHER);
+        meditacoes.add(mMulher);
+        mJuvenil = mdba.buscaMeditacao(hoje, Meditacao.JUVENIL);
+        meditacoes.add(mJuvenil);
 
-        meditacao = mdba.buscaMeditacao(hoje,1);
-        if(meditacao == null) {
+        Iterator<Meditacao> it = meditacoes.iterator();
+
+        if (mAdulto != null || mMulher != null || mJuvenil != null) {
+            try {
+                while (it.hasNext()) {
+                    meditacao = it.next();
+
+                    switch (meditacao.getTipo()) {
+                        case Meditacao.ADULTO:
+                            sbMeditacoes.append("\n\nMeditação Matinal\n\n");
+                            break;
+                        case Meditacao.MULHER:
+                            sbMeditacoes.append("\n\nMeditação da Mulher\n\n");
+                            break;
+                        case Meditacao.JUVENIL:
+                            sbMeditacoes.append("\n\nInspiração Juvenil\n\n");
+                            break;
+                    }
+
+                    if (meditacao != null) {
+                        sbMeditacoes.append(meditacao.getTitulo());
+                        sbMeditacoes.append("\n\n");
+                        sbMeditacoes.append(dataPorExtenso(ca));
+                        sbMeditacoes.append("\n\n");
+                        sbMeditacoes.append(meditacao.getTextoBiblico());
+                        sbMeditacoes.append("\n\n");
+                        sbMeditacoes.append(meditacao.getTexto());
+                        sbMeditacoes.append("\n\n\n\n");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            share = sbMeditacoes.toString();
+            sbMeditacoes.delete(0, sbMeditacoes.length());
+
+        } else {
             if (internetDisponivel(getApplication())) {
-                baixaMeditacoes();
+                progress.show();
+                new ProcessaMeditacoesTask().execute(getURLs());
             } else {
                 Toast.makeText(getApplicationContext(), "OPS! É necessário INTERNET na primeira vez que usa no mês ;)", Toast.LENGTH_SHORT).show();
             }
@@ -185,9 +188,9 @@ public class MainActivity extends ActionBarActivity implements
         return false;
     }
 
-    private HashMap<Integer,String> getURLs() {
+    private HashMap<Integer, String> getURLs() {
         String url = "http://iasdcolonial.org.br/index.php/"; //
-        HashMap<Integer,String> urls = new HashMap<Integer,String>();
+        HashMap<Integer, String> urls = new HashMap<>();
         //adultos
         urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
         //mulher
@@ -198,33 +201,54 @@ public class MainActivity extends ActionBarActivity implements
         return urls;
     }
 
-    private void baixaMeditacoes() {
-        HashMap<Integer,String> urls = getURLs();
-        Iterator it = urls.entrySet().iterator();
+    private void processaMeditacoes(Map.Entry<Integer, String> entry) {
+        URL url;
+        BufferedReader reader = null;
+        StringBuilder stringBuilder;
+        ExtraiMeditacao extrator = new ExtraiMeditacao(getApplication());
 
-        while (it.hasNext()) {
-            final Map.Entry<Integer,String> par;
-            par = (Map.Entry<Integer,String>) it.next();
+        try {
 
-            client.get(par.getValue(),
-                    null, new TextHttpResponseHandler() {
-                        @Override
-                        public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+            // create the HttpURLConnection
+            url = new URL(entry.getValue());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-                            Toast.makeText(getApplication(), "Ops! Não foi possível baixar as Meditações", Toast.LENGTH_SHORT).show();
+            // just want to do an HTTP GET here
+            connection.setRequestMethod("GET");
 
-                        }
+            // uncomment this if you want to write output to this url
+            //connection.setDoOutput(true);
 
-                        @Override
-                        public void onSuccess(int i, Header[] headers, String s) {
+            // give it 15 seconds to respond
+            connection.setReadTimeout(15 * 1000);
+            connection.connect();
 
-                            ExtraiMeditacao e = new ExtraiMeditacao(getApplication());
-                            e.processaExtracao(s, par.getKey());
+            // read the output from the server
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            stringBuilder = new StringBuilder();
 
-                        }
-                    });
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            String html = stringBuilder.toString();
+
+            extrator.processaExtracao(html, entry.getKey());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            // close the reader; this can throw an exception too, so
+            // wrap it in another try/catch block.
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
-
     }
 
     @Override
@@ -257,8 +281,6 @@ public class MainActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         viewPager.setCurrentItem(tab.getPosition());
@@ -272,5 +294,27 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
+    }
+
+    class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(HashMap<Integer, String>... tmp) {
+            HashMap<Integer, String> urls = tmp[0];
+
+            for (Map.Entry<Integer, String> url : urls.entrySet()) {
+                processaMeditacoes(url);
+//                publishProgress((int) ((totalSize / (float) count) * 100));
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progress.dismiss();
+            viewPager.getAdapter().notifyDataSetChanged();
+            super.onPostExecute(aVoid);
+        }
     }
 }

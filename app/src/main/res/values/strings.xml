@@ -3,11 +3,9 @@
 
     <string name="app_name">Meditação</string>
     <string name="action_about">Sobre</string>
-    <string name="action_refresh">Atualizar</string>
-    <string name="title_activity_dia_meditacao">Hoje</string>
     <string name="tvLink">Ouça os pocast\'s:<a href="http://biblecast.com.br">\nBiblecast</a><a href="http://www.mcast.com.br">\nMcast</a><a href="http://www.connectcast.com.br">\nConnectcast</a><a href="http://cristaoscansados.net/category/podcasts/cronicast-podcasts/">\nCrônicast</a><a href="http://pupilasembrasas.com.br/">\nPupilas em brasa</a>\n\n Acesse:<a href="http://www.comentariojovem.com.br/">\nComentário Jovem</a><a href="http://missaoposmoderna.com.br/">\nMissão pós-moderna</a></string>
     <string name="send_to">Enviar para</string>
     <string name="action_share">Compartilhar</string>
-    <string name="title_activity_main">Meditação</string>
+    <string name="title_activity_main">Guia ES</string>
 
 </resources>
