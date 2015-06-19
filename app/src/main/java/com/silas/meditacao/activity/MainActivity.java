@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements
         progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
         progress.setMessage("Ore e aguarde...");
+        progress.setCancelable(false);
 
         verificaMeditacao();
 
@@ -124,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements
 
         Iterator<Meditacao> it = meditacoes.iterator();
 
-        if (mAdulto != null || mMulher != null || mJuvenil != null) {
+        if (mAdulto != null && mMulher != null && mJuvenil != null) {
             try {
                 while (it.hasNext()) {
                     meditacao = it.next();
@@ -149,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements
                         sbMeditacoes.append(meditacao.getTextoBiblico());
                         sbMeditacoes.append("\n\n");
                         sbMeditacoes.append(meditacao.getTexto());
-                        sbMeditacoes.append("\n\n\n\n");
+                        sbMeditacoes.append("\n\n\n");
                     }
                 }
             } catch (Exception e) {
