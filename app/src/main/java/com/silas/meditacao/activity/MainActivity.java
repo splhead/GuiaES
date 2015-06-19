@@ -23,6 +23,7 @@ import com.silas.meditacao.models.Meditacao;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -58,8 +59,8 @@ public class MainActivity extends ActionBarActivity implements
 
         progress = new ProgressDialog(this);
         progress.setIndeterminate(true);
-        progress.setTitle("Atualizando");
-        progress.setMessage("Aguarde...");
+        progress.setTitle("Recebendo poder!");
+        progress.setMessage("Ore e aguarde...");
 
         verificaMeditacao();
 
@@ -160,10 +161,7 @@ public class MainActivity extends ActionBarActivity implements
 
         } else {
             if (internetDisponivel(getApplication())) {
-                progress.show();
                 new ProcessaMeditacoesTask().execute(getURLs());
-            } else {
-                Toast.makeText(getApplicationContext(), "OPS! É necessário INTERNET na primeira vez que usa no mês ;)", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -184,6 +182,9 @@ public class MainActivity extends ActionBarActivity implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Toast.makeText(getApplicationContext(), "OPS! Parece que você está sem gravata (digo, INTERNET)" +
+                        " asssim o poder (a meditação) não desce! ;)",
+                Toast.LENGTH_SHORT).show();
 //        Log.i("TestaInternet", "Não está conectado.");
         return false;
     }
@@ -201,10 +202,10 @@ public class MainActivity extends ActionBarActivity implements
         return urls;
     }
 
-    private void processaMeditacoes(Map.Entry<Integer, String> entry) {
+    private void processaMeditacoes(Map.Entry<Integer, String> entry, int tentativa) {
         URL url;
         BufferedReader reader = null;
-        StringBuilder stringBuilder;
+        StringBuffer stringBuffer;
         ExtraiMeditacao extrator = new ExtraiMeditacao(getApplication());
 
         try {
@@ -224,16 +225,27 @@ public class MainActivity extends ActionBarActivity implements
             connection.connect();
 
             // read the output from the server
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            stringBuilder = new StringBuilder();
+            InputStream is = connection.getInputStream();
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
+            if (is != null) {
+                reader = new BufferedReader(new InputStreamReader(is));
+                stringBuffer = new StringBuffer();
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+                String html = stringBuffer.toString();
+
+                extrator.processaExtracao(html, entry.getKey());
             }
-            String html = stringBuilder.toString();
 
-            extrator.processaExtracao(html, entry.getKey());
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (tentativa <= 3) {
+                tentativa++;
+                processaMeditacoes(entry, tentativa);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -298,13 +310,19 @@ public class MainActivity extends ActionBarActivity implements
 
     class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress.show();
+        }
 
         @Override
         protected Void doInBackground(HashMap<Integer, String>... tmp) {
             HashMap<Integer, String> urls = tmp[0];
+            int tentativa = 1;
 
             for (Map.Entry<Integer, String> url : urls.entrySet()) {
-                processaMeditacoes(url);
+                processaMeditacoes(url, tentativa);
 //                publishProgress((int) ((totalSize / (float) count) * 100));
             }
             return null;

@@ -4,15 +4,15 @@ package com.silas.meditacao.models;
  * Created by silas on 08/09/14.
  */
 public class Meditacao {
+    public static final int ADULTO = 1;
+    public static final int MULHER = 2;
+    public static final int JUVENIL = 3;
     private long id;
     private String data;
     private String titulo;
     private String textoBiblico;
     private String texto;
     private int tipo;
-    public static final int ADULTO = 1;
-    public static final int MULHER = 2;
-    public static final int JUVENIL = 3;
 
     public Meditacao(long id, String titulo, String data, String textoBiblico, String texto, int tipo) {
         this.id = id;
@@ -73,14 +73,12 @@ public class Meditacao {
     }
 
     public String toString() {
-        return this.getTitulo() + " " + this.getData();
+        return this.getTitulo() + " " + this.getData() + " " + getTipo();
     }
 
     public int getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
-    }
+
 }

@@ -1,7 +1,6 @@
 package com.silas.meditacao.io;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.models.Meditacao;
@@ -34,8 +33,7 @@ public class ExtraiMeditacao {
     public void processaExtracao(String html, int tipo) {
         Calendar c = GregorianCalendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, 1);
-        int iMes = c.get(Calendar.MONTH);
-        int iDia = c.get(Calendar.DAY_OF_MONTH);
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         StringBuilder sbTexto = new StringBuilder();
         String sData, sTitulo, sTextoBiblico, sTexto;
@@ -78,7 +76,7 @@ public class ExtraiMeditacao {
             meditacao.setTextoBiblico(sTextoBiblico);
             meditacao.setTexto(sTexto);
 
-            Log.d("Meditacao", meditacao.toString());
+//            Log.d("Meditacao", meditacao.toString());
 
             meditacoes.add(meditacao);
 
@@ -101,35 +99,4 @@ public class ExtraiMeditacao {
 //        Log.d("oL", "uProximo: " + proximo.tagName());
         return proximo.nextElementSibling();
     }
-
-    /*private String getURL(int tipo) {
-        //inspiracao-juvenil/mensal
-        String url = "http://iasdcolonial.org.br/index.php/";
-
-        switch (tipo) {
-            case Meditacao.MULHER:
-                url += "meditacao-da-mulher/mensal";
-                break;
-            case Meditacao.JUVENIL:
-                url += "inspiracao-juvenil/mensal";
-                break;
-            case Meditacao.ADULTO:
-                url += "meditacao-diaria/mensal";
-        }
-        Log.d("getUrl", url);
-        return url;
-    }
-
-    private ArrayList<String> getURLs() {
-        String url = "http://iasdcolonial.org.br/index.php/"; //
-        ArrayList<String> urls = new ArrayList<String>();
-        //adultos
-        urls.add(url + "meditacao-diaria/mensal");
-        //mulher
-        urls.add(url + "meditacao-da-mulher/mensal");
-        //juvenil
-        urls.add(url + "inspiracao-juvenil/mensal");
-
-        return urls;
-    }*/
 }
