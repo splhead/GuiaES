@@ -61,9 +61,10 @@ public class ExtraiMeditacao {
             prox = prox.nextElementSibling();
 
             while (prox.tagName().equalsIgnoreCase("p")) {
-                if(!prox.hasAttr("style")) {
+                if (prox.children().size() == 0 || !prox.child(0).tagName().equalsIgnoreCase("strong")) {
                     sbTexto.append(prox.text() + "\n\n");
                 }
+
                 //passa para o proximo elemento
                 prox = prox.nextElementSibling();
             }

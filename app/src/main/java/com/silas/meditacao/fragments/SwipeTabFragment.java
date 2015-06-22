@@ -1,10 +1,14 @@
 package com.silas.meditacao.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -39,6 +43,7 @@ public class SwipeTabFragment extends Fragment {
 
     public SwipeTabFragment() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
     }
 
     /**
@@ -87,31 +92,78 @@ public class SwipeTabFragment extends Fragment {
                 tvData.setText(revertData(meditacao.getData()));
                 tvTextoBiblico.setText(meditacao.getTextoBiblico());
                 tvTexto.setText(meditacao.getTexto());
+
+            } else {
+                tvTitulo.setText("");
+                tvData.setText("");
+                tvTextoBiblico.setText("");
+                tvTexto.setText("");
             }
 
 
         }catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
+    private String preparaCompartilhamento(Meditacao meditacao) {
+        if (meditacao == null) {
+            return "";
+        }
+        StringBuilder saida = new StringBuilder();
+        switch (meditacao.getTipo()) {
+            case Meditacao.ADULTO:
+                saida.append("Meditação Matinal\n\n");
+                break;
+            case Meditacao.MULHER:
+                saida.append("Meditação da Mulher\n\n");
+                break;
+            case Meditacao.JUVENIL:
+                saida.append("Inspiração Juvenil\n\n");
+                break;
+        }
 
+        saida.append(meditacao.getTitulo() + "\n");
+        saida.append(meditacao.getTextoBiblico() + "\n");
+        saida.append(revertData(meditacao.getData()) + "\n\n");
+        saida.append(meditacao.getTexto());
+        return saida.toString();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.dia_meditacao, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private String revertData(String data) {
         //yyyy-MM-dd
+        String saida;
         String mes[] = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
-        return data.substring(8) + " de "
-                + mes[Integer.parseInt(data.substring(5,7))]
+        saida = data.substring(8) + " de "
+                + mes[Integer.parseInt(data.substring(5, 7)) - 1]
                 + " de " + data.substring(0,4);
+        return saida;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_dia_meditacao, container, false);
+        return inflater.inflate(R.layout.fragment_dia_meditacao, container, false);
     }
 
     /*
