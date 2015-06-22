@@ -123,8 +123,8 @@ public class SwipeTabFragment extends Fragment {
                 break;
         }
 
-        saida.append(meditacao.getTitulo() + "\n");
-        saida.append(meditacao.getTextoBiblico() + "\n");
+        saida.append(meditacao.getTitulo() + "\n\n");
+        saida.append(meditacao.getTextoBiblico() + "\n\n");
         saida.append(revertData(meditacao.getData()) + "\n\n");
         saida.append(meditacao.getTexto());
         return saida.toString();
