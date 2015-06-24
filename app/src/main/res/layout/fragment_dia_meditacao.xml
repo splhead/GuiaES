@@ -25,7 +25,7 @@
                 android:text="Título"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:textSize="26sp" />
 
             <TextView
                 android:id="@+id/tvData"
@@ -45,7 +45,7 @@
                 android:paddingTop="8dp"
                 android:text="Texto Bíblico"
                 android:textColor="#ffe53935"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="italic" />
 
 
@@ -58,7 +58,7 @@
                 android:paddingTop="8dp"
                 android:text="Texto"
                 android:textColor="#ff292929"
-                android:textSize="16dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tvLinks"
