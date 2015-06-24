@@ -7,5 +7,7 @@
     <string name="send_to">Enviar para</string>
     <string name="action_share">Compartilhar</string>
     <string name="title_activity_main">Guia ES</string>
+    <string name="twitter_text">\@splhead</string>
+    <string name="history_text">Sim, este app foi feito por um PECADOR! Que erra tentando acertar! Que de graça recebeu e de graça também te dá - rimou :p\n\nSe ainda assim você ficar muito agradecido e quiser abençoar o desenvolvimento deste app e o seu desenvolvedor, doe qualquer quantia. Também tenho minhas lutas por aqui ainda e a taxa $25 de desenvolvedor para pagar rsrsrs. Não quero colocar propaganda.\n\nEntre em contato\nObrigado!</string>
 
 </resources>

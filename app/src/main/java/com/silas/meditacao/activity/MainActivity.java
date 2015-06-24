@@ -1,6 +1,7 @@
 package com.silas.meditacao.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -154,8 +155,8 @@ public class MainActivity extends ActionBarActivity implements
 
         switch (id) {
             case R.id.action_about:
-                /*Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);*/
+                Intent i = new Intent(this, AboutActivity.class);
+                startActivity(i);
                 break;
         }
         return super.onOptionsItemSelected(item);
