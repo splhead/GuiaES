@@ -4,11 +4,11 @@ android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
     defaultConfig {
-        applicationId "com.silas.guiaes.activity"
-        minSdkVersion 8
+        applicationId "com.silas.guiaes.app"
+        minSdkVersion 10
         targetSdkVersion 20
         versionCode 1
-        versionName '1.3'
+        versionName '1.0'
     }
     buildTypes {
         release {
@@ -25,4 +25,5 @@ dependencies {
     compile files('libs/jsoup-1.7.2.jar')
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
 }
