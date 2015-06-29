@@ -39,7 +39,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         valores.put(TEXTO, meditacao.getTexto());
         valores.put(TIPO, meditacao.getTipo());
 
-        Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
+//        Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
         try {
             bancoDados.beginTransaction();
             return bancoDados.insert(BD_TABELA, null, valores);
@@ -84,7 +84,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
 
                 bancoDados.insert(BD_TABELA, null, valores);
-                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
+//                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
             }
             bancoDados.setTransactionSuccessful();
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
                 c.moveToFirst();
                 Meditacao meditacao = new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
                         , c.getString(3), c.getString(4), c.getInt(5));
-                Log.i(getClass().getName(), meditacao.toString());
+//                Log.i(getClass().getName(), meditacao.toString());
                 return meditacao;
             }
         } catch (Exception e) {
