@@ -22,7 +22,7 @@ import com.silas.meditacao.models.Meditacao;
  * Activities that contain this fragment must implement the
  * {link SwipeTabFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SwipeTabFragment#newInstance} factory method to
+ * Use the {link SwipeTabFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 
@@ -33,7 +33,6 @@ public class SwipeTabFragment extends Fragment {
     public static final String TIPO = "tipo";
     public static final String DATA = "data";
 
-    private MeditacaoDBAdapter mdba;
     private Meditacao meditacao;
 
     private int iTipo;
@@ -50,19 +49,19 @@ public class SwipeTabFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param pTipo Parameter 1.
-     * @param pData Parameter 2.
-     * @return A new instance of fragment SwipeTabFragment.
+     * param pTipo Parameter 1.
+     * param pData Parameter 2.
+     * return A new instance of fragment SwipeTabFragment.
      */
 
-    public static SwipeTabFragment newInstance(int pTipo, String pData) {
+    /*public static SwipeTabFragment newInstance(int pTipo, String pData) {
         SwipeTabFragment fragment = new SwipeTabFragment();
         Bundle args = new Bundle();
         args.putInt(TIPO, pTipo);
         args.putString(DATA, pData);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ public class SwipeTabFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mdba = new MeditacaoDBAdapter(getActivity());
+        MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
         try {
             TextView tvTitulo = (TextView) getView().findViewById(R.id.tvTitulo);
             TextView tvData = (TextView) getView().findViewById(R.id.tvData);
@@ -96,7 +95,7 @@ public class SwipeTabFragment extends Fragment {
             } else {
                 tvTitulo.setText("");
                 tvData.setText("");
-                tvTextoBiblico.setText("");
+                tvTextoBiblico.setText("Não disponível!");
                 tvTexto.setText("");
             }
 
@@ -123,10 +122,11 @@ public class SwipeTabFragment extends Fragment {
                 break;
         }
 
-        saida.append(meditacao.getTitulo() + "\n\n");
-        saida.append(meditacao.getTextoBiblico() + "\n\n");
-        saida.append(revertData(meditacao.getData()) + "\n\n");
-        saida.append(meditacao.getTexto());
+        String temp = meditacao.getTitulo() + "\n\n" + meditacao.getTextoBiblico() + "\n\n"
+                + revertData(meditacao.getData()) + "\n\n" + meditacao.getTexto();
+
+        saida.append(temp);
+
         return saida.toString();
     }
 

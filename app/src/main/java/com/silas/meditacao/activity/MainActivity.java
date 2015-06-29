@@ -1,5 +1,6 @@
 package com.silas.meditacao.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -27,7 +29,7 @@ import java.util.HashMap;
 
 
 public class MainActivity extends ActionBarActivity implements
-        ActionBar.TabListener {
+        ActionBar.TabListener, DatePickerDialog.OnDateSetListener {
 
     private MeditacaoDBAdapter mdba;
     private Meditacao mAdulto, mMulher, mJuvenil;
@@ -35,9 +37,9 @@ public class MainActivity extends ActionBarActivity implements
     private ActionBar actionBar;
     private TabPagerAdapter tabPagerAdapter;
     private String[] tabs = {"Adulto", "Mulher", "Juvenil"};
-    private Calendar ca = Calendar.getInstance();
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    public String hoje = sdf.format(ca.getTime());
+    private Calendar dia = Calendar.getInstance();
+    public String sDia = converteData(dia);
+    private DatePickerDialog mDateDialog;
     private AdView mAdView;
 
     @Override
@@ -45,8 +47,8 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!(ca.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && ca.get(Calendar.HOUR_OF_DAY) > 17) ||
-                (ca.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && ca.get(Calendar.HOUR_OF_DAY) < 18)) {
+        if (!(dia.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && dia.get(Calendar.HOUR_OF_DAY) > 17) ||
+                (dia.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && dia.get(Calendar.HOUR_OF_DAY) < 18)) {
             // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
             // values/strings.xml.
             mAdView = (AdView) findViewById(R.id.ad_view);
@@ -65,12 +67,12 @@ public class MainActivity extends ActionBarActivity implements
         mdba = new MeditacaoDBAdapter(getApplication());
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), sDia);
         viewPager.setAdapter(tabPagerAdapter);
 
         verificaMeditacao(this, viewPager);
 
-        actionBar = getSupportActionBar(); //getActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 //        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFC107")));
 
@@ -99,18 +101,23 @@ public class MainActivity extends ActionBarActivity implements
         });
     }
 
+    private String converteData(Calendar ca) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(ca.getTime());
+    }
+
     /**
-     * Testa se esta gravada as meditacoes do dia
+     * Testa se esta gravada as meditacoes do sDia
      * caso não as encontre tenta baixa-las!
      */
 
     private void verificaMeditacao(Context c, ViewPager vPager) {
         try {
-            mAdulto = mdba.buscaMeditacao(hoje, Meditacao.ADULTO);
+            mAdulto = mdba.buscaMeditacao(sDia, Meditacao.ADULTO);
 
-            mMulher = mdba.buscaMeditacao(hoje, Meditacao.MULHER);
+            mMulher = mdba.buscaMeditacao(sDia, Meditacao.MULHER);
 
-            mJuvenil = mdba.buscaMeditacao(hoje, Meditacao.JUVENIL);
+            mJuvenil = mdba.buscaMeditacao(sDia, Meditacao.JUVENIL);
 
 
             if (mAdulto == null || mMulher == null || mJuvenil == null) {
@@ -178,6 +185,14 @@ public class MainActivity extends ActionBarActivity implements
                 Intent i = new Intent(this, AboutActivity.class);
                 startActivity(i);
                 break;
+            case R.id.action_date:
+                mDateDialog = new DatePickerDialog(this, this, dia.get(Calendar.YEAR),
+                        dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                mDateDialog.setTitle("Qual dia?");
+                mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
+                mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
+                mDateDialog.show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -228,5 +243,12 @@ public class MainActivity extends ActionBarActivity implements
             mAdView.destroy();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        dia.set(year, month, day);
+        tabPagerAdapter.setDia(converteData(dia));
+        tabPagerAdapter.notifyDataSetChanged();
     }
 }

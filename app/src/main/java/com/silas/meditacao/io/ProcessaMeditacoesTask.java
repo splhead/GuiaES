@@ -34,7 +34,7 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
         progress = new ProgressDialog(mContext);
         progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
-        progress.setMessage("Ore pelo meu pai (desenvolvedor) e aguarde...");
+        progress.setMessage("Ore pelo meu criador e aguarde...");
         progress.setCancelable(false);
         progress.show();
     }
