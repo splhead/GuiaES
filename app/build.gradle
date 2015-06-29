@@ -7,16 +7,12 @@ android {
         applicationId "com.silas.guiaes.app"
         minSdkVersion 10
         targetSdkVersion 20
-        versionCode 1
-        versionName '1.0.2'
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    productFlavors {
     }
 }
 
@@ -27,3 +23,39 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
 }
+
+def getVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'tag', '--list'
+            standardOutput = code
+        }
+        return code.toString().split("\n").size()
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+        }
+        def saida = stdout.toString().trim().split('-')
+        return saida[0]
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+android {
+    defaultConfig {
+        versionCode getVersionCode()
+        versionName getVersionName()
+    }
+}
+
