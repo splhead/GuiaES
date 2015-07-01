@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Created by silas on 22/06/15.
  */
-public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Void> {
+public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Integer> {
     private Context mContext;
     private ProgressDialog progress;
     private ViewPager viewPager;
@@ -40,21 +40,21 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
     }
 
     @Override
-    protected Void doInBackground(HashMap<Integer, String>... tmp) {
+    protected Integer doInBackground(HashMap<Integer, String>... tmp) {
         HashMap<Integer, String> urls = tmp[0];
         int tentativa = 1;
 
         for (Map.Entry<Integer, String> url : urls.entrySet()) {
             processaMeditacoes(url, tentativa);
         }
-        return null;
+        return tentativa;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(Integer i) {
         progress.dismiss();
         viewPager.getAdapter().notifyDataSetChanged();
-        super.onPostExecute(aVoid);
+        super.onPostExecute(i);
     }
 
     private void processaMeditacoes(Map.Entry<Integer, String> entry, int tentativa) {
@@ -75,10 +75,10 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
             // uncomment this if you want to write output to this url
             //connection.setDoOutput(true);
 
-            // give it 15 seconds to respond
-            connection.setReadTimeout(15 * 1000);
+            // give it 30 seconds to respond
+            connection.setReadTimeout(30 * 1000);
 
-            if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) {
+            if (Build.VERSION.SDK_INT > 13) {
                 connection.setRequestProperty("Connection", "close");
             }
 
