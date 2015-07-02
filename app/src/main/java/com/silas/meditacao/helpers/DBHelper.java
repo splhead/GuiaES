@@ -12,7 +12,7 @@ import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 public class DBHelper extends SQLiteOpenHelper {
 	private static final String NOME_BANCO_DADOS = "guia";
 
-	private static final int VERSAO_BANCO_DADOS = 2;
+	private static final int VERSAO_BANCO_DADOS = 3;
 
 	// Declaracao do SQL de criacao do banco de dados
 	private static final String[] SQL_BANCO_DADOS = {

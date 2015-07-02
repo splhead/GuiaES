@@ -24,19 +24,19 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
 }
 
-//def getVersionCode = { ->
-//    try {
-//        def code = new ByteArrayOutputStream()
-//        exec {
-//            commandLine 'git', 'tag', '--list'
-//            standardOutput = code
-//        }
-//        return code.toString().split("\n").size()
-//    }
-//    catch (ignored) {
-//        return -1;
-//    }
-//}
+def getVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'tag', '--list'
+            standardOutput = code
+        }
+        return code.toString().split("\n").size()
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
 
 def getVersionName = { ->
     try {
@@ -54,7 +54,7 @@ def getVersionName = { ->
 }
 android {
     defaultConfig {
-        versionCode 4
+        versionCode getVersionCode()
         versionName getVersionName()
     }
 }

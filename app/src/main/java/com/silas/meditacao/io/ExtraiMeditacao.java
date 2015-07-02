@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by silas on 02/06/15.
@@ -24,6 +23,7 @@ public class ExtraiMeditacao {
     private Context mContext;
     private MeditacaoDBAdapter mdba;
     private ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
+    private Calendar c = Calendar.getInstance();
 
     public ExtraiMeditacao(Context context) {
         mContext = context;
@@ -31,60 +31,79 @@ public class ExtraiMeditacao {
     }
 
     public void processaExtracao(String html, int tipo) {
-        Calendar c = GregorianCalendar.getInstance();
-        c.set(Calendar.DAY_OF_MONTH, 1);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        StringBuilder sbTexto = new StringBuilder();
-        String sData, sTitulo, sTextoBiblico, sTexto;
         Document doc = Jsoup.parse(html);
         Element raiz = doc.select("div[style^=width: 74%]").first();
         Elements titulos = doc.select("div[style^=width: 74%] td[style^=width:67.0%]");
-        for(Element eTitulo:titulos) {
-            meditacao = new Meditacao("", "", "", "", tipo);
 
-            sTitulo = eTitulo.text();
-//            Log.d("titulo", sTitulo);
+        if (mesCorreto(doc)) {
+            c.set(Calendar.DAY_OF_MONTH, 1);
 
-            sData = sdf.format(c.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            StringBuilder sbTexto = new StringBuilder();
+            String sData, sTitulo, sTextoBiblico, sTexto;
 
-            Element prox = proximo(eTitulo, raiz);
-            //procura pelo proximo <p>
-            while(!prox.tagName().equalsIgnoreCase("p")) {
-                prox = prox.nextElementSibling();
-            }
+            for (Element eTitulo : titulos) {
+                meditacao = new Meditacao("", "", "", "", tipo);
 
-            sTextoBiblico = prox.text();
-//            Log.d("textoBiblico", sTextoBiblico);
+                sTitulo = eTitulo.text();
+                //            Log.d("titulo", sTitulo);
 
-            //passa para texto da meditacao
-            prox = prox.nextElementSibling();
+                sData = sdf.format(c.getTime());
 
-            while (prox.tagName().equalsIgnoreCase("p")) {
-                if (prox.children().size() == 0 || !prox.child(0).tagName().equalsIgnoreCase("strong")) {
-                    sbTexto.append(prox.text() + "\n\n");
+                Element prox = proximo(eTitulo, raiz);
+                //procura pelo proximo <p>
+                while (!prox.tagName().equalsIgnoreCase("p")) {
+                    prox = prox.nextElementSibling();
                 }
 
-                //passa para o proximo elemento
+                sTextoBiblico = prox.text();
+                //            Log.d("textoBiblico", sTextoBiblico);
+
+                //passa para texto da meditacao
                 prox = prox.nextElementSibling();
+
+                while (prox.tagName().equalsIgnoreCase("p")) {
+                    if (prox.children().size() == 0 || !prox.child(0).tagName().equalsIgnoreCase("strong")) {
+                        sbTexto.append(prox.text() + "\n\n");
+                    }
+
+                    //passa para o proximo elemento
+                    prox = prox.nextElementSibling();
+                }
+
+                sTexto = sbTexto.toString();
+                //            Log.d("texto", sTexto);
+
+                meditacao.setTitulo(sTitulo);
+                meditacao.setData(sData);
+                meditacao.setTextoBiblico(sTextoBiblico);
+                meditacao.setTexto(sTexto);
+
+                //            Log.d("Meditacao", meditacao.toString());
+
+                meditacoes.add(meditacao);
+
+                sbTexto.delete(0, sbTexto.length());
+                c.add(Calendar.DAY_OF_MONTH, 1);
             }
-
-            sTexto = sbTexto.toString();
-//            Log.d("texto", sTexto);
-
-            meditacao.setTitulo(sTitulo);
-            meditacao.setData(sData);
-            meditacao.setTextoBiblico(sTextoBiblico);
-            meditacao.setTexto(sTexto);
-
-//            Log.d("Meditacao", meditacao.toString());
-
-            meditacoes.add(meditacao);
-
-            sbTexto.delete(0, sbTexto.length());
-            c.add(Calendar.DAY_OF_MONTH, 1);
+            mdba.addMeditacoes(meditacoes);
         }
-        mdba.addMeditacoes(meditacoes);
+    }
+
+    /**
+     * Verifica se o mes no site é o mes atual
+     */
+
+    private boolean mesCorreto(Document doc) {
+        String[] meses = {
+                "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        };
+
+        Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
+
+        return eTd.text().toLowerCase().contains(meses[c.get(Calendar.MONTH)]);
+
     }
 
     /*

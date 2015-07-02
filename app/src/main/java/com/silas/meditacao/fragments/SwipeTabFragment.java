@@ -95,7 +95,7 @@ public class SwipeTabFragment extends Fragment {
             } else {
                 tvTitulo.setText("");
                 tvData.setText("");
-                tvTextoBiblico.setText("Não disponível!");
+                tvTextoBiblico.setText("Não disponível ainda\nTente mais tarde, se quiser!");
                 tvTexto.setText("");
             }
 
