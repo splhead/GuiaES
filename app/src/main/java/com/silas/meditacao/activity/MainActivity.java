@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
@@ -28,9 +30,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 
-public class MainActivity extends ActionBarActivity implements
+
+public class MainActivity extends AppCompatActivity implements
         ActionBar.TabListener, DatePickerDialog.OnDateSetListener {
 
+    private Toolbar mToolbar;
     private MeditacaoDBAdapter mdba;
     private Meditacao mAdulto, mMulher, mJuvenil;
     private ViewPager viewPager;
@@ -47,7 +51,40 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!(dia.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && dia.get(Calendar.HOUR_OF_DAY) > 17) ||
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(getString(R.string.app_name));
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setLogo(R.drawable.ic_launcher);
+        setSupportActionBar(mToolbar);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+
+                switch (id) {
+                    case R.id.action_about:
+                        Intent i = new Intent(getApplication(), AboutActivity.class);
+                        startActivity(i);
+                        break;
+                    case R.id.action_date:
+                        mDateDialog = new DatePickerDialog(MainActivity.this, MainActivity.this, dia.get(Calendar.YEAR),
+                                dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                        mDateDialog.setTitle("Qual dia?");
+                        mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
+                        mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
+                        mDateDialog.show();
+                        break;
+                }
+                return true;
+            }
+        });
+
+        mToolbar.inflateMenu(R.menu.main);
+
+        /*if (!(dia.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && dia.get(Calendar.HOUR_OF_DAY) > 17) ||
                 (dia.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && dia.get(Calendar.HOUR_OF_DAY) < 18)) {
             // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
             // values/strings.xml.
@@ -83,9 +120,7 @@ public class MainActivity extends ActionBarActivity implements
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-            /**
-             * on swipe select the respective tab
-             * */
+
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
@@ -98,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements
             @Override
             public void onPageScrollStateChanged(int arg0) {
             }
-        });
+        });*/
     }
 
     private String converteData(Calendar ca) {
