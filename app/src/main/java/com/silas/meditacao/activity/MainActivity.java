@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.FragmentTransaction;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -30,15 +27,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 
-
 public class MainActivity extends AppCompatActivity implements
-        ActionBar.TabListener, DatePickerDialog.OnDateSetListener {
+        DatePickerDialog.OnDateSetListener {
 
     private Toolbar mToolbar;
     private MeditacaoDBAdapter mdba;
     private Meditacao mAdulto, mMulher, mJuvenil;
     private ViewPager viewPager;
-    private ActionBar actionBar;
+    private TabLayout tabLayout;
     private TabPagerAdapter tabPagerAdapter;
     private String[] tabs = {"Adulto", "Mulher", "Juvenil"};
     private Calendar dia = Calendar.getInstance();
@@ -51,12 +47,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CollapsingToolbarLayout collapsingToolbar =
+     /*   CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(getString(R.string.app_name));
+        collapsingToolbar.setTitle(getString(R.string.app_name));*/
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-//        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setTitle(getString(R.string.app_name));
+//        mToolbar.setTitleTextColor(R.color.abc_primary_text_material_dark);
         mToolbar.setLogo(R.drawable.ic_launcher);
         setSupportActionBar(mToolbar);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -94,12 +91,12 @@ public class MainActivity extends AppCompatActivity implements
             // get test ads on a physical device. e.g.
             // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
             AdRequest adRequest = new AdRequest.Builder()
-//                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                     .build();
 
             // Start loading the ad in the background.
             mAdView.loadAd(adRequest);
-        }
+        }*/
 
         mdba = new MeditacaoDBAdapter(getApplication());
 
@@ -109,21 +106,35 @@ public class MainActivity extends AppCompatActivity implements
 
         verificaMeditacao(this, viewPager);
 
-        actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFC107")));
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+//        tabLayout.setupWithViewPager(viewPager);
+//        tabLayout.setTabsFromPagerAdapter(tabPagerAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));
+        for (String tabName : tabs) {
+            tabLayout.addTab(tabLayout.newTab().setText(tabName));
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
         }
 
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
+                tabLayout.getTabAt(position);
             }
 
             @Override
@@ -133,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onPageScrollStateChanged(int arg0) {
             }
-        });*/
+        });
     }
 
     private String converteData(Calendar ca) {
@@ -183,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         Toast.makeText(getApplicationContext(), "OPS! Parece que você está sem gravata (digo, INTERNET)" +
                         " asssim o poder (a meditação) não desce! ;)",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_LONG).show();
 //        Log.i("TestaInternet", "Não está conectado.");
         return false;
     }
@@ -230,21 +241,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
     }
 
     /**
