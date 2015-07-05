@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -47,15 +48,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-     /*   CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(getString(R.string.app_name));*/
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mToolbar.setTitle(getString(R.string.app_name));
-//        mToolbar.setTitleTextColor(R.color.abc_primary_text_material_dark);
-        mToolbar.setLogo(R.drawable.ic_launcher);
+        mToolbar.inflateMenu(R.menu.main);
         setSupportActionBar(mToolbar);
+
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mToolbar.inflateMenu(R.menu.main);
 
-        /*if (!(dia.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && dia.get(Calendar.HOUR_OF_DAY) > 17) ||
+        if (!(dia.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && dia.get(Calendar.HOUR_OF_DAY) > 17) ||
                 (dia.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && dia.get(Calendar.HOUR_OF_DAY) < 18)) {
             // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
             // values/strings.xml.
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
 
             // Start loading the ad in the background.
             mAdView.loadAd(adRequest);
-        }*/
+        }
 
         mdba = new MeditacaoDBAdapter(getApplication());
 
@@ -106,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements
 
         verificaMeditacao(this, viewPager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
 //        tabLayout.setupWithViewPager(viewPager);
 //        tabLayout.setTabsFromPagerAdapter(tabPagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -212,37 +209,6 @@ public class MainActivity extends AppCompatActivity implements
         return urls;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_about:
-                Intent i = new Intent(this, AboutActivity.class);
-                startActivity(i);
-                break;
-            case R.id.action_date:
-                mDateDialog = new DatePickerDialog(this, this, dia.get(Calendar.YEAR),
-                        dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
-                mDateDialog.setTitle("Qual dia?");
-                mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
-                mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
-                mDateDialog.show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Called when leaving the activity
      */
@@ -281,5 +247,11 @@ public class MainActivity extends AppCompatActivity implements
         dia.set(year, month, day);
         tabPagerAdapter.setDia(converteData(dia));
         tabPagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

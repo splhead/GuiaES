@@ -1,48 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinatorLayout"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- <android.support.v7.widget.RecyclerView
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <!--<android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
+            android:fitsSystemWindows="true"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_scrollFlags="scroll|enterAlways" />
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/tabLayout"
+            android:id="@+id/tablayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fitsSystemWindows="true"
             app:tabIndicatorColor="@android:color/white"
-            app:tabIndicatorHeight="4dp"
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="@android:color/white" />
-        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
-    </android.support.design.widget.AppBarLayout>
 
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
@@ -50,15 +40,12 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!--<com.google.android.gms.ads.AdView
+    <com.google.android.gms.ads.AdView
         android:id="@+id/ad_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        app:layout_anchor="@id/pager"
+        app:layout_anchorGravity="bottom|right|end"
         app:adSize="BANNER"
-        app:adUnitId="@string/banner_ad_unit_id" />-->
-
+        app:adUnitId="@string/banner_ad_unit_id" />
 </android.support.design.widget.CoordinatorLayout>
-
-
