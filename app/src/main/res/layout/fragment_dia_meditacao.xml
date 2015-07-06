@@ -1,73 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvTitulo"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center_horizontal"
+            android:padding="8dp"
+            android:text="Título"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="26sp" />
 
-            <TextView
-                android:id="@+id/tvTitulo"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-thin"
-                android:gravity="center_horizontal"
-                android:padding="8dp"
-                android:text="Título"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="26sp" />
+        <TextView
+            android:id="@+id/tvData"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="data"
+            android:textAlignment="center"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tvData"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="data"
-                android:textAlignment="center"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvTextoBiblico"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="8dp"
-                android:text="Texto Bíblico"
-                android:textColor="#ffe53935"
-                android:textSize="18sp"
-                android:textStyle="italic" />
+        <TextView
+            android:id="@+id/tvTextoBiblico"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="8dp"
+            android:text="Texto Bíblico"
+            android:textColor="#ffe53935"
+            android:textSize="18sp"
+            android:textStyle="italic" />
 
 
-            <TextView
-                android:id="@+id/tvTexto"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:lineSpacingMultiplier="1.3"
-                android:paddingTop="8dp"
-                android:text="Texto"
-                android:textColor="#ff292929"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/tvTexto"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:lineSpacingMultiplier="1.3"
+            android:paddingTop="8dp"
+            android:text="Texto"
+            android:textColor="#ff292929"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/tvLinks"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-thin"
-                android:paddingTop="8dp"
-                android:text="@string/tvLink"
-                android:textColor="#ff5e4537" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvLinks"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:paddingTop="8dp"
+            android:text="@string/tvLink"
+            android:textColor="#ff5e4537" />
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

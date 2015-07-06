@@ -1,15 +1,10 @@
 package com.silas.meditacao.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -43,13 +38,13 @@ public class SwipeTabFragment extends Fragment {
 
     public SwipeTabFragment() {
         // Required empty public constructor
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
+     * <p/>
      * param pTipo Parameter 1.
      * param pData Parameter 2.
      * return A new instance of fragment SwipeTabFragment.
@@ -63,7 +58,6 @@ public class SwipeTabFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +69,27 @@ public class SwipeTabFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        /*((AppCompatActivity) getActivity()).getSupportActionBar();
+        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar_main);
+        toolbar.inflateMenu(R.menu.dia_meditacao);
+        (AppCompatActivity) getActivity().setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.d("onOptionsItemSelected", "yes");
+                int id = item.getItemId();
+                if (id == R.id.action_share) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+                }
+                return false;
+            }
+        });
+        activity.toolbar.inflateMenu(R.menu.menu_search);*/
+
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
         try {
             TextView tvTitulo = (TextView) getView().findViewById(R.id.tvTitulo);
@@ -86,7 +100,7 @@ public class SwipeTabFragment extends Fragment {
             tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
 
             meditacao = mdba.buscaMeditacao(sData, iTipo);
-            if(meditacao != null) {
+            if (meditacao != null) {
 
                 tvTitulo.setText(meditacao.getTitulo());
                 tvData.setText(revertData(meditacao.getData()));
@@ -101,9 +115,10 @@ public class SwipeTabFragment extends Fragment {
             }
 
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        super.onActivityCreated(savedInstanceState);
     }
 
     private String preparaCompartilhamento(Meditacao meditacao) {
@@ -131,7 +146,7 @@ public class SwipeTabFragment extends Fragment {
         return saida.toString();
     }
 
-    @Override
+    /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.dia_meditacao, menu);
     }
@@ -148,7 +163,7 @@ public class SwipeTabFragment extends Fragment {
             startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private String revertData(String data) {
         //yyyy-MM-dd
@@ -157,7 +172,7 @@ public class SwipeTabFragment extends Fragment {
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
         saida = data.substring(8) + " de "
                 + mes[Integer.parseInt(data.substring(5, 7)) - 1]
-                + " de " + data.substring(0,4);
+                + " de " + data.substring(0, 4);
         return saida;
     }
 

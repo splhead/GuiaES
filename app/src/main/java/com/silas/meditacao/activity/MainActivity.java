@@ -31,9 +31,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener {
 
-    private Toolbar mToolbar;
     private MeditacaoDBAdapter mdba;
-    private Meditacao mAdulto, mMulher, mJuvenil;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private TabPagerAdapter tabPagerAdapter;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.inflateMenu(R.menu.main);
         setSupportActionBar(mToolbar);
@@ -156,11 +154,11 @@ public class MainActivity extends AppCompatActivity implements
 
     private void verificaMeditacao(Context c, ViewPager vPager) {
         try {
-            mAdulto = mdba.buscaMeditacao(sDia, Meditacao.ADULTO);
+            Meditacao mAdulto = mdba.buscaMeditacao(sDia, Meditacao.ADULTO);
 
-            mMulher = mdba.buscaMeditacao(sDia, Meditacao.MULHER);
+            Meditacao mMulher = mdba.buscaMeditacao(sDia, Meditacao.MULHER);
 
-            mJuvenil = mdba.buscaMeditacao(sDia, Meditacao.JUVENIL);
+            Meditacao mJuvenil = mdba.buscaMeditacao(sDia, Meditacao.JUVENIL);
 
 
             if (mAdulto == null || mMulher == null || mJuvenil == null) {
@@ -225,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onResume() {
+        dia = Calendar.getInstance();
         super.onResume();
         if (mAdView != null) {
             mAdView.resume();
