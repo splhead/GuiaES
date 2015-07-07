@@ -1,5 +1,10 @@
 package com.silas.meditacao.models;
 
+
+import android.support.v4.app.Fragment;
+
+import com.silas.meditacao.fragments.ContentFragment;
+
 /**
  * Created by silas on 08/09/14.
  */
@@ -80,5 +85,7 @@ public class Meditacao {
         return tipo;
     }
 
-
+    public Fragment createFragment() {
+        return ContentFragment.newInstance(getTitulo(), getTextoBiblico(), getData(), getTexto(), getTipo());
+    }
 }
