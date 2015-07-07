@@ -1,10 +1,15 @@
 package com.silas.meditacao.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,7 +43,7 @@ public class SwipeTabFragment extends Fragment {
 
     public SwipeTabFragment() {
         // Required empty public constructor
-//        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     /**
@@ -69,26 +74,27 @@ public class SwipeTabFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        /*((AppCompatActivity) getActivity()).getSupportActionBar();
-        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar_main);
-        toolbar.inflateMenu(R.menu.dia_meditacao);
-        (AppCompatActivity) getActivity().setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Log.d("onOptionsItemSelected", "yes");
-                int id = item.getItemId();
-                if (id == R.id.action_share) {
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
-                }
-                return false;
-            }
-        });
-        activity.toolbar.inflateMenu(R.menu.menu_search);*/
+//        ActionBar t = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar_main);
+//        toolbar.inflateMenu(R.menu.dia_meditacao);
+
+//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                Log.d("onOptionsItemSelected", "yes");
+//                int id = item.getItemId();
+//                if (id == R.id.action_share) {
+//                    Intent sendIntent = new Intent();
+//                    sendIntent.setAction(Intent.ACTION_SEND);
+//                    sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
+//                    sendIntent.setType("text/plain");
+//                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+//                }
+//                return false;
+//            }
+//        });
+//
+//        ((AppCompatActivity) getActivity()).getSupportActionBar()
 
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
         try {
@@ -146,7 +152,7 @@ public class SwipeTabFragment extends Fragment {
         return saida.toString();
     }
 
-    /*@Override
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.dia_meditacao, menu);
     }
@@ -163,7 +169,7 @@ public class SwipeTabFragment extends Fragment {
             startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
         }
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 
     private String revertData(String data) {
         //yyyy-MM-dd

@@ -99,12 +99,27 @@ public class MainActivity extends AppCompatActivity implements
         tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), sDia);
         viewPager.setAdapter(tabPagerAdapter);
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.getTabAt(position);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+
         verificaMeditacao(this, viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
-//        tabLayout.setupWithViewPager(viewPager);
-//        tabLayout.setTabsFromPagerAdapter(tabPagerAdapter);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
 
         for (String tabName : tabs) {
             tabLayout.addTab(tabLayout.newTab().setText(tabName));
@@ -125,21 +140,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
         }
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                tabLayout.getTabAt(position);
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
     }
 
     private String converteData(Calendar ca) {
