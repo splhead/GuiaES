@@ -4,7 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.view.ViewPager;
+
+import com.silas.meditacao.fragments.DiaMeditacaoFragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +23,14 @@ import java.util.Map;
 public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Integer> {
     private Context mContext;
     private ProgressDialog progress;
-    private ViewPager viewPager;
+    private DiaMeditacaoFragment.Updatable mCallback;
 
-    public ProcessaMeditacoesTask(Context context, ViewPager vPager) {
+//    private ViewPager viewPager;
+
+    public ProcessaMeditacoesTask(Context context, DiaMeditacaoFragment.Updatable cb /*, ViewPager vPager*/) {
         mContext = context;
-        viewPager = vPager;
+        mCallback = cb;
+//        viewPager = vPager;
     }
 
     @Override
@@ -53,7 +58,8 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
     @Override
     protected void onPostExecute(Integer i) {
         progress.dismiss();
-        viewPager.getAdapter().notifyDataSetChanged();
+        mCallback.onUpdate(Calendar.getInstance());
+//        viewPager.getAdapter().notifyDataSetChanged();
         super.onPostExecute(i);
     }
 

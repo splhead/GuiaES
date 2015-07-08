@@ -17,9 +17,9 @@
             android:fontFamily="sans-serif-thin"
             android:gravity="center_horizontal"
             android:padding="8dp"
-            android:text="Título"
             android:textAlignment="center"
             android:textColor="@android:color/black"
+            android:textIsSelectable="true"
             android:textSize="26sp" />
 
         <TextView
@@ -27,9 +27,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="data"
             android:textAlignment="center"
             android:textColor="@android:color/darker_gray"
+            android:textIsSelectable="true"
             android:textSize="12sp" />
 
         <TextView
@@ -38,8 +38,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingTop="8dp"
-            android:text="Texto Bíblico"
             android:textColor="#ffe53935"
+            android:textIsSelectable="true"
             android:textSize="18sp"
             android:textStyle="italic" />
 
@@ -51,8 +51,8 @@
             android:fontFamily="sans-serif-light"
             android:lineSpacingMultiplier="1.3"
             android:paddingTop="8dp"
-            android:text="Texto"
             android:textColor="#ff292929"
+            android:textIsSelectable="true"
             android:textSize="18sp" />
 
         <TextView

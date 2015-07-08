@@ -53,6 +53,22 @@ public class Meditacao {
         this.data = data;
     }
 
+    public String getDataPorExtenso() {
+        //yyyy-MM-dd
+        String out = "";
+        String mes[] = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
+        try {
+            out = data.substring(8) + " de "
+                    + mes[Integer.parseInt(data.substring(5, 7)) - 1]
+                    + " de " + data.substring(0, 4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return out;
+    }
+
     public String getTitulo() {
         return titulo;
     }
@@ -85,7 +101,20 @@ public class Meditacao {
         return tipo;
     }
 
+    public String getNomeTipo() {
+        switch (getTipo()) {
+            case ADULTO:
+                return "Adulto";
+            case MULHER:
+                return "Mulher";
+            case JUVENIL:
+                return "Juvenil";
+        }
+        return "";
+    }
+
     public Fragment createFragment() {
-        return ContentFragment.newInstance(getTitulo(), getTextoBiblico(), getData(), getTexto(), getTipo());
+        return ContentFragment.newInstance(this.getTitulo(), this.getTextoBiblico(),
+                this.getDataPorExtenso(), this.getTexto(), this.getTipo());
     }
 }

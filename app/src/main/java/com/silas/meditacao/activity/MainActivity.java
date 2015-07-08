@@ -20,7 +20,6 @@ import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabPagerAdapter;
-import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
 
 import java.text.SimpleDateFormat;
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
 
             if (mAdulto == null || mMulher == null || mJuvenil == null) {
                 if (internetDisponivel(getApplication())) {
-                    new ProcessaMeditacoesTask(c, vPager).execute(getURLs());
+//                    new ProcessaMeditacoesTask(c, vPager).execute(getURLs());
                 }
             }
         } catch (Exception e) {

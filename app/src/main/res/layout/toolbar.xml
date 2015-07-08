@@ -23,6 +23,6 @@
         android:fitsSystemWindows="true"
         app:tabIndicatorColor="@android:color/white"
         app:tabSelectedTextColor="@android:color/white"
-        app:tabTextColor="@android:color/white" />
+        app:tabTextColor="@color/colorTabInactive" />
 
 </android.support.design.widget.AppBarLayout>
