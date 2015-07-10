@@ -63,7 +63,7 @@ public class Meditacao {
                     + mes[Integer.parseInt(data.substring(5, 7)) - 1]
                     + " de " + data.substring(0, 4);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         return out;
@@ -115,6 +115,6 @@ public class Meditacao {
 
     public Fragment createFragment() {
         return ContentFragment.newInstance(this.getTitulo(), this.getTextoBiblico(),
-                this.getDataPorExtenso(), this.getTexto(), this.getTipo());
+                this.getDataPorExtenso(), this.getTexto());
     }
 }

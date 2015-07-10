@@ -1,20 +1,17 @@
 package com.silas.meditacao.adapters;
 
-import com.silas.meditacao.helpers.DBHelper;
-
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
+import com.silas.meditacao.helpers.DBHelper;
 
 public class DBAdapter {
+	protected SQLiteDatabase bancoDados;
 	private Context contexto;
 	private DBHelper dbHelper;
-	protected SQLiteDatabase bancoDados;
-	
-	public DBAdapter(){
-	}
-	
+
+
 	public DBAdapter(Context contexto) {
 		this.setContexto(contexto);
 	}

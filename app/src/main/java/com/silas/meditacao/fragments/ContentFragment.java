@@ -3,6 +3,7 @@ package com.silas.meditacao.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +22,11 @@ public class ContentFragment extends Fragment {
     private static final String TEXTO_BIBLICO = "texto_biblico";
     private static final String DATA = "data";
     private static final String TEXTO = "texto";
-    private static final String TIPO = "tipo";
-
 
     private String mTitulo;
     private String mTextoBiblico;
     private String mData;
     private String mTexto;
-    private int mTipo;
 
     public ContentFragment() {
         // Required empty public constructor
@@ -43,14 +41,13 @@ public class ContentFragment extends Fragment {
      * @return A new instance of fragment ContentFragment.
      */
 
-    public static ContentFragment newInstance(String titulo, String textoBiblico, String data, String texto, int tipo) {
+    public static ContentFragment newInstance(String titulo, String textoBiblico, String data, String texto) {
         ContentFragment fragment = new ContentFragment();
         Bundle args = new Bundle();
         args.putString(TITULO, titulo);
         args.putString(TEXTO_BIBLICO, textoBiblico);
         args.putString(DATA, data);
         args.putString(TEXTO, texto);
-        args.putInt(TIPO, tipo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,14 +60,13 @@ public class ContentFragment extends Fragment {
             mTextoBiblico = getArguments().getString(TEXTO_BIBLICO);
             mData = getArguments().getString(DATA);
             mTexto = getArguments().getString(TEXTO);
-            mTipo = getArguments().getInt(TIPO);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dia_meditacao, container, false);
+        return inflater.inflate(R.layout.content_fragment, container, false);
     }
 
     @Override
@@ -91,6 +87,9 @@ public class ContentFragment extends Fragment {
 
             TextView tvTexto = (TextView) view.findViewById(R.id.tvTexto);
             tvTexto.setText(mTexto);
+
+            TextView tvLinks = (TextView) view.findViewById(R.id.tvLinks);
+            tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 }

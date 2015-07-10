@@ -13,21 +13,19 @@ import org.jsoup.select.Elements;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by silas on 02/06/15.
  */
 public class ExtraiMeditacao {
-    private Meditacao meditacao;
 
-    private Context mContext;
     private MeditacaoDBAdapter mdba;
-    private ArrayList<Meditacao> meditacoes = new ArrayList<Meditacao>();
+    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
     private Calendar c = Calendar.getInstance();
 
     public ExtraiMeditacao(Context context) {
-        mContext = context;
-        mdba = new MeditacaoDBAdapter(mContext);
+        mdba = new MeditacaoDBAdapter(context);
     }
 
     public void processaExtracao(String html, int tipo) {
@@ -38,12 +36,12 @@ public class ExtraiMeditacao {
         if (mesCorreto(doc)) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             StringBuilder sbTexto = new StringBuilder();
             String sData, sTitulo, sTextoBiblico, sTexto;
 
             for (Element eTitulo : titulos) {
-                meditacao = new Meditacao("", "", "", "", tipo);
+                Meditacao meditacao = new Meditacao("", "", "", "", tipo);
 
                 sTitulo = eTitulo.text();
                 //            Log.d("titulo", sTitulo);
@@ -64,7 +62,8 @@ public class ExtraiMeditacao {
 
                 while (prox.tagName().equalsIgnoreCase("p")) {
                     if (prox.children().size() == 0 || !prox.child(0).tagName().equalsIgnoreCase("strong")) {
-                        sbTexto.append(prox.text() + "\n\n");
+                        sbTexto.append(prox.text());
+                        sbTexto.append("\n\n");
                     }
 
                     //passa para o proximo elemento
@@ -102,7 +101,9 @@ public class ExtraiMeditacao {
 
         Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
 
-        return eTd.text().toLowerCase().contains(meses[c.get(Calendar.MONTH)]);
+        String mes = meses[c.get(Calendar.MONTH)];
+
+        return eTd.text().toLowerCase().contains(mes);
 
     }
 

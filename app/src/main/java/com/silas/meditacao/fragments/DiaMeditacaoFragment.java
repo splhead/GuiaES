@@ -15,10 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.AboutActivity;
-import com.silas.meditacao.activity.TestActivity;
+import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
@@ -34,9 +37,11 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         DatePickerDialog.OnDateSetListener {
 
     private List<Meditacao> mTabs = new ArrayList<>();
-    private Calendar dia = Calendar.getInstance();
+    private Calendar dia;
     private ViewPager mViewPager;
     private Updatable mCallback;
+    private int mesAnterior;
+    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,9 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
 
             MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
 
-            String sDia = args.getString(TestActivity.DIA);
+            String sDia = args.getString(MainActivity.DIA);
+            mesAnterior = args.getInt(MainActivity.MES_ANTERIOR);
+            int mesAtual = args.getInt(MainActivity.MES_ATUAL);
             Meditacao mAdulto, mMulher, mJuvenil;
 
             try {
@@ -57,9 +64,14 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 mJuvenil = mdba.buscaMeditacao(sDia, Meditacao.JUVENIL);
 
                 if (mAdulto == null || mMulher == null || mJuvenil == null) {
-                    // TODO: 07/07/15 Corrigir para não baixar no futuro ne 
-                    if (Util.internetDisponivel(getActivity())) {
-                        new ProcessaMeditacoesTask(getActivity(), mCallback).execute(Util.getURLs());
+                    //solução para não tentar baixar de outros meses
+                    if (mesAnterior == mesAtual) {
+                        if (Util.internetDisponivel(getActivity())) {
+                            //noinspection unchecked
+                            new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior).execute(Util.getURLs());
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "Não disponível", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -76,7 +88,7 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sampler, container, false);
+        return inflater.inflate(R.layout.dia_meditacao_fragment, container, false);
     }
 
     @Override
@@ -85,6 +97,25 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.setOnMenuItemClickListener(this);
         mToolbar.inflateMenu(R.menu.main);
+
+        Calendar hoje = Calendar.getInstance();
+
+        if (!(hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
+                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18)) {
+            // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
+            // values/strings.xml.
+            mAdView = (AdView) view.findViewById(R.id.ad_view);
+
+            // Create an ad request. Check logcat output for the hashed device ID to
+            // get test ads on a physical device. e.g.
+            // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+            AdRequest adRequest = new AdRequest.Builder()
+//                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+        }
 
         mViewPager = (ViewPager) view.findViewById(R.id.pager);
 
@@ -108,7 +139,9 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 startActivity(i);
                 break;
             case R.id.action_date:
-                DatePickerDialog mDateDialog = new DatePickerDialog(getActivity(), this, dia.get(Calendar.YEAR),
+                dia = Calendar.getInstance();
+                DatePickerDialog mDateDialog = new DatePickerDialog(getActivity(),
+                        this, dia.get(Calendar.YEAR),
                         dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
                 mDateDialog.setTitle("Qual dia?");
                 mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
@@ -120,7 +153,8 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
                 sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+                startActivity(Intent.createChooser(sendIntent,
+                        getResources().getText(R.string.send_to)));
                 break;
 
         }
@@ -131,7 +165,8 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         Meditacao meditacao = mTabs.get(mViewPager.getCurrentItem());
 
         if (meditacao == null) {
-            return "";
+            return "Olhe que aplicativo bacana \"Meditação Cristã Adventista\"\n" +
+                    "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
         }
 
         StringBuilder out = new StringBuilder();
@@ -161,7 +196,7 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         dia.set(year, month, day);
-        mCallback.onUpdate(dia);
+        mCallback.onUpdate(dia, mesAnterior);
     }
 
     @Override
@@ -177,7 +212,40 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         }
     }
 
+    /**
+     * Called when leaving the activity
+     */
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    /**
+     * Called when returning to the activity
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    /**
+     * Called before the activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
     public interface Updatable {
-        void onUpdate(Calendar c);
+        void onUpdate(Calendar c, int mesAnterior);
     }
 }

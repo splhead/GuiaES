@@ -24,13 +24,12 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
     private Context mContext;
     private ProgressDialog progress;
     private DiaMeditacaoFragment.Updatable mCallback;
+    private int mesAnterior = 99;
 
-//    private ViewPager viewPager;
-
-    public ProcessaMeditacoesTask(Context context, DiaMeditacaoFragment.Updatable cb /*, ViewPager vPager*/) {
+    public ProcessaMeditacoesTask(Context context, DiaMeditacaoFragment.Updatable cb, int ma) {
         mContext = context;
         mCallback = cb;
-//        viewPager = vPager;
+        mesAnterior = ma;
     }
 
     @Override
@@ -44,8 +43,9 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
         progress.show();
     }
 
+    @SafeVarargs
     @Override
-    protected Integer doInBackground(HashMap<Integer, String>... tmp) {
+    protected final Integer doInBackground(HashMap<Integer, String>... tmp) {
         HashMap<Integer, String> urls = tmp[0];
         int tentativa = 1;
 
@@ -58,8 +58,7 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
     @Override
     protected void onPostExecute(Integer i) {
         progress.dismiss();
-        mCallback.onUpdate(Calendar.getInstance());
-//        viewPager.getAdapter().notifyDataSetChanged();
+        mCallback.onUpdate(Calendar.getInstance(), mesAnterior);
         super.onPostExecute(i);
     }
 

@@ -24,7 +24,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         super(contexto);
     }
 
-    private long add(Meditacao meditacao) {
+    /*private long add(Meditacao meditacao) {
         // verifica se o registro já exite no banco
         if (this.meditacao(meditacao.getData(), meditacao.getTipo()) != null) {
             Log.w(getClass().getName(),
@@ -49,12 +49,12 @@ public class MeditacaoDBAdapter extends DBAdapter {
         }
     }
 
+    */
+
     /**
      * Grava a meditacao no banco
      *
-     * @param meditacao
-     * @return id
-     */
+     *//*
     public long addMeditacao(Meditacao meditacao) {
         try {
             abrir();
@@ -62,7 +62,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         } finally {
             fechar();
         }
-    }
+    }*/
 
     private void add(ArrayList<Meditacao> meditacoes) {
 
@@ -105,22 +105,24 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
 
     private Meditacao meditacao(String sData, int tipo) {
-        Cursor c = bancoDados.query(true, BD_TABELA,
-                new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
-                , DATA + " like '" + sData + "%' AND " + TIPO + " = " + tipo
-                , null, null, null, null, null);
+        Cursor c = null;
         try {
+            c = bancoDados.query(true, BD_TABELA,
+                    new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
+                    , DATA + " like '" + sData + "%' AND " + TIPO + " = " + tipo
+                    , null, null, null, null, null);
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                Meditacao meditacao = new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
+                return new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
                         , c.getString(3), c.getString(4), c.getInt(5));
-                Log.i(getClass().getName(), meditacao.toString());
-                return meditacao;
+//                Log.i(getClass().getName(), meditacao.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            c.close();
+            if (c != null) {
+                c.close();
+            }
         }
         return null;
     }
@@ -128,7 +130,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
     /**
      * Busca a lição com base em seu número!
      *
-     * @param sData
      */
     public Meditacao buscaMeditacao(String sData, int iTipo) {
         try {
