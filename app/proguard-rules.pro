@@ -15,3 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keepattributes *Annotation*
+-keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }
+-keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }
+-keep class org.jsoup.** { *; }
+
+#-keep class android.support.design.widget.** { *; }
+#-keep interface android.support.design.widget.** { *; }
+#-dontwarn android.support.design.**
