@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -69,16 +67,8 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                     //solução para não tentar baixar de outros meses
                     if (mesAnterior == mesAtual) {
                         if (Util.internetDisponivel(getActivity())) {
-
-                            Handler handler = new Handler(Looper.getMainLooper());
-
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    //noinspection unchecked
-                                    new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior).execute(Util.getURLs());
-                                }
-                            });
-
+                            //noinspection unchecked
+                            new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior).execute(Util.getURLs());
                         }
                     } else {
                         Toast.makeText(getActivity(), "Não disponível", Toast.LENGTH_SHORT).show();
