@@ -94,6 +94,7 @@ public class ExtraiMeditacao {
      */
 
     private boolean mesCorreto(Document doc) {
+        Calendar calendar = Calendar.getInstance();
         String[] meses = {
                 "janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
@@ -101,7 +102,7 @@ public class ExtraiMeditacao {
 
         Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
 
-        String mes = meses[c.get(Calendar.MONTH)];
+        String mes = meses[calendar.get(Calendar.MONTH)];
 
         return eTd.text().toLowerCase().contains(mes);
 

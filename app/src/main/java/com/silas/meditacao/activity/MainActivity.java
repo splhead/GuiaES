@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.fragments.DiaMeditacaoFragment;
 
@@ -28,6 +30,15 @@ public class MainActivity extends AppCompatActivity implements DiaMeditacaoFragm
         if (savedInstanceState == null) {
             updateFragment();
         }
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        Tracker trackerAd = analytics.newTracker("UA-64551284-1");
+        Tracker tracker = analytics.newTracker("UA-64551284-2");
+        trackerAd.enableExceptionReporting(true);
+        tracker.enableExceptionReporting(true);
+        trackerAd.enableAdvertisingIdCollection(true);
+        tracker.enableAdvertisingIdCollection(true);
+        trackerAd.enableAutoActivityTracking(true);
+        tracker.enableAutoActivityTracking(true);
     }
 
     public void updateFragment() {
