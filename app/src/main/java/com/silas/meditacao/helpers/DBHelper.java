@@ -33,11 +33,11 @@ public class DBHelper extends SQLiteOpenHelper {
 	// Método chamado durante a criação do banco de dados
 	@Override
 	public void onCreate(SQLiteDatabase bancodados) {
-		for (int i = 0; i < SQL_BANCO_DADOS.length; i++) {
+		for (String SQL_BANCO_DADO : SQL_BANCO_DADOS) {
 			try {
 
 				bancodados.beginTransaction();
-				bancodados.execSQL(SQL_BANCO_DADOS[i]);
+				bancodados.execSQL(SQL_BANCO_DADO);
 				bancodados.setTransactionSuccessful();
 //                Log.d(getClass().getSimpleName(), "BD criado");
 
