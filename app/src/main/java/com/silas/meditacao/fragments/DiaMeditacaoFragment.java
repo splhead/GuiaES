@@ -144,6 +144,11 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                         R.style.AppTheme_DialogTheme, this
                         , dia.get(Calendar.YEAR),
                         dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                Meditacao meditacao = mTabs.get(mViewPager.getCurrentItem());
+                MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
+                long[] dates = mdba.buscaDataMinMax(meditacao.getTipo());
+                mDateDialog.getDatePicker().setMinDate(dates[0]);
+                mDateDialog.getDatePicker().setMaxDate(dates[1]);
                 mDateDialog.setTitle("Qual dia?");
                 mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
                 mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);

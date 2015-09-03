@@ -8,7 +8,9 @@ import android.util.Log;
 
 import com.silas.meditacao.models.Meditacao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MeditacaoDBAdapter extends DBAdapter {
     public static final String ROWID = "_id";
@@ -135,6 +137,45 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             return meditacao(sData, iTipo);
+        } finally {
+            fechar();
+        }
+    }
+
+    private long[] minMax(int tipo) {
+        Cursor c = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        try {
+            c = bancoDados.query(true, BD_TABELA,
+                    new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}
+                    , TIPO + " = " + tipo
+                    , null, null, null, null, null);
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                return new long[]{sdf.parse(c.getString(0)).getTime(),
+                        sdf.parse(c.getString(1)).getTime()};
+               /* return new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
+                        , c.getString(3), c.getString(4), c.getInt(5));*/
+//                Log.i(getClass().getName(), meditacao.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Busca intervalo de data disponível
+     */
+    public long[] buscaDataMinMax(int iTipo) {
+        try {
+            abrir();
+            return minMax(iTipo);
         } finally {
             fechar();
         }
