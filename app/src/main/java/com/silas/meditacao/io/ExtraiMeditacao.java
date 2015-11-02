@@ -30,9 +30,10 @@ public class ExtraiMeditacao {
 
     public void processaExtracao(String html, int tipo) {
         Document doc = Jsoup.parse(html);
-        Element raiz = doc.select("div[style^=width: 74%]").first();
-        Elements titulos = doc.select("div[style^=width: 74%] td[style^=width:67.0%]");
-
+//        Element raiz = doc.select("div[style^=width: 74%]").first();
+        Element raiz = doc.select("div[style^= background-color]").first();
+//        Elements titulos = doc.select("div[style^=width: 74%] td[style^=width:67.0%]");
+        Elements titulos = doc.select("div[style^= background-color] td[style^=width:67.0%]");
         if (mesCorreto(doc)) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
@@ -100,7 +101,8 @@ public class ExtraiMeditacao {
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         };
 
-        Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
+//        Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
+        Element eTd = doc.select("div[style^= background-color] td[style^=width:33.0%]").first();
 
         String mes = meses[calendar.get(Calendar.MONTH)];
 
