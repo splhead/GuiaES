@@ -12,5 +12,6 @@
     <string name="history_text">Sim, este app foi feito por um PECADOR! Que erra tentando acertar! Que de graça recebeu e de graça também te dá - rimou :p\n\nSe ainda assim você ficar muito agradecido e quiser abençoar o desenvolvimento deste app e o seu desenvolvedor, doe qualquer quantia. Também tenho minhas lutas por aqui ainda e a taxa $25 de desenvolvedor para pagar rsrsrs. 3A é o melhor!\n O Reino VEM!\n\n\nObrigado Heróis!</string>
     <!-- This is an ad unit ID for a test ad. Replace with your own banner ad unit id. -->
     <string name="banner_ad_unit_id">ca-app-pub-5765621569845430/3645256504</string>
+    <string name="action_share_app">Compartilhar este APP</string>
 
 </resources>

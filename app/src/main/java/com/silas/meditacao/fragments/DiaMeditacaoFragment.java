@@ -162,6 +162,14 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 startActivity(Intent.createChooser(sendIntent,
                         getResources().getText(R.string.send_to)));
                 break;
+            case R.id.action_share_app:
+                Intent s = new Intent();
+                s.setAction(Intent.ACTION_SEND);
+                s.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.silas.guiaes.app");
+                s.setType("text/plain");
+                startActivity(Intent.createChooser(s,
+                        getResources().getText(R.string.send_to)));
+//            http://bit.ly/1knCbjW
 
         }
         return false;
