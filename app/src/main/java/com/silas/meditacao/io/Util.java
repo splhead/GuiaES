@@ -37,11 +37,11 @@ public class Util {
         String url = "http://iasdcolonial.org.br/index.php/"; //
         HashMap<Integer, String> urls = new HashMap<>();
         //adultos
-        urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
+        urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal/pc");
         //mulher
-        urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal");
+        urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal/pc");
         //juvenil
-        urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
+        urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal/pc");
 
         return urls;
     }

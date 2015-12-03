@@ -30,11 +30,11 @@ public class ExtraiMeditacao {
 
     public void processaExtracao(String html, int tipo) {
         Document doc = Jsoup.parse(html);
-//        Element raiz = doc.select("div[style^=width: 74%]").first();
-        Element raiz = doc.select("div[style^= background-color]").first();
-//        Elements titulos = doc.select("div[style^=width: 74%] td[style^=width:67.0%]");
-        Elements titulos = doc.select("div[style^= background-color] td[style^=width:67.0%]");
-        if (mesCorreto(doc)) {
+        Element raiz = doc.select("div[style^=width: 74%]").first();
+//        Element raiz = doc.select("div[style^= background-color]").first();
+        Elements titulos = raiz.select("td[style^=width:67]");
+//        Elements titulos = doc.select("div[style^= background-color] td[style^=width:67.0%]");
+        if (mesCorreto(titulos)) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -94,15 +94,14 @@ public class ExtraiMeditacao {
      * Verifica se o mes no site é o mes atual
      */
 
-    private boolean mesCorreto(Document doc) {
+    private boolean mesCorreto(Elements titulos) {
         Calendar calendar = Calendar.getInstance();
         String[] meses = {
                 "janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         };
 
-//        Element eTd = doc.select("div[style^=width: 74%] td[style^=width:33.0%]").first();
-        Element eTd = doc.select("div[style^= background-color] td[style^=width:33.0%]").first();
+        Element eTd = titulos.first().nextElementSibling();
 
         String mes = meses[calendar.get(Calendar.MONTH)];
 

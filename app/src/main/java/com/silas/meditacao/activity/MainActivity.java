@@ -3,6 +3,7 @@ package com.silas.meditacao.activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -39,6 +40,25 @@ public class MainActivity extends AppCompatActivity implements DiaMeditacaoFragm
         tracker.enableAdvertisingIdCollection(true);
         trackerAd.enableAutoActivityTracking(true);
         tracker.enableAutoActivityTracking(true);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+       /* boolean naoAtivo = (PendingIntent.getService(MainActivity.this, 0,
+                new Intent(MainActivity.this , NotificationService.class), 0)) == null;
+
+
+        if (naoAtivo) {
+            Intent myIntent = new Intent(MainActivity.this , NotificationService.class);
+            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getService(MainActivity.this, 0, myIntent, 0);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 06);
+            calendar.set(Calendar.MINUTE, 00);
+            calendar.set(Calendar.SECOND, 00);
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pendingIntent);//set repeating every 24 hours
+        }*/
     }
 
     public void updateFragment() {
@@ -61,5 +81,4 @@ public class MainActivity extends AppCompatActivity implements DiaMeditacaoFragm
         dia = c;
         updateFragment();
     }
-
 }
