@@ -3,6 +3,7 @@
     package="com.silas.guiaes.activity">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -41,6 +42,19 @@
             android:enabled="true"
             android:exported="false" />
 
+        <receiver android:name="com.silas.meditacao.receiver.NotificationReceiver">
+            <intent-filter>
+                <action android:name="ALARME_DISPARADO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.silas.meditacao.receiver.SchedulerReceiver">
+            <intent-filter>
+                <action android:name="AGENDADOR" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
