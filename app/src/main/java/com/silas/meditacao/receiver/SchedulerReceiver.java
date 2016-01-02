@@ -16,10 +16,10 @@ public class SchedulerReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent myIntent = new Intent("ALARME_DISPARADO");
 
-        boolean alarmeAtivo = (PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE) == null);
+        boolean alarmeAtivo = (PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE) != null);
 
 
-        if (alarmeAtivo) {
+        if (!alarmeAtivo) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 

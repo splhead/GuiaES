@@ -30,8 +30,8 @@ public class ExtraiMeditacao {
 
     public void processaExtracao(String html, int tipo) {
         Document doc = Jsoup.parse(html);
-        Element raiz = doc.select("div[style^=width: 74%]").first();
-//        Element raiz = doc.select("div[style^= background-color]").first();
+//        Element raiz = doc.select("div[style^=width: 74%]").first();
+        Element raiz = doc.select("div[style^= background-color]").first();
         Elements titulos = raiz.select("td[style^=width:67]");
 //        Elements titulos = doc.select("div[style^= background-color] td[style^=width:67.0%]");
         if (mesCorreto(titulos)) {
