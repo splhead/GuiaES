@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="@string/pref_fontSizes_default"
+        android:dialogTitle="@string/pref_title_font_size"
+        android:entries="@array/pref_fontSizes_entries"
+        android:entryValues="@array/pref_fontSizes_values"
+        android:key="pref_font_size"
+        android:summary="@string/pref_sum_font_size"
+        android:title="@string/pref_title_font_size" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_night_mode"
+        android:summary="@string/pref_sum_night_mode"
+        android:title="@string/pref_title_night_mode" />
+</PreferenceScreen>

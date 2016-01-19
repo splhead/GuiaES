@@ -18,6 +18,8 @@ public class AboutActivity extends Activity {
         setContentView(R.layout.about);
 
         TextView tvCopyright = (TextView) findViewById(R.id.copyright_textView);
-        tvCopyright.setText("\u00A9 " + getString(R.string.title_activity_main) + " " + Calendar.getInstance().get(Calendar.YEAR));
+        String out = "\u00A9 " + getString(R.string.title_activity_main) +
+                " " + Calendar.getInstance().get(Calendar.YEAR);
+        tvCopyright.setText(out);
     }
 }

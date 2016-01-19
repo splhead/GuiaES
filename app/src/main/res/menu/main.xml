@@ -5,17 +5,22 @@
         android:id="@+id/action_date"
         android:icon="@drawable/ic_today_white_24dp"
         android:title="@string/action_date"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share_white_24dp"
         android:title="@string/action_share"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_share_app"
         android:title="@string/action_share_app"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
 
     <item

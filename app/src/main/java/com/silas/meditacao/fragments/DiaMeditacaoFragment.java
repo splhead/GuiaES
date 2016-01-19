@@ -22,6 +22,7 @@ import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.AboutActivity;
 import com.silas.meditacao.activity.MainActivity;
+import com.silas.meditacao.activity.PreferencesActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
@@ -138,6 +139,10 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 Intent i = new Intent(getActivity(), AboutActivity.class);
                 startActivity(i);
                 break;
+            case R.id.action_settings:
+                Intent intent = new Intent(getActivity(), PreferencesActivity.class);
+                startActivity(intent);
+                break;
             case R.id.action_date:
                 dia = Calendar.getInstance();
                 DatePickerDialog mDateDialog = new DatePickerDialog(getActivity(),
@@ -165,7 +170,9 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
             case R.id.action_share_app:
                 Intent s = new Intent();
                 s.setAction(Intent.ACTION_SEND);
-                s.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.silas.guiaes.app");
+                s.putExtra(Intent.EXTRA_TEXT,
+                        "Olhe que aplicativo bacana \"Meditação Cristã Adventista\"\n" +
+                                "https://play.google.com/store/apps/details?id=com.silas.guiaes.app");
                 s.setType("text/plain");
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
