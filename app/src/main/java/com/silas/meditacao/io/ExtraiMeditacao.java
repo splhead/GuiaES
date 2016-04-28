@@ -32,9 +32,20 @@ public class ExtraiMeditacao {
         Document doc = Jsoup.parse(html);
 //        Element raiz = doc.select("div[style^=width: 74%]").first();
         Element raiz = doc.select("div[style^= background-color]").first();
+//        correção para meditação da mulher 04/2016
+        if (raiz == null) {
+            raiz = doc.select("div.img").first();
+        }
+//        Log.d("raiz", raiz.text());
+
         Elements titulos = raiz.select("td[style^=width:67]");
-//        Elements titulos = doc.select("div[style^= background-color] td[style^=width:67.0%]");
-        if (mesCorreto(titulos)) {
+//        correção para meditação da mulher 04/2016
+        if (titulos.first() == null) {
+            titulos = raiz.select("div.header-title");
+        }
+//        Log.d("titulos", titulos.first().text());
+
+        if (mesCorreto(raiz, titulos)) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -79,7 +90,7 @@ public class ExtraiMeditacao {
                 meditacao.setTextoBiblico(sTextoBiblico);
                 meditacao.setTexto(sTexto);
 
-                //            Log.d("Meditacao", meditacao.toString());
+//                Log.d("Meditacao", meditacao.toString());
 
                 meditacoes.add(meditacao);
 
@@ -94,14 +105,20 @@ public class ExtraiMeditacao {
      * Verifica se o mes no site é o mes atual
      */
 
-    private boolean mesCorreto(Elements titulos) {
+    private boolean mesCorreto(Element raiz, Elements titulos) {
         Calendar calendar = Calendar.getInstance();
         String[] meses = {
                 "janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         };
 
-        Element eTd = titulos.first().nextElementSibling();
+//        Correção da meditacao da mulher 04/2016
+        Element eTd;
+        if (titulos.first().siblingElements().isEmpty()) {
+            eTd = raiz.select("div.header-dia").first();
+        } else {
+            eTd = titulos.first().nextElementSibling();
+        }
 
         String mes = meses[calendar.get(Calendar.MONTH)];
 
