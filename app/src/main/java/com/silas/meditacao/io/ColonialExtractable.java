@@ -1,8 +1,6 @@
 package com.silas.meditacao.io;
 
-import android.content.Context;
-
-import com.silas.meditacao.adapters.MeditacaoDBAdapter;
+import com.silas.meditacao.interfaces.Extractable;
 import com.silas.meditacao.models.Meditacao;
 
 import org.jsoup.Jsoup;
@@ -16,36 +14,23 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Created by silas on 02/06/15.
+ * Created by silas on 03/05/16.
  */
-public class ExtraiMeditacao {
-
-    private MeditacaoDBAdapter mdba;
-    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+public class ColonialExtractable implements Extractable {
+    private ArrayList<Meditacao> dias = new ArrayList<>();
     private Calendar c = Calendar.getInstance();
+    private Document doc;
 
-    public ExtraiMeditacao(Context context) {
-        mdba = new MeditacaoDBAdapter(context);
+    public ColonialExtractable(String content) {
+        doc = Jsoup.parse(content);
     }
 
-    public void processaExtracao(String html, int tipo) {
-        Document doc = Jsoup.parse(html);
-//        Element raiz = doc.select("div[style^=width: 74%]").first();
-        Element raiz = doc.select("div[style^= background-color]").first();
-//        correção para meditação da mulher 04/2016
-        if (raiz == null) {
-            raiz = doc.select("div.img").first();
-        }
-//        Log.d("raiz", raiz.text());
+    @Override
+    public ArrayList<Meditacao> extraiMeditacao(int type) {
+        Element raiz = getRoot();
+        Elements titulos = getTitles();
 
-        Elements titulos = raiz.select("td[style^=width:67]");
-//        correção para meditação da mulher 04/2016
-        if (titulos.first() == null) {
-            titulos = raiz.select("div.header-title");
-        }
-//        Log.d("titulos", titulos.first().text());
-
-        if (mesCorreto(raiz, titulos)) {
+        if (conteudoEstaAtualizado()) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -53,7 +38,7 @@ public class ExtraiMeditacao {
             String sData, sTitulo, sTextoBiblico, sTexto;
 
             for (Element eTitulo : titulos) {
-                Meditacao meditacao = new Meditacao("", "", "", "", tipo);
+                Meditacao meditacao = new Meditacao("", "", "", "", type);
 
                 sTitulo = eTitulo.text();
                 //            Log.d("titulo", sTitulo);
@@ -92,38 +77,35 @@ public class ExtraiMeditacao {
 
 //                Log.d("Meditacao", meditacao.toString());
 
-                meditacoes.add(meditacao);
+                dias.add(meditacao);
 
                 sbTexto.delete(0, sbTexto.length());
                 c.add(Calendar.DAY_OF_MONTH, 1);
             }
-            mdba.addMeditacoes(meditacoes);
+            return dias;
         }
+        return null;
     }
 
-    /**
-     * Verifica se o mes no site é o mes atual
-     */
-
-    private boolean mesCorreto(Element raiz, Elements titulos) {
-        Calendar calendar = Calendar.getInstance();
-        String[] meses = {
-                "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-        };
-
-//        Correção da meditacao da mulher 04/2016
-        Element eTd;
-        if (titulos.first().siblingElements().isEmpty()) {
-            eTd = raiz.select("div.header-dia").first();
-        } else {
-            eTd = titulos.first().nextElementSibling();
+    private Element getRoot() {
+//        Element raiz = doc.select("div[style^=width: 74%]").first();
+        Element raiz = doc.select("div[style^= background-color]").first();
+//        correção para meditação da mulher 04/2016
+        if (raiz == null) {
+            raiz = doc.select("div.img").first();
         }
+//        Log.d("raiz", raiz.text());
+        return raiz;
+    }
 
-        String mes = meses[calendar.get(Calendar.MONTH)];
-
-        return eTd.text().toLowerCase().contains(mes);
-
+    private Elements getTitles() {
+        Elements titulos = getRoot().select("td[style^=width:67]");
+//        correção para meditação da mulher 04/2016
+        if (titulos.first() == null) {
+            titulos = getRoot().select("div.header-title");
+        }
+//        Log.d("titulos", titulos.first().text());
+        return titulos;
     }
 
     /*
@@ -138,5 +120,26 @@ public class ExtraiMeditacao {
         }
 //        Log.d("oL", "uProximo: " + proximo.tagName());
         return proximo.nextElementSibling();
+    }
+
+    @Override
+    public boolean conteudoEstaAtualizado() {
+        Calendar calendar = Calendar.getInstance();
+        String[] meses = {
+                "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        };
+
+//        Correção da meditacao da mulher 04/2016
+        Element eTd;
+        if (getTitles().first().siblingElements().isEmpty()) {
+            eTd = getRoot().select("div.header-dia").first();
+        } else {
+            eTd = getTitles().first().nextElementSibling();
+        }
+
+        String mes = meses[calendar.get(Calendar.MONTH)];
+
+        return eTd.text().toLowerCase().contains(mes);
     }
 }

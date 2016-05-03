@@ -3,16 +3,14 @@ package com.silas.meditacao.io;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.widget.Toast;
 
+import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.fragments.DiaMeditacaoFragment;
+import com.silas.meditacao.interfaces.Extractable;
+import com.silas.meditacao.models.Meditacao;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,16 +18,20 @@ import java.util.Map;
 /**
  * Created by silas on 22/06/15.
  */
-public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, Void, Integer> {
+public class ProcessaMeditacoesTask extends
+        AsyncTask<HashMap<Integer, String>, Void, HashMap<Integer, String>> {
     private Context mContext;
     private ProgressDialog progress;
     private DiaMeditacaoFragment.Updatable mCallback;
     private int mesAnterior = 99;
+    private MeditacaoDBAdapter mdba;
 
     public ProcessaMeditacoesTask(Context context, DiaMeditacaoFragment.Updatable cb, int ma) {
         mContext = context;
         mCallback = cb;
         mesAnterior = ma;
+        mdba = new MeditacaoDBAdapter(mContext);
+
     }
 
     @Override
@@ -45,86 +47,49 @@ public class ProcessaMeditacoesTask extends AsyncTask<HashMap<Integer, String>, 
 
     @SafeVarargs
     @Override
-    protected final Integer doInBackground(HashMap<Integer, String>... tmp) {
+    protected final HashMap<Integer, String> doInBackground(HashMap<Integer, String>... tmp) {
         HashMap<Integer, String> urls = tmp[0];
-        int tentativa = 1;
+        ArrayList<Meditacao> dias;
+        HashMap<Integer, String> status = new HashMap<>();
+        Extractable extrator;
 
         for (Map.Entry<Integer, String> url : urls.entrySet()) {
-            processaMeditacoes(url, tentativa);
+            String html = Util.getHTML(url.getValue());
+            extrator = new ColonialExtractable(html);
+            dias = extrator.extraiMeditacao(url.getKey());
+            if (dias.size() == 0) {
+                switch (url.getKey()) {
+                    case Meditacao.ADULTO:
+                        status.put(Meditacao.ADULTO, "Meditação dos Adultos indisponível" +
+                                " \n tente mais tarde!");
+                        break;
+                    case Meditacao.MULHER:
+                        status.put(Meditacao.MULHER, "Meditação das Mulheres indisponível" +
+                                " \n tente mais tarde!");
+                        break;
+                    case Meditacao.JUVENIL:
+                        status.put(Meditacao.JUVENIL, "Inspiração Juvenil indisponível" +
+                                " \n tente mais tarde!");
+                        break;
+                }
+            } else {
+                mdba.addMeditacoes(dias);
+            }
+
         }
-        return tentativa;
+        return status;
     }
 
     @Override
-    protected void onPostExecute(Integer i) {
+    protected void onPostExecute(HashMap<Integer, String> status) {
         progress.dismiss();
+
+//      Atualiza a tab com o conteúdo baixado
         mCallback.onUpdate(Calendar.getInstance(), mesAnterior);
-        super.onPostExecute(i);
-    }
 
-    private void processaMeditacoes(Map.Entry<Integer, String> entry, int tentativa) {
-        URL url;
-        BufferedReader reader = null;
-        StringBuffer stringBuffer;
-        ExtraiMeditacao extrator = new ExtraiMeditacao(mContext);
-
-        try {
-
-            // create the HttpURLConnection
-            url = new URL(entry.getValue());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // just want to do an HTTP GET here
-            connection.setRequestMethod("GET");
-
-            // uncomment this if you want to write output to this url
-            //connection.setDoOutput(true);
-
-            // give it 30 seconds to respond
-            connection.setReadTimeout(30 * 1000);
-
-            if (Build.VERSION.SDK_INT > 13) {
-                connection.setRequestProperty("Connection", "close");
-            }
-
-            connection.connect();
-
-            // read the output from the server
-            InputStream is = connection.getInputStream();
-
-            if (is != null) {
-                reader = new BufferedReader(new InputStreamReader(is));
-                stringBuffer = new StringBuffer();
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuffer.append(line);
-                }
-                String html = stringBuffer.toString();
-
-                extrator.processaExtracao(html, entry.getKey());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (tentativa <= 3) {
-                tentativa++;
-                processaMeditacoes(entry, tentativa);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            // close the reader; this can throw an exception too, so
-            // wrap it in another try/catch block.
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
+        for (Map.Entry<Integer, String> message : status.entrySet()) {
+            Toast.makeText(mContext, message.getValue(), Toast.LENGTH_SHORT).show();
         }
+        super.onPostExecute(status);
     }
 }

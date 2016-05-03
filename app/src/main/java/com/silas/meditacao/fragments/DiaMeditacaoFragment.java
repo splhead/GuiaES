@@ -57,28 +57,32 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
             String sDia = args.getString(MainActivity.DIA);
             mesAnterior = args.getInt(MainActivity.MES_ANTERIOR);
             int mesAtual = args.getInt(MainActivity.MES_ATUAL);
-            Meditacao mAdulto, mMulher, mJuvenil;
+
+            ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
             try {
-                mAdulto = mdba.buscaMeditacao(sDia, Meditacao.ADULTO);
-                mMulher = mdba.buscaMeditacao(sDia, Meditacao.MULHER);
-                mJuvenil = mdba.buscaMeditacao(sDia, Meditacao.JUVENIL);
 
-                if (mAdulto == null || mMulher == null || mJuvenil == null) {
-                    //solução para não tentar baixar de outros meses
-                    if (mesAnterior == mesAtual) {
-                        if (Util.internetDisponivel(getActivity())) {
-                            //noinspection unchecked
-                            new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior).execute(Util.getURLs());
+                meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.ADULTO));
+                meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.MULHER));
+                meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.JUVENIL));
+
+                for (int i = 0; i < meditacoes.size(); i++) {
+                    Meditacao meditacao = meditacoes.get(i);
+                    if (meditacao == null) {
+                        //solução para não tentar baixar de outros meses quando escolhe outro dia
+                        if (mesAnterior == mesAtual) {
+                            if (Util.internetDisponivel(getActivity())) {
+                                //noinspection unchecked
+                                new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior)
+                                        .execute(Util.getURLs(i + 1));
+                            }
+                        } else {
+                            Toast.makeText(getActivity(),
+                                    "Data não disponível", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(getActivity(), "Não disponível", Toast.LENGTH_SHORT).show();
                     }
+                    mTabs.add(meditacao);
                 }
-
-                mTabs.add(mAdulto);
-                mTabs.add(mMulher);
-                mTabs.add(mJuvenil);
 
             } catch (Exception e) {
                 e.printStackTrace();
