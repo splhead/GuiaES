@@ -56,7 +56,7 @@ public class Util {
                 //juvenil
                 urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
                 break;
-            case 0:
+            default:
                 //adultos
                 urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
                 //mulher

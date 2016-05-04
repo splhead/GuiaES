@@ -157,7 +157,8 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
                 long[] dates = mdba.buscaDataMinMax(meditacao.getTipo());
                 mDateDialog.getDatePicker().setMinDate(dates[0]);
-                mDateDialog.getDatePicker().setMaxDate(dates[1]);
+//                + um dia pois o último não é selecionavel
+                mDateDialog.getDatePicker().setMaxDate(dates[1] + (60000 * 60 * 24));
                 mDateDialog.setTitle("Qual dia?");
                 mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
                 mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);

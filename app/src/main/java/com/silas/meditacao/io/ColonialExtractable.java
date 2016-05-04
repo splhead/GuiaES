@@ -58,7 +58,8 @@ public class ColonialExtractable implements Extractable {
                 prox = prox.nextElementSibling();
 
                 while (prox.tagName().equalsIgnoreCase("p")) {
-                    if (prox.children().size() == 0 || !prox.child(0).tagName().equalsIgnoreCase("strong")) {
+                    if (prox.children().size() == 0 || !prox.child(0).tagName()
+                            .equalsIgnoreCase("strong")) {
                         sbTexto.append(prox.text());
                         sbTexto.append("\n\n");
                     }
@@ -88,23 +89,35 @@ public class ColonialExtractable implements Extractable {
     }
 
     private Element getRoot() {
+        Element raiz = null;
+        try {
 //        Element raiz = doc.select("div[style^=width: 74%]").first();
-        Element raiz = doc.select("div[style^= background-color]").first();
+            raiz = doc.select("div[style^= background-color]").first();
 //        correção para meditação da mulher 04/2016
-        if (raiz == null) {
-            raiz = doc.select("div.img").first();
-        }
+            if (raiz == null) {
+                raiz = doc.select("div.img").first();
+            }
 //        Log.d("raiz", raiz.text());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return raiz;
     }
 
     private Elements getTitles() {
-        Elements titulos = getRoot().select("td[style^=width:67]");
+        Elements titulos = null;
+
+        try {
+            titulos = getRoot().select("td[style^=width:67]");
 //        correção para meditação da mulher 04/2016
-        if (titulos.first() == null) {
-            titulos = getRoot().select("div.header-title");
-        }
+            if (titulos.first() == null) {
+                titulos = getRoot().select("div.header-title");
+            }
 //        Log.d("titulos", titulos.first().text());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         return titulos;
     }
 
@@ -129,17 +142,23 @@ public class ColonialExtractable implements Extractable {
                 "janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         };
-
-//        Correção da meditacao da mulher 04/2016
-        Element eTd;
-        if (getTitles().first().siblingElements().isEmpty()) {
-            eTd = getRoot().select("div.header-dia").first();
-        } else {
-            eTd = getTitles().first().nextElementSibling();
-        }
-
         String mes = meses[calendar.get(Calendar.MONTH)];
 
-        return eTd.text().toLowerCase().contains(mes);
+        Element eTd;
+
+        try {
+            if (getTitles().first().siblingElements().isEmpty()) {
+//        Correção da meditacao da mulher 04/2016
+                eTd = getRoot().select("div.header-dia").first();
+            } else {
+                eTd = getTitles().first().nextElementSibling();
+            }
+            return eTd.text().toLowerCase().contains(mes);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

@@ -49,15 +49,19 @@ public class ProcessaMeditacoesTask extends
     @Override
     protected final HashMap<Integer, String> doInBackground(HashMap<Integer, String>... tmp) {
         HashMap<Integer, String> urls = tmp[0];
-        ArrayList<Meditacao> dias;
+        ArrayList<Meditacao> dias = null;
         HashMap<Integer, String> status = new HashMap<>();
         Extractable extrator;
 
         for (Map.Entry<Integer, String> url : urls.entrySet()) {
             String html = Util.getHTML(url.getValue());
             extrator = new ColonialExtractable(html);
-            dias = extrator.extraiMeditacao(url.getKey());
-            if (dias.size() == 0) {
+            try {
+                dias = extrator.extraiMeditacao(url.getKey());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (dias == null) {
                 switch (url.getKey()) {
                     case Meditacao.ADULTO:
                         status.put(Meditacao.ADULTO, "Meditação dos Adultos indisponível" +
@@ -85,7 +89,9 @@ public class ProcessaMeditacoesTask extends
         progress.dismiss();
 
 //      Atualiza a tab com o conteúdo baixado
-        mCallback.onUpdate(Calendar.getInstance(), mesAnterior);
+        if (status.size() <= 0) {
+            mCallback.onUpdate(Calendar.getInstance(), mesAnterior);
+        }
 
         for (Map.Entry<Integer, String> message : status.entrySet()) {
             Toast.makeText(mContext, message.getValue(), Toast.LENGTH_SHORT).show();
