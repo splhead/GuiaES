@@ -4,12 +4,10 @@
         <item>Pequena</item>
         <item>Normal</item>
         <item>Grande</item>
-        <item>Maior ainda</item>
     </string-array>
     <string-array name="pref_fontSizes_values">
-        <item>0.7</item>
-        <item>1</item>
-        <item>1.5</item>
-        <item>2</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
     </string-array>
 </resources>

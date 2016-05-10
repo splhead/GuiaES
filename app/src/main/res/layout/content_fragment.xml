@@ -20,7 +20,7 @@
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textIsSelectable="true"
-            android:textSize="26sp" />
+            android:textSize="?attr/font_large" />
 
         <TextView
             android:id="@+id/tvData"
@@ -30,7 +30,7 @@
             android:textAlignment="center"
             android:textColor="@android:color/darker_gray"
             android:textIsSelectable="true"
-            android:textSize="12sp" />
+            android:textSize="?attr/font_small" />
 
         <TextView
             android:id="@+id/tvTextoBiblico"
@@ -40,7 +40,7 @@
             android:paddingTop="8dp"
             android:textColor="#ffe53935"
             android:textIsSelectable="true"
-            android:textSize="18sp"
+            android:textSize="?attr/font_medium"
             android:textStyle="italic" />
 
 
@@ -53,7 +53,7 @@
             android:paddingTop="8dp"
             android:textColor="#ff292929"
             android:textIsSelectable="true"
-            android:textSize="18sp" />
+            android:textSize="?attr/font_medium" />
 
         <TextView
             android:id="@+id/tvLinks"
