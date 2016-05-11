@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.Light" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/colorPrimary</item>
 
@@ -11,32 +11,53 @@
              which is used to tint widgets -->
         <item name="colorAccent">@color/colorAccent</item>
 
-        <!-- You can also set colorControlNormal, colorControlActivated
-             colorControlHighlight, and colorSwitchThumbNormal. -->
+        <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
+        <item name="verseColor">@color/colorPrimary</item>
 
     </style>
 
-    <style name="Theme.MyTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Light.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.MyTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.Light.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <!-- colorPrimary is used for the default action bar background -->
+        <item name="colorPrimary">@color/colorPrimaryInverse</item>
+
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated,
+             which is used to tint widgets -->
+        <item name="colorAccent">@color/colorAccentInverse</item>
+
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="verseColor">@color/textColorPrimary</item>
+    </style>
+
+    <style name="Theme.Dark.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="FontStyle" />
 
-    <style name="FontStyle.Small">
+    <style name="FontStyle.Pequena">
         <item name="font_small">10sp</item>
         <item name="font_medium">16sp</item>
         <item name="font_large">24sp</item>
         <item name="font_xlarge">26sp</item>
     </style>
 
-    <style name="FontStyle.Medium">
+    <style name="FontStyle.Normal">
         <item name="font_small">12sp</item>
         <item name="font_medium">18sp</item>
         <item name="font_large">26sp</item>
         <item name="font_xlarge">28sp</item>
     </style>
 
-    <style name="FontStyle.Large">
+    <style name="FontStyle.Grande">
         <item name="font_small">14sp</item>
         <item name="font_medium">20sp</item>
         <item name="font_large">28sp</item>

@@ -10,6 +10,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!--android:textColor="@android:color/black"-->
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="fill_parent"
@@ -18,32 +19,33 @@
             android:gravity="center_horizontal"
             android:padding="8dp"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+
             android:textIsSelectable="true"
             android:textSize="?attr/font_large" />
 
+        <!--android:textColor="@android:color/darker_gray"-->
         <TextView
             android:id="@+id/tvData"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textAlignment="center"
-            android:textColor="@android:color/darker_gray"
             android:textIsSelectable="true"
             android:textSize="?attr/font_small" />
 
+        <!--android:textColor="#ffe53935"-->
         <TextView
             android:id="@+id/tvTextoBiblico"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingTop="8dp"
-            android:textColor="#ffe53935"
+            android:textColor="?attr/verseColor"
             android:textIsSelectable="true"
             android:textSize="?attr/font_medium"
             android:textStyle="italic" />
 
-
+        <!--android:textColor="#ff292929"-->
         <TextView
             android:id="@+id/tvTexto"
             android:layout_width="fill_parent"
@@ -51,17 +53,15 @@
             android:fontFamily="sans-serif-light"
             android:lineSpacingMultiplier="1.3"
             android:paddingTop="8dp"
-            android:textColor="#ff292929"
             android:textIsSelectable="true"
             android:textSize="?attr/font_medium" />
-
+        <!--android:textColor="#ff5e4537"-->
         <TextView
             android:id="@+id/tvLinks"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-thin"
             android:paddingTop="8dp"
-            android:text="@string/tvLink"
-            android:textColor="#ff5e4537" />
+            android:text="@string/tvLink" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

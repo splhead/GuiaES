@@ -29,7 +29,7 @@ public class Preferences {
 
     public FontStyle getFontStyle() {
         return FontStyle.valueOf(open().getString(FONT_STYLE,
-                FontStyle.Medium.name()));
+                FontStyle.Normal.name()));
     }
 
     public void setFontStyle(FontStyle style) {
@@ -37,9 +37,9 @@ public class Preferences {
     }
 
     public enum FontStyle {
-        Small(R.style.FontStyle_Small, "Small"),
-        Medium(R.style.FontStyle_Medium, "Medium"),
-        Large(R.style.FontStyle_Large, "Large");
+        Pequena(R.style.FontStyle_Pequena, "Pequena"),
+        Normal(R.style.FontStyle_Normal, "Normal"),
+        Grande(R.style.FontStyle_Grande, "Grande");
 
         private int resId;
         private String title;

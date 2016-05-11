@@ -6,4 +6,5 @@
         <attr name="font_large" format="dimension" />
         <attr name="font_xlarge" format="dimension" />
     </declare-styleable>
+    <attr name="verseColor" format="reference" />
 </resources>

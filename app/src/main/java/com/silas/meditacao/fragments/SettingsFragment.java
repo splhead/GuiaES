@@ -27,16 +27,17 @@ public class SettingsFragment extends PreferenceFragment
         if (key.equals(KEY_FONT_SIZE)) {
             Preferences p = new Preferences(getActivity());
             Preference fontSizePref = findPreference(key);
-            fontSizePref.setSummary(sharedPreferences.getString(key, "Medium"));
-            switch (sharedPreferences.getString(key, "Medium")) {
-                case "Small":
-                    p.setFontStyle(Preferences.FontStyle.Small);
+            String fontSize = sharedPreferences.getString(key, "Normal");
+            fontSizePref.setSummary(fontSize);
+            switch (fontSize) {
+                case "Pequena":
+                    p.setFontStyle(Preferences.FontStyle.Pequena);
                     break;
-                case "Medium":
-                    p.setFontStyle(Preferences.FontStyle.Medium);
+                case "Normal":
+                    p.setFontStyle(Preferences.FontStyle.Normal);
                     break;
-                case "Large":
-                    p.setFontStyle(Preferences.FontStyle.Large);
+                case "Grande":
+                    p.setFontStyle(Preferences.FontStyle.Grande);
                     break;
             }
         }
