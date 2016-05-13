@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.Preferences;
+import com.silas.meditacao.io.Util;
 
 /**
  * Created by splhead on 18/01/16.
@@ -15,6 +16,7 @@ import com.silas.meditacao.io.Preferences;
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String KEY_FONT_SIZE = "pref_font_size";
+    public final static String KEY_DARK_THEME = "pref_night_mode";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,14 +34,19 @@ public class SettingsFragment extends PreferenceFragment
             switch (fontSize) {
                 case "Pequena":
                     p.setFontStyle(Preferences.FontStyle.Pequena);
+                    Util.restart(getActivity());
                     break;
                 case "Normal":
                     p.setFontStyle(Preferences.FontStyle.Normal);
+                    Util.restart(getActivity());
                     break;
                 case "Grande":
                     p.setFontStyle(Preferences.FontStyle.Grande);
+                    Util.restart(getActivity());
                     break;
             }
+        } else if (key.equals(KEY_DARK_THEME)) {
+            Util.restart(getActivity());
         }
     }
 

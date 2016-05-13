@@ -3,7 +3,6 @@ package com.silas.meditacao.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -17,7 +16,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity implements DiaMeditacaoFragment.Updatable {
+public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment.Updatable {
     public static final String DIA = "dia";
     public static final String MES_ANTERIOR = "mes_anterior";
     public static final String MES_ATUAL = "mes_atual";
@@ -25,12 +24,6 @@ public class MainActivity extends AppCompatActivity implements DiaMeditacaoFragm
     private int mesAnterior = dia.get(Calendar.MONTH);
     private int mesAtual = dia.get(Calendar.MONTH);
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-    @Override
-    protected void onResume() {
-        getTheme().applyStyle(new Preferences(this).getFontStyle().getResId(), true);
-        super.onResume();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

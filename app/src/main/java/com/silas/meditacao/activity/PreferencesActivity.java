@@ -1,6 +1,5 @@
 package com.silas.meditacao.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import com.silas.meditacao.fragments.SettingsFragment;
@@ -9,7 +8,7 @@ import com.silas.meditacao.io.Preferences;
 /**
  * Created by splhead on 18/01/16.
  */
-public class PreferencesActivity extends Activity {
+public class PreferencesActivity extends ThemedActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

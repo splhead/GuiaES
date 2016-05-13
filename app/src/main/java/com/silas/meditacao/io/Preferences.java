@@ -10,12 +10,18 @@ import com.silas.guiaes.activity.R;
  * Created by silas on 10/05/16.
  */
 public class Preferences {
-    private final static String FONT_STYLE = "pref_font_size";
-
+    public final static String FONT_STYLE = "pref_font_size";
+    public final static String DARK_THEME = "pref_night_mode";
+    private static Preferences appInstance;
     private final Context context;
 
     public Preferences(Context context) {
         this.context = context;
+        appInstance = this;
+    }
+
+    public static boolean getBoolean(String key, boolean defaultValue) {
+        return appInstance.open().getBoolean(key, defaultValue);
     }
 
     protected SharedPreferences open() {

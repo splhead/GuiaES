@@ -1,11 +1,15 @@
 package com.silas.meditacao.io;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
+import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.models.Meditacao;
 
 import java.io.BufferedReader;
@@ -129,5 +133,16 @@ public class Util {
             }
         }
         return "";
+    }
+
+    public static void restart(Activity activity) {
+        /*Intent intent = activity.getIntent();
+        activity.finish();
+        Activity nActivity = new Activity();
+        nActivity.startActivity(intent);*/
+        TaskStackBuilder.create(activity)
+                .addNextIntent(new Intent(activity, MainActivity.class))
+                .addNextIntent(activity.getIntent())
+                .startActivities();
     }
 }
