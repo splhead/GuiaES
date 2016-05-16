@@ -1,6 +1,7 @@
 package com.silas.meditacao.activity;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -13,10 +14,11 @@ import com.silas.meditacao.io.Preferences;
 public class ThemedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Preferences preferences = new Preferences(this);
-        if (Preferences.getBoolean(Preferences.DARK_THEME, false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Preferences.DARK_THEME, false)) {
             setTheme(R.style.Theme_Dark);
         }
+        Preferences preferences = new Preferences(this);
         getTheme().applyStyle(preferences.getFontStyle().getResId(), true);
         super.onCreate(savedInstanceState);
     }

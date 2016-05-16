@@ -9,7 +9,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.fragments.DiaMeditacaoFragment;
-import com.silas.meditacao.io.Preferences;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,7 +26,6 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getTheme().applyStyle(new Preferences(this).getFontStyle().getResId(), true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         if (savedInstanceState == null) {

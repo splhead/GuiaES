@@ -3,8 +3,10 @@ package com.silas.meditacao.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,7 @@ import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.activity.PreferencesActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
+import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
@@ -101,6 +104,10 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         Toolbar mToolbar = (Toolbar) view.findViewById(R.id.toolbar_main);
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.setOnMenuItemClickListener(this);
+        if (!PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getBoolean(Preferences.DARK_THEME, false)) {
+            mToolbar.setPopupTheme(R.style.Theme_Light_PopupOverlay);
+        }
         mToolbar.inflateMenu(R.menu.main);
 
         Calendar hoje = Calendar.getInstance();
@@ -149,10 +156,20 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 break;
             case R.id.action_date:
                 dia = Calendar.getInstance();
-                DatePickerDialog mDateDialog = new DatePickerDialog(getActivity(),
-                        R.style.AppTheme_DialogTheme, this
-                        , dia.get(Calendar.YEAR),
-                        dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog mDateDialog;
+//                Preferences preferences = new Preferences(getActivity());
+                if (!PreferenceManager.getDefaultSharedPreferences(getActivity())
+                        .getBoolean(Preferences.DARK_THEME, false)) {
+                    mDateDialog = new DatePickerDialog(getActivity(),
+                            R.style.AppTheme_DialogTheme, this
+                            , dia.get(Calendar.YEAR),
+                            dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                } else {
+                    mDateDialog = new DatePickerDialog(getActivity(),
+                            R.style.AppTheme_DialogThemeInverse, this
+                            , dia.get(Calendar.YEAR),
+                            dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+                }
                 Meditacao meditacao = mTabs.get(mViewPager.getCurrentItem());
                 MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(getActivity());
                 long[] dates = mdba.buscaDataMinMax(meditacao.getTipo());
@@ -226,15 +243,17 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        try {
-            mCallback = (Updatable) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + "must implement Updatable");
+        if (context instanceof Activity) {
+            try {
+                mCallback = (Updatable) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(context.toString()
+                        + "must implement Updatable");
 
+            }
         }
     }
 

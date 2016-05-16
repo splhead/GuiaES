@@ -6,6 +6,7 @@
         android:entries="@array/pref_fontSizes_entries"
         android:entryValues="@array/pref_fontSizes_values"
         android:key="pref_font_size"
+        android:negativeButtonText="@string/pref_font_size_cancel"
         android:summary="@string/pref_sum_font_size"
         android:title="@string/pref_title_font_size" />
     <CheckBoxPreference

@@ -8,4 +8,12 @@
         <item name="android:colorAccent">@color/colorAccent</item>
 
     </style>
+
+    <style name="AppTheme.DialogThemeInverse" parent="Theme.AppCompat.Dialog">
+
+        <item name="android:colorPrimary">@color/colorPrimaryInverse</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
+        <item name="android:colorAccent">@color/colorAccentInverse</item>
+
+    </style>
 </resources>

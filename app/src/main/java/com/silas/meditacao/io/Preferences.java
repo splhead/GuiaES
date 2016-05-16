@@ -20,10 +20,6 @@ public class Preferences {
         appInstance = this;
     }
 
-    public static boolean getBoolean(String key, boolean defaultValue) {
-        return appInstance.open().getBoolean(key, defaultValue);
-    }
-
     protected SharedPreferences open() {
 //        return context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
         return PreferenceManager.getDefaultSharedPreferences(context);

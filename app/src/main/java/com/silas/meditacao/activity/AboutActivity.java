@@ -1,6 +1,5 @@
 package com.silas.meditacao.activity;
 
-import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -12,7 +11,7 @@ import java.util.Calendar;
 /**
  * Created by silas on 24/06/15.
  */
-public class AboutActivity extends Activity {
+public class AboutActivity extends ThemedActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         PackageInfo pInfo;
