@@ -60,6 +60,10 @@ public class Util {
                 //juvenil
                 urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
                 break;
+            case Meditacao.ABJANELAS:
+                //janelas
+                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/be690eb3f39ed90765634f2b9f922d9492cb1611/med_janelas_para_vida.json");
+                break;
             default:
                 //adultos
                 urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
@@ -67,12 +71,15 @@ public class Util {
                 urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal");
                 //juvenil
                 urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
+                //janelas
+                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/be690eb3f39ed90765634f2b9f922d9492cb1611/med_janelas_para_vida.json");
                 break;
         }
+//        Log.d("Util", urls.toString());
         return urls;
     }
 
-    public static String getHTML(String address) {
+    public static String getContent(String address) {
         URL url;
         BufferedReader reader = null;
         StringBuffer stringBuffer;
@@ -109,6 +116,7 @@ public class Util {
                 while ((line = reader.readLine()) != null) {
                     stringBuffer.append(line);
                 }
+//                Log.d("Util", stringBuffer.toString());
                 return stringBuffer.toString();
             }
 
@@ -117,7 +125,7 @@ public class Util {
             /*if (tentativa < 3) {
                 tentativa++;
                 Log.d("tentativa", String.valueOf(tentativa));
-                getHTML(con, address, tentativa);
+                getContent(con, address, tentativa);
             }
             Toast.makeText(con, "Indisponível, tente novamente mais tarde!", Toast.LENGTH_SHORT)
                     .show();*/

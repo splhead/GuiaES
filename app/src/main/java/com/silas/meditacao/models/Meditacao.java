@@ -3,6 +3,7 @@ package com.silas.meditacao.models;
 
 import android.support.v4.app.Fragment;
 
+import com.google.gson.annotations.SerializedName;
 import com.silas.meditacao.fragments.ContentFragment;
 
 /**
@@ -12,11 +13,23 @@ public class Meditacao {
     public static final int ADULTO = 1;
     public static final int MULHER = 2;
     public static final int JUVENIL = 3;
+    public static final int ABJANELAS = 4;
+
     private long id;
+
+    @SerializedName("day")
     private String data;
+
+    @SerializedName("title")
     private String titulo;
+
+    @SerializedName("verse")
     private String textoBiblico;
+
+    @SerializedName("text")
     private String texto;
+
+    @SerializedName("type")
     private int tipo;
 
     public Meditacao(long id, String titulo, String data, String textoBiblico, String texto, int tipo) {
@@ -109,6 +122,8 @@ public class Meditacao {
                 return "Mulher";
             case JUVENIL:
                 return "Juvenil";
+            case ABJANELAS:
+                return "A. Bullon";
         }
         return "";
     }

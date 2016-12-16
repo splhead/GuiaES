@@ -68,6 +68,7 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.ADULTO));
                 meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.MULHER));
                 meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.JUVENIL));
+                meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.ABJANELAS));
 
                 for (int i = 0; i < meditacoes.size(); i++) {
                     Meditacao meditacao = meditacoes.get(i);
@@ -112,17 +113,12 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
 
         Calendar hoje = Calendar.getInstance();
 
-        if (!((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
-                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18))) {
-            // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
-            // values/strings.xml.
+        if (notShabbat(hoje)) {
+            // if not Shabbat load advertise
             mAdView = (AdView) view.findViewById(R.id.ad_view);
 
-            // Create an ad request. Check logcat output for the hashed device ID to
-            // get test ads on a physical device. e.g.
-            // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
             AdRequest adRequest = new AdRequest.Builder()
-//                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice("1DDC6B87A119F01DE92D910C6F5B9F5C")
                     .build();
 
             // Start loading the ad in the background.
@@ -138,6 +134,11 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         TabLayout mTablayout = (TabLayout) view.findViewById(R.id.tablayout);
 
         mTablayout.setupWithViewPager(mViewPager);
+    }
+
+    private boolean notShabbat(Calendar hoje) {
+        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
+                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
     }
 
     @Override
@@ -222,6 +223,9 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                 break;
             case Meditacao.JUVENIL:
                 out.append("Inspiração Juvenil\n\n");
+                break;
+            case Meditacao.ABJANELAS:
+                out.append("Janelas para Vida\n\n");
                 break;
         }
 

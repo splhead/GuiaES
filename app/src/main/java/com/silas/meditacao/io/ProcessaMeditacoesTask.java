@@ -54,8 +54,9 @@ public class ProcessaMeditacoesTask extends
         Extractable extrator;
 
         for (Map.Entry<Integer, String> url : urls.entrySet()) {
-            String html = Util.getHTML(url.getValue());
-            extrator = new ColonialExtractable(html);
+//            String html = Util.getContent(url.getValue());
+//            extrator = new ColonialExtractable(html);
+            extrator = howToGet(url.getKey(), url.getValue());
             try {
                 dias = extrator.extraiMeditacao(url.getKey());
             } catch (Exception e) {
@@ -75,6 +76,10 @@ public class ProcessaMeditacoesTask extends
                         status.put(Meditacao.JUVENIL, "Inspiração Juvenil indisponível" +
                                 " \n tente mais tarde!");
                         break;
+                    case Meditacao.ABJANELAS:
+                        status.put(Meditacao.ABJANELAS, "Janelas para vida indisponível" +
+                                " \n tente mais tarde!");
+                        break;
                 }
             } else {
                 mdba.addMeditacoes(dias);
@@ -82,6 +87,20 @@ public class ProcessaMeditacoesTask extends
 
         }
         return status;
+    }
+
+    private Extractable howToGet(int type, String url) {
+        String content = Util.getContent(url);
+
+        switch (type) {
+            case Meditacao.ADULTO:
+            case Meditacao.MULHER:
+            case Meditacao.JUVENIL:
+                return new ColonialExtractable(content);
+            case Meditacao.ABJANELAS:
+                return new JsonExtractable(content);
+        }
+        return null;
     }
 
     @Override
