@@ -84,8 +84,9 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                             Toast.makeText(getActivity(),
                                     "Data não disponível", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        mTabs.add(meditacao);
                     }
-                    mTabs.add(meditacao);
                 }
 
             } catch (Exception e) {
