@@ -150,7 +150,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
             c = bancoDados.query(true, BD_TABELA,
                     new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}
                     , TIPO + " = " + tipo
-                    , null, null, null, null, null);
+                    , null, TIPO, null, null, null);
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 return new long[]{sdf.parse(c.getString(0)).getTime(),

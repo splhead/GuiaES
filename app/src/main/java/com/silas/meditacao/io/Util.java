@@ -62,17 +62,7 @@ public class Util {
                 break;
             case Meditacao.ABJANELAS:
                 //janelas
-                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/be690eb3f39ed90765634f2b9f922d9492cb1611/med_janelas_para_vida.json");
-                break;
-            default:
-                //adultos
-                urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
-                //mulher
-                urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal");
-                //juvenil
-                urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
-                //janelas
-                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/be690eb3f39ed90765634f2b9f922d9492cb1611/med_janelas_para_vida.json");
+                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json");
                 break;
         }
 //        Log.d("Util", urls.toString());

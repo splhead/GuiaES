@@ -38,7 +38,7 @@ public class JsonExtractable implements Extractable {
 
 //        Log.i("Json", meditacoes.size() + " meditacoes loaded.");
         for (Meditacao meditacao : meditacoes) {
-            Log.i("PostActivity", meditacao.toString());
+            Log.i("Json", meditacao.toString());
             dias.add(meditacao);
         }
 //        Log.i("JsonExtractable", meditacoes.size() + " meditações carregadas.");
