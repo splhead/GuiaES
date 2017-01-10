@@ -11,12 +11,14 @@ import com.silas.meditacao.io.Preferences;
 /**
  * Created by silas on 13/05/16.
  */
-public class ThemedActivity extends AppCompatActivity {
+public abstract class ThemedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Preferences.DARK_THEME, false)) {
             setTheme(R.style.Theme_Dark);
+        } else {
+            setTheme(R.style.Theme_Light);
         }
         Preferences preferences = new Preferences(this);
         getTheme().applyStyle(preferences.getFontStyle().getResId(), true);

@@ -44,24 +44,24 @@
     <style name="FontStyle" />
 
     <style name="FontStyle.Pequena">
-        <item name="font_small">10sp</item>
-        <item name="font_medium">16sp</item>
-        <item name="font_large">24sp</item>
-        <item name="font_xlarge">26sp</item>
-    </style>
-
-    <style name="FontStyle.Normal">
         <item name="font_small">12sp</item>
         <item name="font_medium">18sp</item>
         <item name="font_large">26sp</item>
         <item name="font_xlarge">28sp</item>
     </style>
 
-    <style name="FontStyle.Grande">
+    <style name="FontStyle.Normal">
         <item name="font_small">14sp</item>
         <item name="font_medium">20sp</item>
         <item name="font_large">28sp</item>
         <item name="font_xlarge">30sp</item>
+    </style>
+
+    <style name="FontStyle.Grande">
+        <item name="font_small">16sp</item>
+        <item name="font_medium">22sp</item>
+        <item name="font_large">30sp</item>
+        <item name="font_xlarge">32sp</item>
     </style>
 
 </resources>
