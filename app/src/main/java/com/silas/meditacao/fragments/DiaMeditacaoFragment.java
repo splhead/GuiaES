@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -80,9 +80,6 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                                 new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior)
                                         .execute(Util.getURLs(i + 1));
                             }
-                        } else {
-                            Toast.makeText(getActivity(),
-                                    "Data não disponível", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         mTabs.add(meditacao);
@@ -135,6 +132,14 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
         TabLayout mTablayout = (TabLayout) view.findViewById(R.id.tablayout);
 
         mTablayout.setupWithViewPager(mViewPager);
+
+        //        tira a imagem de erro do fundo
+
+        if (mTabs.size() > 0) {
+            ImageView ivErro = (ImageView) view.findViewById(R.id.iVerro);
+            ivErro.setVisibility(View.GONE);
+        }
+
     }
 
     private boolean notShabbat(Calendar hoje) {
