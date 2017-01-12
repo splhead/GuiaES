@@ -10,14 +10,12 @@ import com.silas.guiaes.activity.R;
  * Created by silas on 10/05/16.
  */
 public class Preferences {
-    public final static String FONT_STYLE = "pref_font_size";
     public final static String DARK_THEME = "pref_night_mode";
-    private static Preferences appInstance;
+    private final static String FONT_STYLE = "pref_font_size";
     private final Context context;
 
     public Preferences(Context context) {
         this.context = context;
-        appInstance = this;
     }
 
     protected SharedPreferences open() {
@@ -25,7 +23,7 @@ public class Preferences {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    protected SharedPreferences.Editor edit() {
+    private SharedPreferences.Editor edit() {
         return open().edit();
     }
 
@@ -39,24 +37,18 @@ public class Preferences {
     }
 
     public enum FontStyle {
-        Pequena(R.style.FontStyle_Pequena, "Pequena"),
-        Normal(R.style.FontStyle_Normal, "Normal"),
-        Grande(R.style.FontStyle_Grande, "Grande");
+        Pequena(R.style.FontStyle_Pequena),
+        Normal(R.style.FontStyle_Normal),
+        Grande(R.style.FontStyle_Grande);
 
         private int resId;
-        private String title;
 
-        FontStyle(int resId, String title) {
+        FontStyle(int resId) {
             this.resId = resId;
-            this.title = title;
         }
 
         public int getResId() {
             return resId;
-        }
-
-        public String getTitle() {
-            return title;
         }
     }
 }

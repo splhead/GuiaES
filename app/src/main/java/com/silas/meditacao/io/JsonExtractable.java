@@ -9,20 +9,17 @@ import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by silas on 15/12/16.
  */
 
-public class JsonExtractable implements Extractable {
+class JsonExtractable implements Extractable {
     private ArrayList<Meditacao> dias = new ArrayList<>();
     private String contentJSON;
-    private Gson gson;
-    private Calendar c = Calendar.getInstance();
 
-    public JsonExtractable(String content) {
+    JsonExtractable(String content) {
         contentJSON = content;
     }
 
@@ -30,7 +27,7 @@ public class JsonExtractable implements Extractable {
     public ArrayList<Meditacao> extraiMeditacao(int type) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat("yyyy-MM-dd");
-        gson = gsonBuilder.create();
+        Gson gson = gsonBuilder.create();
 
 //        List<Meditacao> meditacoes = Arrays.asList(gson.fromJson(contentJSON, Meditacao[].class));
 //        Log.i("JsonExtractable", gson.fromJson(contentJSON, Meditacao[].class).toString());

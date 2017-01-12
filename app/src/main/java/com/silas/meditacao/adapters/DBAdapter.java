@@ -6,29 +6,29 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.silas.meditacao.helpers.DBHelper;
 
-public class DBAdapter {
-	protected SQLiteDatabase bancoDados;
+class DBAdapter {
+	SQLiteDatabase bancoDados;
 	private Context contexto;
 	private DBHelper dbHelper;
 
 
-	public DBAdapter(Context contexto) {
+	DBAdapter(Context contexto) {
 		this.setContexto(contexto);
 	}
-	
-	public void setContexto(Context contexto){
+
+	private void setContexto(Context contexto) {
 		this.contexto = contexto;
 	}
-	
-	public DBAdapter abrir() throws SQLException
+
+	DBAdapter abrir() throws SQLException
 	{
 		dbHelper = new DBHelper(contexto);
 		bancoDados  = dbHelper.getWritableDatabase();
 //		Log.i(getClass().getName(), "Conectando com banco de dados");
 		return this;
 	}
-	
-	public void fechar() throws SQLException
+
+	void fechar() throws SQLException
 	{
 //		Log.i(getClass().getName(), "Fechando conexão com banco de dados");
 		dbHelper.close();

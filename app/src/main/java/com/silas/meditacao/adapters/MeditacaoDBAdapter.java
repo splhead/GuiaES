@@ -4,6 +4,7 @@ package com.silas.meditacao.adapters;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.util.Log;
 
 import com.silas.meditacao.models.Meditacao;
@@ -101,7 +102,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
             abrir();
             add(meditacoes);
         } finally {
-            fechar();
+            try {
+                fechar();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -138,7 +143,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
             abrir();
             return meditacao(sData, iTipo);
         } finally {
-            fechar();
+            try {
+                fechar();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -177,7 +186,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
             abrir();
             return minMax(iTipo);
         } finally {
-            fechar();
+            try {
+                fechar();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
     /*

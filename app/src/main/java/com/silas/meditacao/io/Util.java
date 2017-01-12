@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 
 public class Util {
 
@@ -44,32 +43,28 @@ public class Util {
         return false;
     }
 
-    public static HashMap<Integer, String> getURLs(int type) {
+    static String getURL(int type) {
         String url = "http://iasdcolonial.org.br/index.php/"; //
-        HashMap<Integer, String> urls = new HashMap<>();
+
         switch (type) {
             case Meditacao.ADULTO:
                 //adultos
-                urls.put(Meditacao.ADULTO, url + "meditacao-diaria/mensal");
-                break;
+                return url + "meditacao-diaria/mensal";
             case Meditacao.MULHER:
                 //mulher
-                urls.put(Meditacao.MULHER, url + "meditacao-da-mulher/mensal");
-                break;
+                return url + "meditacao-da-mulher/mensal";
             case Meditacao.JUVENIL:
                 //juvenil
-                urls.put(Meditacao.JUVENIL, url + "inspiracao-juvenil/mensal");
-                break;
+                return url + "inspiracao-juvenil/mensal";
+
             case Meditacao.ABJANELAS:
                 //janelas
-                urls.put(Meditacao.ABJANELAS, "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json");
-                break;
+                return "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json";
         }
-//        Log.d("Util", urls.toString());
-        return urls;
+        return "";
     }
 
-    public static String getContent(String address) {
+    static String getContent(String address) {
         URL url;
         BufferedReader reader = null;
         StringBuffer stringBuffer;

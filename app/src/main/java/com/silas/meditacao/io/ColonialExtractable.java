@@ -16,12 +16,12 @@ import java.util.Locale;
 /**
  * Created by silas on 03/05/16.
  */
-public class ColonialExtractable implements Extractable {
+class ColonialExtractable implements Extractable {
     private ArrayList<Meditacao> dias = new ArrayList<>();
     private Calendar c = Calendar.getInstance();
     private Document doc;
 
-    public ColonialExtractable(String content) {
+    ColonialExtractable(String content) {
         doc = Jsoup.parse(content);
     }
 
@@ -83,9 +83,8 @@ public class ColonialExtractable implements Extractable {
                 sbTexto.delete(0, sbTexto.length());
                 c.add(Calendar.DAY_OF_MONTH, 1);
             }
-            return dias;
         }
-        return null;
+        return dias;
     }
 
     private Element getRoot() {

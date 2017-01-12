@@ -78,7 +78,7 @@ public class DiaMeditacaoFragment extends Fragment implements Toolbar.OnMenuItem
                             if (Util.internetDisponivel(getActivity())) {
                                 //noinspection unchecked
                                 new ProcessaMeditacoesTask(getActivity(), mCallback, mesAnterior)
-                                        .execute(Util.getURLs(i + 1));
+                                        .execute(i + 1);
                             }
                         }
                     } else {
