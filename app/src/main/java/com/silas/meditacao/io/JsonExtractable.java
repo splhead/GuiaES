@@ -9,6 +9,7 @@ import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ class JsonExtractable implements Extractable {
     }
 
     @Override
-    public ArrayList<Meditacao> extraiMeditacao(int type) {
+    public ArrayList<Meditacao> extraiMeditacao(Calendar dia, int type) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat("yyyy-MM-dd");
         Gson gson = gsonBuilder.create();
@@ -49,7 +50,7 @@ class JsonExtractable implements Extractable {
     }
 
     @Override
-    public boolean conteudoEstaAtualizado() {
+    public boolean conteudoEstaAtualizado(Calendar day) {
         return true;
     }
 }

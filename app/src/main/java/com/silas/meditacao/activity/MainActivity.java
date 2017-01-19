@@ -5,15 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -22,43 +18,31 @@ import com.google.android.gms.analytics.Tracker;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
-import com.silas.meditacao.fragments.DiaMeditacaoFragment;
 import com.silas.meditacao.io.Preferences;
-import com.silas.meditacao.io.ProcessaMeditacoesTask;
-import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
 
-public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment.Updatable,
+public class MainActivity extends ThemedActivity implements
         Toolbar.OnMenuItemClickListener,
         DatePickerDialog.OnDateSetListener {
-    public static final String DIA = "dia";
-    public static final String MES_ANTERIOR = "mes_anterior";
-    public static final String MES_ATUAL = "mes_atual";
+//    public static final String DIA = "dia";
+//    public static final String MES_ANTERIOR = "mes_anterior";
+//    public static final String MES_ATUAL = "mes_atual";
     private Calendar dia = Calendar.getInstance();
-    private int mesAnterior = dia.get(Calendar.MONTH);
-    private int mesAtual = dia.get(Calendar.MONTH);
+//    private int mesAnterior = dia.get(Calendar.MONTH);
+//    private int mesAtual = dia.get(Calendar.MONTH);
     private AdView mAdView;
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
-    private List<Meditacao> mTabs = new ArrayList<>();
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    //    private List<Meditacao> mTabs = new ArrayList<>();
+//    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
-        if (savedInstanceState == null) {
-//            updateFragment();
-        }
-
-        init();
 
         setupGoogleAnalytics();
 
@@ -70,50 +54,10 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
 
         setupViewPager();
 
-        setupTabs();
-
 
         setupAd();
     }
 
-    private void init() {
-//        mTabs.clear();
-        MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-
-//            String sDia = args.getString(MainActivity.DIA);
-//            mesAnterior = args.getInt(MainActivity.MES_ANTERIOR);
-//            int mesAtual = args.getInt(MainActivity.MES_ATUAL);
-        String sDia = sdf.format(dia.getTime());
-        ArrayList<Meditacao> meditacoes = new ArrayList<>();
-
-        try {
-
-            meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.ADULTO));
-            meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.MULHER));
-            meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.JUVENIL));
-            meditacoes.add(mdba.buscaMeditacao(sDia, Meditacao.ABJANELAS));
-
-            for (int i = 0; i < meditacoes.size(); i++) {
-                Meditacao meditacao = meditacoes.get(i);
-                if (meditacao == null) {
-                    //solução para não tentar baixar de outros meses quando escolhe outro dia
-                    if (mesAnterior == mesAtual) {
-                        if (Util.internetDisponivel(this)) {
-                            //noinspection unchecked
-                            new ProcessaMeditacoesTask(this, this, mesAnterior)
-                                    .execute(i + 1);
-                        }
-                    }
-                } else {
-                    mTabs.add(meditacao);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void setupNotification() {
         Intent myIntent = new Intent("AGENDADOR");
@@ -153,46 +97,16 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
         if (mViewPager != null) {
-            tabAdapter = new TabAdapter(getSupportFragmentManager());
-            tabAdapter.setList(mTabs);
+            tabAdapter = new TabAdapter(getSupportFragmentManager(), dia);
+
             mViewPager.setAdapter(tabAdapter);
+
+            TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
+
+            mTablayout.setupWithViewPager(mViewPager);
         }
     }
 
-    private void setupTabs() {
-        TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
-
-        mTablayout.setupWithViewPager(mViewPager);
-
-        //        tira a imagem de erro do fundo
-
-        if (mTabs.size() > 0) {
-            ImageView ivErro = (ImageView) findViewById(R.id.iVerro);
-            ivErro.setVisibility(View.GONE);
-        }
-    }
-
-    /*public void updateFragment() {
-//        Log.d("teste","aslkdjflaçksdjfçlkajsdfçlkjasdçlfjadsf");
-        *//*FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        String sDia = sdf.format(dia.getTime());
-        args.putString(DIA, sDia);
-        args.putInt(MES_ANTERIOR, mesAnterior);
-        args.putInt(MES_ATUAL, mesAtual);
-        DiaMeditacaoFragment fragment = new DiaMeditacaoFragment();
-        fragment.setArguments(args);
-        transaction.replace(R.id.fragment, fragment);
-        transaction.commit();*//*
-    }*/
-
-    @Override
-    public void onUpdate(Calendar c, int ma) {
-        mesAtual = c.get(Calendar.MONTH);
-        mesAnterior = ma;
-        dia = c;
-        //updateFragment();
-    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -209,30 +123,7 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
                 startActivity(intent);
                 break;
             case R.id.action_date:
-                dia = Calendar.getInstance();
-                DatePickerDialog mDateDialog;
-//                Preferences preferences = new Preferences(this);
-                if (!PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(Preferences.DARK_THEME, false)) {
-                    mDateDialog = new DatePickerDialog(this,
-                            R.style.AppTheme_DialogTheme, this
-                            , dia.get(Calendar.YEAR),
-                            dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
-                } else {
-                    mDateDialog = new DatePickerDialog(this,
-                            R.style.AppTheme_DialogThemeInverse, this
-                            , dia.get(Calendar.YEAR),
-                            dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
-                }
-                Meditacao meditacao = mTabs.get(mViewPager.getCurrentItem());
-                MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-                long[] dates = mdba.buscaDataMinMax(meditacao.getTipo());
-                mDateDialog.getDatePicker().setMinDate(dates[0]);
-                mDateDialog.getDatePicker().setMaxDate(dates[1]);
-                mDateDialog.setTitle("Qual dia?");
-                mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
-                mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
-                mDateDialog.show();
+                setupDatePicker();
                 break;
             case R.id.action_share:
                 Intent sendIntent = new Intent();
@@ -251,14 +142,42 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
                 s.setType("text/plain");
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
-//            http://bit.ly/1knCbjW
 
         }
         return false;
     }
 
+    private void setupDatePicker() {
+        dia = Calendar.getInstance();
+        DatePickerDialog mDateDialog;
+//                Preferences preferences = new Preferences(this);
+        if (!PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Preferences.DARK_THEME, false)) {
+            mDateDialog = new DatePickerDialog(this,
+                    R.style.AppTheme_DialogTheme, this
+                    , dia.get(Calendar.YEAR),
+                    dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+        } else {
+            mDateDialog = new DatePickerDialog(this,
+                    R.style.AppTheme_DialogThemeInverse, this
+                    , dia.get(Calendar.YEAR),
+                    dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+        }
+
+        MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
+        long[] dates = mdba.buscaDataMinMax(mViewPager.getCurrentItem() + 1);
+
+        mDateDialog.getDatePicker().setMinDate(dates[0]);
+        mDateDialog.getDatePicker().setMaxDate(dates[1]);
+        mDateDialog.setTitle("Qual dia?");
+        mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
+        mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
+        mDateDialog.show();
+    }
+
     private String preparaCompartilhamento() {
-        Meditacao meditacao = mTabs.get(mViewPager.getCurrentItem());
+        Meditacao meditacao = tabAdapter.getContentFragmentList()
+                .get(mViewPager.getCurrentItem()).getMeditacao();
 
         if (meditacao == null) {
             return "Olhe que aplicativo bacana \"Meditação Cristã Adventista\"\n" +
@@ -348,12 +267,6 @@ public class MainActivity extends ThemedActivity implements DiaMeditacaoFragment
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         dia.set(year, month, day);
-        updateFragments();
-//        init();
-        //onUpdate(dia, mesAnterior);
-    }
-
-    private void updateFragments() {
-        tabAdapter.updateFragments();
+        tabAdapter.updateFragments(dia);
     }
 }

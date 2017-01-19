@@ -26,11 +26,11 @@ class ColonialExtractable implements Extractable {
     }
 
     @Override
-    public ArrayList<Meditacao> extraiMeditacao(int type) {
+    public ArrayList<Meditacao> extraiMeditacao(Calendar dia, int type) {
         Element raiz = getRoot();
         Elements titulos = getTitles();
 
-        if (conteudoEstaAtualizado()) {
+        if (conteudoEstaAtualizado(dia)) {
             c.set(Calendar.DAY_OF_MONTH, 1);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -135,13 +135,13 @@ class ColonialExtractable implements Extractable {
     }
 
     @Override
-    public boolean conteudoEstaAtualizado() {
-        Calendar calendar = Calendar.getInstance();
+    public boolean conteudoEstaAtualizado(Calendar dia) {
+
         String[] meses = {
                 "janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         };
-        String mes = meses[calendar.get(Calendar.MONTH)];
+        String mes = meses[dia.get(Calendar.MONTH)];
 
         Element eTd;
 

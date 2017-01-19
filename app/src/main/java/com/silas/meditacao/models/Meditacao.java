@@ -114,8 +114,8 @@ public class Meditacao {
         return tipo;
     }
 
-    public String getNomeTipo() {
-        switch (getTipo()) {
+    public static String getNomeTipo(int tipo) {
+        switch (tipo) {
             case ADULTO:
                 return "Adulto";
             case MULHER:
@@ -128,7 +128,7 @@ public class Meditacao {
         return "";
     }
 
-    public Fragment createFragment() {
+    /*public Fragment createFragment() {
         return ContentFragment.newInstance(this);
-    }
+    }*/
 }

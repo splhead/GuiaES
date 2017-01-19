@@ -6,8 +6,8 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
-import com.silas.meditacao.fragments.DiaMeditacaoFragment;
 import com.silas.meditacao.interfaces.Extractable;
+import com.silas.meditacao.interfaces.Updateable;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
@@ -20,14 +20,17 @@ public class ProcessaMeditacoesTask extends
         AsyncTask<Integer, Void, ArrayList<String>> {
     private Context mContext;
     private ProgressDialog progress;
-    private DiaMeditacaoFragment.Updatable mCallback;
-    private int mesAnterior = 99;
+    //    private DiaMeditacaoFragment.Updatable mCallback;
+//    private int mesAnterior = 99;
+    private Updateable mCallback;
     private MeditacaoDBAdapter mdba;
+    private int tipo;
+    private Calendar dia;
 
-    public ProcessaMeditacoesTask(Context context, DiaMeditacaoFragment.Updatable cb, int ma) {
+    public ProcessaMeditacoesTask(Context context, Updateable mCallback, Calendar dia) {
         mContext = context;
-        mCallback = cb;
-        mesAnterior = ma;
+        this.mCallback = mCallback;
+        this.dia = dia;
         mdba = new MeditacaoDBAdapter(mContext);
 
     }
@@ -48,38 +51,40 @@ public class ProcessaMeditacoesTask extends
         ArrayList<Meditacao> dias = null;
         ArrayList<String> status = new ArrayList<>();
         Extractable extrator;
+        tipo = tipos[0];
 
-        for (Integer tipo : tipos) {
-            extrator = howToGet(tipo, Util.getURL(tipo));
-            try {
-                dias = extrator.extraiMeditacao(tipo);
-            } catch (Exception e) {
-                e.printStackTrace();
+        extrator = howToGet(tipo, Util.getURL(tipo));
+        try {
+            if (extrator != null) {
+                dias = extrator.extraiMeditacao(dia, tipo);
             }
-            if (dias == null) {
-                switch (tipo) {
-                    case Meditacao.ADULTO:
-                        status.add(Meditacao.ADULTO, "Meditação dos Adultos indisponível" +
-                                " \n tente mais tarde!");
-                        break;
-                    case Meditacao.MULHER:
-                        status.add(Meditacao.MULHER, "Meditação das Mulheres indisponível" +
-                                " \n tente mais tarde!");
-                        break;
-                    case Meditacao.JUVENIL:
-                        status.add(Meditacao.JUVENIL, "Inspiração Juvenil indisponível" +
-                                " \n tente mais tarde!");
-                        break;
-                    case Meditacao.ABJANELAS:
-                        status.add(Meditacao.ABJANELAS, "Janelas para vida indisponível" +
-                                " \n tente mais tarde!");
-                        break;
-                }
-            } else {
-                mdba.addMeditacoes(dias);
-            }
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        if (dias == null) {
+            switch (tipo) {
+                case Meditacao.ADULTO:
+                    status.add(Meditacao.ADULTO, "Meditação dos Adultos indisponível" +
+                            " \n tente mais tarde!");
+                    break;
+                case Meditacao.MULHER:
+                    status.add(Meditacao.MULHER, "Meditação das Mulheres indisponível" +
+                            " \n tente mais tarde!");
+                    break;
+                case Meditacao.JUVENIL:
+                    status.add(Meditacao.JUVENIL, "Inspiração Juvenil indisponível" +
+                            " \n tente mais tarde!");
+                    break;
+                case Meditacao.ABJANELAS:
+                    status.add(Meditacao.ABJANELAS, "Janelas para vida indisponível" +
+                            " \n tente mais tarde!");
+                    break;
+            }
+        } else {
+            mdba.addMeditacoes(dias);
+        }
+
+
         return status;
     }
 
@@ -101,9 +106,9 @@ public class ProcessaMeditacoesTask extends
     protected void onPostExecute(ArrayList<String> status) {
         progress.dismiss();
 
-//      Atualiza a tab com o conteúdo baixado
+//      Atualiza o fragment com o conteúdo baixado
         if (status.size() <= 0) {
-            mCallback.onUpdate(Calendar.getInstance(), mesAnterior);
+            mCallback.onUpdate(Calendar.getInstance(), tipo);
         }
 
         for (String message : status) {
