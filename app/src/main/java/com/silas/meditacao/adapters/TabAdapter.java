@@ -2,16 +2,20 @@ package com.silas.meditacao.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.silas.meditacao.interfaces.FragmentObserver;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class TabAdapter extends FragmentPagerAdapter {
+public class TabAdapter extends FragmentStatePagerAdapter {
 
     private List<Meditacao> mList = new ArrayList<>();
+    private Observable mObservers = new FragmentObserver();
 
     public TabAdapter(FragmentManager fm) {
         super(fm);
@@ -19,10 +23,14 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if (mList.get(position) != null) {
-            return mList.get(position).createFragment();
+
+        Fragment fragment = mList.get(position).createFragment();
+
+        if (fragment instanceof Observer) {
+            mObservers.addObserver((Observer) fragment);
         }
-        return new Meditacao("", "", "", "", position + 1).createFragment();
+
+        return fragment;
     }
 
     @Override
@@ -32,13 +40,14 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        if (mList.get(position) != null) {
-            return mList.get(position).getNomeTipo();
-        }
-        return "";
+        return mList.get(position).getNomeTipo();
     }
 
     public void setList(List<Meditacao> l) {
         mList = l;
+    }
+
+    public void updateFragments() {
+        mObservers.notifyObservers();
     }
 }

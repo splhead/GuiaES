@@ -129,7 +129,6 @@ public class Meditacao {
     }
 
     public Fragment createFragment() {
-        return ContentFragment.newInstance(this.getTitulo(), this.getTextoBiblico(),
-                this.getDataPorExtenso(), this.getTexto());
+        return ContentFragment.newInstance(this);
     }
 }
