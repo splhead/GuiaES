@@ -17,7 +17,7 @@ import java.util.Calendar;
  * Created by silas on 22/06/15.
  */
 public class ProcessaMeditacoesTask extends
-        AsyncTask<Integer, Void, ArrayList<String>> {
+        AsyncTask<Integer, Void, String> {
     private Context mContext;
     private ProgressDialog progress;
     //    private DiaMeditacaoFragment.Updatable mCallback;
@@ -47,9 +47,9 @@ public class ProcessaMeditacoesTask extends
     }
 
     @Override
-    protected final ArrayList<String> doInBackground(Integer... tipos) {
+    protected final String doInBackground(Integer... tipos) {
         ArrayList<Meditacao> dias = null;
-        ArrayList<String> status = new ArrayList<>();
+        String status = "";
         Extractable extrator;
         tipo = tipos[0];
 
@@ -61,23 +61,23 @@ public class ProcessaMeditacoesTask extends
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (dias == null) {
+        if (dias == null || dias.size() == 0) {
             switch (tipo) {
                 case Meditacao.ADULTO:
-                    status.add(Meditacao.ADULTO, "Meditação dos Adultos indisponível" +
-                            " \n tente mais tarde!");
+                    status = "Meditação dos Adultos indisponível" +
+                            " \n tente mais tarde!";
                     break;
                 case Meditacao.MULHER:
-                    status.add(Meditacao.MULHER, "Meditação das Mulheres indisponível" +
-                            " \n tente mais tarde!");
+                    status = "Meditação das Mulheres indisponível" +
+                            " \n tente mais tarde!";
                     break;
                 case Meditacao.JUVENIL:
-                    status.add(Meditacao.JUVENIL, "Inspiração Juvenil indisponível" +
-                            " \n tente mais tarde!");
+                    status = "Inspiração Juvenil indisponível" +
+                            " \n tente mais tarde!";
                     break;
                 case Meditacao.ABJANELAS:
-                    status.add(Meditacao.ABJANELAS, "Janelas para vida indisponível" +
-                            " \n tente mais tarde!");
+                    status = "Janelas para vida indisponível" +
+                            " \n tente mais tarde!";
                     break;
             }
         } else {
@@ -103,16 +103,14 @@ public class ProcessaMeditacoesTask extends
     }
 
     @Override
-    protected void onPostExecute(ArrayList<String> status) {
+    protected void onPostExecute(String status) {
         progress.dismiss();
 
 //      Atualiza o fragment com o conteúdo baixado
-        if (status.size() <= 0) {
+        if (status.isEmpty()) {
             mCallback.onUpdate(Calendar.getInstance(), tipo);
-        }
-
-        for (String message : status) {
-            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, status, Toast.LENGTH_SHORT).show();
         }
         super.onPostExecute(status);
     }

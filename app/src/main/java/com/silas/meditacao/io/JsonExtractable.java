@@ -26,26 +26,21 @@ class JsonExtractable implements Extractable {
 
     @Override
     public ArrayList<Meditacao> extraiMeditacao(Calendar dia, int type) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("yyyy-MM-dd");
-        Gson gson = gsonBuilder.create();
+        if (contentJSON != null && !contentJSON.isEmpty()) {
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setDateFormat("yyyy-MM-dd");
+            Gson gson = gsonBuilder.create();
 
-//        List<Meditacao> meditacoes = Arrays.asList(gson.fromJson(contentJSON, Meditacao[].class));
-//        Log.i("JsonExtractable", gson.fromJson(contentJSON, Meditacao[].class).toString());
-        List<Meditacao> meditacoes = Arrays.asList(gson.fromJson(contentJSON, Meditacao[].class));
+//          Log.i(getClass().getSimpleName(), gson.fromJson(contentJSON, Meditacao[].class).toString());
+            List<Meditacao> meditacoes = Arrays.
+                    asList(gson.fromJson(contentJSON, Meditacao[].class));
 
-//        Log.i("Json", meditacoes.size() + " meditacoes loaded.");
-        for (Meditacao meditacao : meditacoes) {
-            Log.i("Json", meditacao.toString());
-            dias.add(meditacao);
+            for (Meditacao meditacao : meditacoes) {
+                Log.i(getClass().getSimpleName() , meditacao.toString());
+                dias.add(meditacao);
+            }
+//          Log.i(getClass().getSimpleName(), meditacoes.size() + " meditacoes loaded.");
         }
-//        Log.i("JsonExtractable", meditacoes.size() + " meditações carregadas.");
-//        for (Meditacao m : meditacoes) {
-//            Log.d("JsonExtractable", m.toString());
-//        }
-//
-//
-//        return new ArrayList<Meditacao>(meditacoes);
         return dias;
     }
 

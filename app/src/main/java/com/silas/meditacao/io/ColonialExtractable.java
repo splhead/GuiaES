@@ -1,5 +1,7 @@
 package com.silas.meditacao.io;
 
+import android.util.Log;
+
 import com.silas.meditacao.interfaces.Extractable;
 import com.silas.meditacao.models.Meditacao;
 
@@ -22,66 +24,65 @@ class ColonialExtractable implements Extractable {
     private Document doc;
 
     ColonialExtractable(String content) {
-        doc = Jsoup.parse(content);
+        if (content != null && !content.isEmpty())
+            doc = Jsoup.parse(content);
     }
 
     @Override
     public ArrayList<Meditacao> extraiMeditacao(Calendar dia, int type) {
-        Element raiz = getRoot();
-        Elements titulos = getTitles();
+        if (doc != null) {
+            Element raiz = getRoot();
+            Elements titulos = getTitles();
 
-        if (conteudoEstaAtualizado(dia)) {
-            c.set(Calendar.DAY_OF_MONTH, 1);
+            if (conteudoEstaAtualizado(dia)) {
+                c.set(Calendar.DAY_OF_MONTH, 1);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            StringBuilder sbTexto = new StringBuilder();
-            String sData, sTitulo, sTextoBiblico, sTexto;
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                StringBuilder sbTexto = new StringBuilder();
+                String sData, sTitulo, sTextoBiblico, sTexto;
 
-            for (Element eTitulo : titulos) {
-                Meditacao meditacao = new Meditacao("", "", "", "", type);
+                for (Element eTitulo : titulos) {
+                    sTitulo = eTitulo.text();
+                    //            Log.d("titulo", sTitulo);
 
-                sTitulo = eTitulo.text();
-                //            Log.d("titulo", sTitulo);
+                    sData = sdf.format(c.getTime());
 
-                sData = sdf.format(c.getTime());
-
-                Element prox = proximo(eTitulo, raiz);
-                //procura pelo proximo <p>
-                while (!prox.tagName().equalsIgnoreCase("p")) {
-                    prox = prox.nextElementSibling();
-                }
-
-                sTextoBiblico = prox.text();
-                //            Log.d("textoBiblico", sTextoBiblico);
-
-                //passa para texto da meditacao
-                prox = prox.nextElementSibling();
-
-                while (prox.tagName().equalsIgnoreCase("p")) {
-                    if (prox.children().size() == 0 || !prox.child(0).tagName()
-                            .equalsIgnoreCase("strong")) {
-                        sbTexto.append(prox.text());
-                        sbTexto.append("\n\n");
+                    Element prox = proximo(eTitulo, raiz);
+                    //procura pelo proximo <p>
+                    while (!prox.tagName().equalsIgnoreCase("p")) {
+                        prox = prox.nextElementSibling();
                     }
 
-                    //passa para o proximo elemento
+                    sTextoBiblico = prox.text();
+                    //            Log.d("textoBiblico", sTextoBiblico);
+
+                    //passa para texto da meditacao
                     prox = prox.nextElementSibling();
+
+                    while (prox.tagName().equalsIgnoreCase("p")) {
+                        if (prox.children().size() == 0 || !prox.child(0).tagName()
+                                .equalsIgnoreCase("strong")) {
+                            sbTexto.append(prox.text());
+                            sbTexto.append("\n\n");
+                        }
+
+                        //passa para o proximo elemento
+                        prox = prox.nextElementSibling();
+                    }
+
+                    sTexto = sbTexto.toString();
+                    //            Log.d("texto", sTexto);
+
+                    Meditacao meditacao = new Meditacao(sTitulo, sData,
+                            sTextoBiblico, sTexto, type);
+
+//                    Log.d("Meditacao", meditacao.toString());
+
+                    dias.add(meditacao);
+
+                    sbTexto.delete(0, sbTexto.length());
+                    c.add(Calendar.DAY_OF_MONTH, 1);
                 }
-
-                sTexto = sbTexto.toString();
-                //            Log.d("texto", sTexto);
-
-                meditacao.setTitulo(sTitulo);
-                meditacao.setData(sData);
-                meditacao.setTextoBiblico(sTextoBiblico);
-                meditacao.setTexto(sTexto);
-
-//                Log.d("Meditacao", meditacao.toString());
-
-                dias.add(meditacao);
-
-                sbTexto.delete(0, sbTexto.length());
-                c.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
         return dias;

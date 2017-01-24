@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.silas.meditacao.activity.MainActivity;
@@ -16,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -36,9 +38,9 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Toast.makeText(con, "OPS! Parece que você está sem gravata (digo, INTERNET)" +
+        Toast.makeText(con, "Ops! Parece que você está sem gravata (digo, INTERNET)" +
                         " assim o poder (a meditação) não desce! ;)",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 //        Log.i("TestaInternet", "Não está conectado.");
         return false;
     }
@@ -105,15 +107,18 @@ public class Util {
                 return stringBuffer.toString();
             }
 
+        } catch (ConnectException ce) {
+            Log.d("getContent", "Sem Internet!");
+            ce.printStackTrace();
         } catch (IOException e) {
+            Log.d("getContent", "erro ao baixar o conteúdo!");
             e.printStackTrace();
             /*if (tentativa < 3) {
                 tentativa++;
                 Log.d("tentativa", String.valueOf(tentativa));
                 getContent(con, address, tentativa);
             }
-            Toast.makeText(con, "Indisponível, tente novamente mais tarde!", Toast.LENGTH_SHORT)
-                    .show();*/
+            */
         } finally {
             // close the reader; this can throw an exception too, so
             // wrap it in another try/catch block.

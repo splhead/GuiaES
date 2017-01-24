@@ -80,11 +80,10 @@ public class ContentFragment extends Fragment implements Updateable{
         String sDia = sdf.format(dia.getTime());
         try {
             meditacao = mdba.buscaMeditacao(sDia, tipo);
-            Calendar hoje = Calendar.getInstance();
+//            Calendar hoje = Calendar.getInstance();
 //            boolean mesAtual = (dia.get(Calendar.MONTH) == hoje.get(Calendar.MONTH));
 
-            if(meditacao == null && Util.internetDisponivel(getActivity())
-                    ) {
+            if(meditacao == null && Util.internetDisponivel(getActivity())) {
                 new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
             } else {
                 setupContent(view,meditacao);

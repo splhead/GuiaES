@@ -111,9 +111,8 @@ public class MainActivity extends ThemedActivity implements
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         //        Log.d("onMenuItemClick frag", item.toString());
-        int id = item.getItemId();
 
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.action_about:
                 Intent i = new Intent(this, AboutActivity.class);
                 startActivity(i);
@@ -211,9 +210,6 @@ public class MainActivity extends ThemedActivity implements
         return out.toString();
     }
 
-    /**
-     * Called when leaving the activity
-     */
     @Override
     public void onPause() {
         if (mAdView != null) {
@@ -222,9 +218,6 @@ public class MainActivity extends ThemedActivity implements
         super.onPause();
     }
 
-    /**
-     * Called when returning to the activity
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -233,9 +226,6 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    /**
-     * Called before the activity is destroyed
-     */
     @Override
     public void onDestroy() {
         if (mAdView != null) {
