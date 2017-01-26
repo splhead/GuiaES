@@ -32,7 +32,8 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.code.gson:gson:2.8+'
+    compile 'org.jsoup:jsoup:1.10.2'
 }
 
 def getVersionCode = { ->

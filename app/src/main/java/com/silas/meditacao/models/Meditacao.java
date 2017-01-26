@@ -1,14 +1,7 @@
 package com.silas.meditacao.models;
 
-
-import android.support.v4.app.Fragment;
-
 import com.google.gson.annotations.SerializedName;
-import com.silas.meditacao.fragments.ContentFragment;
 
-/**
- * Created by silas on 08/09/14.
- */
 public class Meditacao {
     public static final int ADULTO = 1;
     public static final int MULHER = 2;
@@ -86,25 +79,25 @@ public class Meditacao {
         return titulo;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+//    public void setTitulo(String titulo) {
+//        this.titulo = titulo;
+//    }
 
     public String getTextoBiblico() {
         return textoBiblico;
     }
 
-    public void setTextoBiblico(String textoBiblico) {
-        this.textoBiblico = textoBiblico;
-    }
+//    public void setTextoBiblico(String textoBiblico) {
+//        this.textoBiblico = textoBiblico;
+//    }
 
     public String getTexto() {
         return texto;
     }
 
-    public void setTexto(String texto) {
-        this.texto = texto;
-    }
+//    public void setTexto(String texto) {
+//        this.texto = texto;
+//    }
 
     public String toString() {
         return this.getTitulo() + " " + this.getData() + " " + getTipo();

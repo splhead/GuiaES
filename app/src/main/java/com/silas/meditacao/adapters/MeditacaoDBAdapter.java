@@ -9,8 +9,10 @@ import android.util.Log;
 
 import com.silas.meditacao.models.Meditacao;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class MeditacaoDBAdapter extends DBAdapter {
@@ -22,6 +24,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
     public static final String TIPO = "tipo";
 
     private static final String BD_TABELA = "meditacao";
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     public MeditacaoDBAdapter(Context contexto) {
         super(contexto);
@@ -74,7 +77,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             for (Meditacao meditacao : meditacoes) {
                 // verifica se o registro já exite no banco
-                if (this.meditacao(meditacao.getData(), meditacao.getTipo()) != null) {
+                if (buscaMeditacao(stringToCalendar(meditacao.getData()), meditacao.getTipo()) != null) {
                     Log.w(getClass().getName(),
                             "A meditacao já existe e não será gravada");
                 }
@@ -97,6 +100,21 @@ public class MeditacaoDBAdapter extends DBAdapter {
         }
     }
 
+    /*public String calendarToString(Calendar data) {
+        return sdf.format(data.getTime());
+    }*/
+
+    private Calendar stringToCalendar(String data) {
+        try {
+            Calendar dia = Calendar.getInstance();
+            dia.setTime(sdf.parse(data));
+            return dia;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void addMeditacoes(ArrayList<Meditacao> meditacoes) {
         try {
             abrir();
@@ -111,8 +129,9 @@ public class MeditacaoDBAdapter extends DBAdapter {
     }
 
 
-    private Meditacao meditacao(String sData, int tipo) {
+    private Meditacao meditacao(Calendar data, int tipo) {
         Cursor c = null;
+        String sData = sdf.format(data.getTime());
         try {
             c = bancoDados.query(true, BD_TABELA,
                     new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
@@ -138,10 +157,10 @@ public class MeditacaoDBAdapter extends DBAdapter {
      * Busca a lição com base em seu número!
      *
      */
-    public Meditacao buscaMeditacao(String sData, int iTipo) {
+    public Meditacao buscaMeditacao(Calendar data, int iTipo) {
         try {
             abrir();
-            return meditacao(sData, iTipo);
+            return meditacao(data, iTipo);
         } finally {
             try {
                 fechar();
@@ -153,8 +172,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     private long[] minMax(int tipo) {
         Cursor c = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
         try {
             c = bancoDados.query(true, BD_TABELA,
                     new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}

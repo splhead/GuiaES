@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -17,9 +18,7 @@ import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +31,6 @@ public class ContentFragment extends Fragment implements Updateable{
     private Calendar dia;
     private int tipo;
     private MeditacaoDBAdapter mdba;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     public ContentFragment() {
         // Required empty public constructor
@@ -77,9 +75,8 @@ public class ContentFragment extends Fragment implements Updateable{
 
 
     private void searchOrDownload(View view) {
-        String sDia = sdf.format(dia.getTime());
         try {
-            meditacao = mdba.buscaMeditacao(sDia, tipo);
+            meditacao = mdba.buscaMeditacao(dia, tipo);
 //            Calendar hoje = Calendar.getInstance();
 //            boolean mesAtual = (dia.get(Calendar.MONTH) == hoje.get(Calendar.MONTH));
 
@@ -88,6 +85,21 @@ public class ContentFragment extends Fragment implements Updateable{
             } else {
                 setupContent(view,meditacao);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void search(View view) {
+        try {
+            meditacao = mdba.buscaMeditacao(dia, tipo);
+
+            if(meditacao == null) {
+                Toast.makeText(getActivity(),"Indisponível tente novamente mais tarde!", Toast.LENGTH_SHORT).show();
+            }
+
+            setupContent(view,meditacao);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,6 +149,6 @@ public class ContentFragment extends Fragment implements Updateable{
     public void onUpdate(Calendar dia, int tipo) {
         this.setDia(dia);
         this.setTipo(tipo);
-        searchOrDownload(getView());
+        search(getView());
     }
 }
