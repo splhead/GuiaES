@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -90,21 +89,6 @@ public class ContentFragment extends Fragment implements Updateable{
         }
     }
 
-    private void search(View view) {
-        try {
-            meditacao = mdba.buscaMeditacao(dia, tipo);
-
-            if(meditacao == null) {
-                Toast.makeText(getActivity(),"Indisponível tente novamente mais tarde!", Toast.LENGTH_SHORT).show();
-            }
-
-            setupContent(view,meditacao);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setupContent(View view, Meditacao meditacao) {
         if (meditacao != null) {
             TextView tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
@@ -149,6 +133,6 @@ public class ContentFragment extends Fragment implements Updateable{
     public void onUpdate(Calendar dia, int tipo) {
         this.setDia(dia);
         this.setTipo(tipo);
-        search(getView());
+        searchOrDownload(getView());
     }
 }

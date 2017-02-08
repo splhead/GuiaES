@@ -25,11 +25,11 @@ public class TabAdapter extends FragmentPagerAdapter {
     public TabAdapter(FragmentManager fm, Calendar dia) {
         super(fm);
         this.dia = dia;
+        initFragments();
     }
 
     @Override
     public Fragment getItem(int position) {
-        initFragments();
         return mList.get(position);
     }
 

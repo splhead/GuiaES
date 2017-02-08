@@ -77,7 +77,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             for (Meditacao meditacao : meditacoes) {
                 // verifica se o registro já exite no banco
-                if (buscaMeditacao(stringToCalendar(meditacao.getData()), meditacao.getTipo()) != null) {
+                if (this.meditacao(stringToCalendar(meditacao.getData()), meditacao.getTipo()) != null) {
                     Log.w(getClass().getName(),
                             "A meditacao já existe e não será gravada");
                 }
