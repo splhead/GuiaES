@@ -19,6 +19,6 @@
         <item name="colorControlActivated">@color/colorAccentInverse</item>
         <item name="textColorAlertDialogListItem">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:windowBackground">@drawable/drawable</item>
+        <item name="android:windowBackground">@color/colorPrimaryInverse</item>
     </style>
 </resources>
