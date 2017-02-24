@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-/**
- * Created by silas on 03/05/16.
- */
 class ColonialExtractable implements Extractable {
     private ArrayList<Meditacao> dias = new ArrayList<>();
     private Calendar c = Calendar.getInstance();
@@ -59,19 +56,17 @@ class ColonialExtractable implements Extractable {
                     //passa para texto da meditacao
                     prox = prox.nextElementSibling();
 
-                    while (prox.tagName().equalsIgnoreCase("p")) {
-                        if (prox.children().size() == 0 || !prox.child(0).tagName()
-                                .equalsIgnoreCase("strong")) {
-                            sbTexto.append(prox.text());
-                            sbTexto.append("\n\n");
-                        }
+                    while (!prox.hasClass("topo")) {
+
+                        sbTexto.append(getTextParagraphs(prox));
+                        sbTexto.append("\n");
 
                         //passa para o proximo elemento
                         prox = prox.nextElementSibling();
                     }
 
                     sTexto = sbTexto.toString();
-                    //            Log.d("texto", sTexto);
+                    Log.d("texto", sTexto);
 
                     Meditacao meditacao = new Meditacao(sTitulo, sData,
                             sTextoBiblico, sTexto, type);
@@ -86,6 +81,22 @@ class ColonialExtractable implements Extractable {
             }
         }
         return dias;
+    }
+
+    // correção Juvenis 22 fevereiro 2017
+    private String getTextParagraphs(Element element) {
+        StringBuilder sbOut = new StringBuilder();
+
+        if (element.tagName().equalsIgnoreCase("p")) {
+            sbOut.append(element.text());
+            sbOut.append("\n");
+        } else if (element.children().size() > 0) {
+            for (Element child : element.children()) {
+                sbOut.append(getTextParagraphs(child));
+            }
+        }
+
+        return sbOut.toString();
     }
 
     private Element getRoot() {
