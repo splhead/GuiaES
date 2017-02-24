@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
 
-    <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
-
+    <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorAccent">@color/colorAccent</item>
-
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="textColorAlertDialogListItem">@android:color/white</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.DialogThemeInverse" parent="Theme.AppCompat.Dialog">
-
+    <style name="AppTheme.DialogThemeInverse" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:colorPrimary">@color/colorPrimaryInverse</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
         <item name="android:colorAccent">@color/colorAccentInverse</item>
-
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@color/colorAccentInverse</item>
+        <item name="textColorAlertDialogListItem">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:windowBackground">@drawable/drawable</item>
     </style>
 </resources>
