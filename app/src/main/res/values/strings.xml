@@ -4,7 +4,7 @@
     <string name="app_name">Meditação</string>
     <string name="action_about">Sobre</string>
     <string name="action_date">Escolher dia</string>
-    <string name="tvLink">Ouça os podcast\'s:\n<a href="http://biblecast.com.br">Biblecast</a>\n<a href="http://www.mcast.com.br">Mcast</a>\n<a href="http://novotempo.com/audios/categoria/contracultura/">Contracultura</a>\n<a href="http://cristaoscansados.com.br/cronicast/">Crônicast</a>\n<a href="http://pupilasembrasas.com.br/">Pupilas em brasa</a>\n\n Acesse:\n<a href="http://novotempo.com/hiperlinkados/">Hiperlinkados</a>\n<a href="http://terceiramargemdorio.org/">Terceira Margem do Rio</a>\n<a href="http://www.tracosdoreino.com.br/">Traços do Reino</a>\n\n\n\n</string>
+    <string name="tvLink">Ouça os podcast\'s:\n<a href="http://terceiramargemdorio.org/podcasts/">Terceira Margem do Rio em Revista</a>\n<a href="http://biblecast.com.br">Biblecast</a>\n<a href="https://soundcloud.com/heroisbc">Maná com Cevada</a>\n<a href="http://novotempo.com/audios/categoria/contracultura/">Contracultura</a>\n<a href="http://cristaoscansados.com.br/">Cristãos Cansados</a>\n<a href="http://pupilasembrasas.com.br/">Pupilas em brasa</a>\n\n Acesse:\n<a href="http://novotempo.com/hiperlinkados/">Hiperlinkados</a>\n<a href="http://terceiramargemdorio.org/">Terceira Margem do Rio</a>\n<a href="http://www.tracosdoreino.com.br/">Traços do Reino</a>\n\n\n\n\n\n</string>
     <string name="send_to">Enviar para</string>
     <string name="action_share">Compartilhar</string>
     <string name="title_activity_main">Guia ES</string>
