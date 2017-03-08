@@ -13,18 +13,12 @@ import com.silas.meditacao.models.Meditacao;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/**
- * Created by silas on 22/06/15.
- */
 public class ProcessaMeditacoesTask extends
         AsyncTask<Integer, Void, String> {
     private Context mContext;
     private ProgressDialog progress;
-    //    private DiaMeditacaoFragment.Updatable mCallback;
-//    private int mesAnterior = 99;
     private Updateable mCallback;
     private MeditacaoDBAdapter mdba;
-    private int tipo;
     private Calendar dia;
 
     public ProcessaMeditacoesTask(Context context, Updateable mCallback, Calendar dia) {
@@ -51,7 +45,7 @@ public class ProcessaMeditacoesTask extends
         ArrayList<Meditacao> dias = null;
         String status = "";
         Extractable extrator;
-        tipo = tipos[0];
+        int tipo = tipos[0];
 
         extrator = howToGet(tipo, Util.getURL(tipo));
         try {
@@ -108,7 +102,7 @@ public class ProcessaMeditacoesTask extends
 
 //      Atualiza o fragment com o conteúdo baixado
         if (status.isEmpty()) {
-            mCallback.onUpdate(Calendar.getInstance(), tipo);
+            mCallback.onUpdate(Calendar.getInstance());
         } else {
             Toast.makeText(mContext, status, Toast.LENGTH_SHORT).show();
         }

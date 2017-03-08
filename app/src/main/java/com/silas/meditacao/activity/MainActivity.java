@@ -27,17 +27,11 @@ import java.util.Calendar;
 public class MainActivity extends ThemedActivity implements
         Toolbar.OnMenuItemClickListener,
         DatePickerDialog.OnDateSetListener {
-//    public static final String DIA = "dia";
-//    public static final String MES_ANTERIOR = "mes_anterior";
-//    public static final String MES_ATUAL = "mes_atual";
+
     private Calendar dia = Calendar.getInstance();
-//    private int mesAnterior = dia.get(Calendar.MONTH);
-//    private int mesAtual = dia.get(Calendar.MONTH);
     private AdView mAdView;
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
-    //    private List<Meditacao> mTabs = new ArrayList<>();
-//    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +94,8 @@ public class MainActivity extends ThemedActivity implements
             tabAdapter = new TabAdapter(getSupportFragmentManager(), dia);
 
             mViewPager.setAdapter(tabAdapter);
+            //corrige a troca de data para atualizar todas as tabs
+            mViewPager.setOffscreenPageLimit(tabAdapter.getCount());
 
             TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
 
@@ -110,7 +106,6 @@ public class MainActivity extends ThemedActivity implements
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        //        Log.d("onMenuItemClick frag", item.toString());
 
         switch (item.getItemId()) {
             case R.id.action_about:
@@ -149,7 +144,7 @@ public class MainActivity extends ThemedActivity implements
     private void setupDatePicker() {
         dia = Calendar.getInstance();
         DatePickerDialog mDateDialog;
-//                Preferences preferences = new Preferences(this);
+
         if (!PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Preferences.DARK_THEME, false)) {
             mDateDialog = new DatePickerDialog(this,

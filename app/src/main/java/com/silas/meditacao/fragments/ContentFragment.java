@@ -35,6 +35,13 @@ public class ContentFragment extends Fragment implements Updateable{
         // Required empty public constructor
     }
 
+    public static ContentFragment newInstance(Calendar dia, int tipo) {
+        ContentFragment fragment = new ContentFragment();
+        fragment.setDia(dia);
+        fragment.setTipo(tipo);
+        return fragment;
+    }
+
     public void setDia(Calendar dia) {
         this.dia = dia;
     }
@@ -45,17 +52,6 @@ public class ContentFragment extends Fragment implements Updateable{
 
     public Meditacao getMeditacao() {
         return meditacao;
-    }
-
-    public int getTipo() {
-        return tipo;
-    }
-
-    public static ContentFragment newInstance(Calendar dia, int tipo) {
-        ContentFragment fragment = new ContentFragment();
-        fragment.setDia(dia);
-        fragment.setTipo(tipo);
-        return fragment;
     }
 
     @Override
@@ -76,8 +72,6 @@ public class ContentFragment extends Fragment implements Updateable{
     private void searchOrDownload(View view) {
         try {
             meditacao = mdba.buscaMeditacao(dia, tipo);
-//            Calendar hoje = Calendar.getInstance();
-//            boolean mesAtual = (dia.get(Calendar.MONTH) == hoje.get(Calendar.MONTH));
 
             if(meditacao == null && Util.internetDisponivel(getActivity())) {
                 new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
@@ -130,9 +124,8 @@ public class ContentFragment extends Fragment implements Updateable{
     }
 
     @Override
-    public void onUpdate(Calendar dia, int tipo) {
+    public void onUpdate(Calendar dia) {
         this.setDia(dia);
-        this.setTipo(tipo);
         searchOrDownload(getView());
     }
 }
