@@ -97,6 +97,9 @@ public class MainActivity extends ThemedActivity implements
             //corrige a troca de data para atualizar todas as tabs
             mViewPager.setOffscreenPageLimit(tabAdapter.getCount());
 
+            mViewPager.setCurrentItem((Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(Preferences.TYPE_DEFAULT, "0"))));
+
             TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
 
             mTablayout.setupWithViewPager(mViewPager);

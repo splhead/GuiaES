@@ -9,9 +9,20 @@
         android:negativeButtonText="@string/pref_font_size_cancel"
         android:summary="@string/pref_sum_font_size"
         android:title="@string/pref_title_font_size" />
+
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_night_mode"
         android:summary="@string/pref_sum_night_mode"
         android:title="@string/pref_title_night_mode" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_type_default"
+        android:dialogTitle="@string/pref_title_type"
+        android:entries="@array/pref_type_entries"
+        android:entryValues="@array/pref_type_values"
+        android:key="pref_type_default"
+        android:negativeButtonText="@string/pref_font_size_cancel"
+        android:summary="@string/pref_sum_type"
+        android:title="@string/pref_title_type" />
 </PreferenceScreen>

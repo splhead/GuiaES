@@ -10,4 +10,16 @@
         <item>Normal</item>
         <item>Grande</item>
     </string-array>
+    <string-array name="pref_type_entries">
+        <item>Adultos</item>
+        <item>Mulher</item>
+        <item>Juvenil</item>
+        <item>Janelas para vida</item>
+    </string-array>
+    <string-array name="pref_type_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

@@ -6,11 +6,9 @@ import android.preference.PreferenceManager;
 
 import com.silas.guiaes.activity.R;
 
-/**
- * Created by silas on 10/05/16.
- */
 public class Preferences {
     public final static String DARK_THEME = "pref_night_mode";
+    public final static String TYPE_DEFAULT = "pref_type_default";
     private final static String FONT_STYLE = "pref_font_size";
     private final Context context;
 
@@ -18,7 +16,7 @@ public class Preferences {
         this.context = context;
     }
 
-    protected SharedPreferences open() {
+    private SharedPreferences open() {
 //        return context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
         return PreferenceManager.getDefaultSharedPreferences(context);
     }

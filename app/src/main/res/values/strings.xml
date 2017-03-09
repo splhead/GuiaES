@@ -14,8 +14,11 @@
     <string name="banner_ad_unit_id">ca-app-pub-5765621569845430/3645256504</string>
     <string name="action_share_app">Compartilhar este APP</string>
     <string name="pref_title_font_size">Ajustar tamanho da letra</string>
+    <string name="pref_title_type">Define qual meditação abrir ao iniciar</string>
+    <string name="pref_sum_type">Abre o app na meditação escolhida</string>
     <string name="pref_sum_font_size">Facilita a leitura em dispositivos pequenos</string>
     <string name="pref_fontSizes_default">Normal</string>
+    <string name="pref_type_default">0</string>
     <string name="pref_title_night_mode">Modo noturno</string>
     <string name="pref_sum_night_mode">Troca as cores para facilitar a leitura em ambientes escuros</string>
     <string name="action_settings">Configurações</string>
