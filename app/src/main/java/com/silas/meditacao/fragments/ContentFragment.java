@@ -57,6 +57,9 @@ public class ContentFragment extends Fragment implements Updateable{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            meditacao = savedInstanceState.getParcelable("meditacao");
+        }
         mdba = new MeditacaoDBAdapter(getActivity());
     }
 
@@ -69,21 +72,31 @@ public class ContentFragment extends Fragment implements Updateable{
     }
 
 
-    private void searchOrDownload(View view) {
-        try {
-            meditacao = mdba.buscaMeditacao(dia, tipo);
-
-            if(meditacao == null && Util.internetDisponivel(getActivity())) {
-                new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
-            } else {
-                setupContent(view,meditacao);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("meditacao", meditacao);
+        super.onSaveInstanceState(outState);
     }
 
-    private void setupContent(View view, Meditacao meditacao) {
+    private void searchOrDownload(View view) {
+        if (meditacao == null) {
+            try {
+                meditacao = mdba.buscaMeditacao(dia, tipo);
+
+                if (meditacao == null && Util.internetDisponivel(getActivity())) {
+                    new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        setupContent(view);
+
+    }
+
+    private void setupContent(View view) {
         if (meditacao != null) {
             TextView tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
             tvTitulo.setText(meditacao.getTitulo());
