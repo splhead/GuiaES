@@ -119,6 +119,7 @@ public class MainActivity extends ThemedActivity implements
         if (queeToDownload.size() > 0) {
             Integer[] tipos = queeToDownload.toArray(new Integer[queeToDownload.size()]);
             new ProcessaMeditacoesTask(this, this, dia).execute(tipos);
+            queeToDownload.clear();
         }
 
     }
