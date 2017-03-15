@@ -1,7 +1,5 @@
 package com.silas.meditacao.io;
 
-import android.util.Log;
-
 import com.silas.meditacao.interfaces.Extractable;
 import com.silas.meditacao.models.Meditacao;
 
@@ -66,7 +64,7 @@ class ColonialExtractable implements Extractable {
                     }
 
                     sTexto = sbTexto.toString();
-                    Log.d("texto", sTexto);
+//                    Log.d("texto", sTexto);
 
                     Meditacao meditacao = new Meditacao(sTitulo, sData,
                             sTextoBiblico, sTexto, type);

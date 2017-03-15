@@ -2,6 +2,7 @@ package com.silas.meditacao.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -11,66 +12,87 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.silas.guiaes.activity.R;
-import com.silas.meditacao.adapters.MeditacaoDBAdapter;
-import com.silas.meditacao.interfaces.Updateable;
-import com.silas.meditacao.io.ProcessaMeditacoesTask;
-import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
-
-import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ContentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ContentFragment extends Fragment implements Updateable{
+public class ContentFragment extends Fragment {
 
     private Meditacao meditacao;
-    private Calendar dia;
-    private int tipo;
-    private MeditacaoDBAdapter mdba;
+    private TextView tvTitulo, tvTextoBiblico, tvData, tvTexto, tvLinks;
+    private ImageView ivErro;
 
     public ContentFragment() {
         // Required empty public constructor
     }
 
-    public static ContentFragment newInstance(Calendar dia, int tipo) {
+    public static ContentFragment newInstance(Meditacao m) {
         ContentFragment fragment = new ContentFragment();
-        fragment.setDia(dia);
-        fragment.setTipo(tipo);
+        fragment.setMeditacao(m);
         return fragment;
-    }
-
-    public void setDia(Calendar dia) {
-        this.dia = dia;
-    }
-
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
     }
 
     public Meditacao getMeditacao() {
         return meditacao;
     }
 
+    public void setMeditacao(Meditacao meditacao) {
+        this.meditacao = meditacao;
+    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             meditacao = savedInstanceState.getParcelable("meditacao");
         }
-        mdba = new MeditacaoDBAdapter(getActivity());
+
+        setupContent();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_fragment, container, false);
-        searchOrDownload(view);
+        tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
+        tvTextoBiblico = (TextView) view.findViewById(R.id.tvTextoBiblico);
+        tvData = (TextView) view.findViewById(R.id.tvData);
+        tvTexto = (TextView) view.findViewById(R.id.tvTexto);
+        tvLinks = (TextView) view.findViewById(R.id.tvLinks);
+        ivErro = (ImageView) view.findViewById(R.id.iVerro);
+
         return view;
     }
 
+//    @Override
+//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//
+//    }
+
+    /*private void searchOrDownload() {
+        try {
+            if (meditacao == null) {
+                mdba = new MeditacaoDBAdapter(getActivity());
+                meditacao = mdba.buscaMeditacao(dia, tipo);
+            }
+
+            if (meditacao == null && Util.internetDisponivel(getActivity())) {
+                new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -78,67 +100,19 @@ public class ContentFragment extends Fragment implements Updateable{
         super.onSaveInstanceState(outState);
     }
 
-    private void searchOrDownload(View view) {
-        if (meditacao == null) {
-            try {
-                meditacao = mdba.buscaMeditacao(dia, tipo);
-
-                if (meditacao == null && Util.internetDisponivel(getActivity())) {
-                    new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        setupContent(view);
-
-    }
-
-    private void setupContent(View view) {
+    private void setupContent() {
         if (meditacao != null) {
-            TextView tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
             tvTitulo.setText(meditacao.getTitulo());
-
-            TextView tvTextoBiblico = (TextView) view.findViewById(R.id.tvTextoBiblico);
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
-
-            TextView tvData = (TextView) view.findViewById(R.id.tvData);
             tvData.setText(meditacao.getDataPorExtenso());
-
-            TextView tvTexto = (TextView) view.findViewById(R.id.tvTexto);
             tvTexto.setText(meditacao.getTexto());
-
-            TextView tvLinks = (TextView) view.findViewById(R.id.tvLinks);
             tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
-
-            ImageView ivErro = (ImageView) view.findViewById(R.id.iVerro);
             ivErro.setVisibility(View.GONE);
-        } else {
-            TextView tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
-            tvTitulo.setText("");
-
-            TextView tvTextoBiblico = (TextView) view.findViewById(R.id.tvTextoBiblico);
-            tvTextoBiblico.setText("");
-
-            TextView tvData = (TextView) view.findViewById(R.id.tvData);
-            tvData.setText("");
-
-            TextView tvTexto = (TextView) view.findViewById(R.id.tvTexto);
-            tvTexto.setText("");
-
-            TextView tvLinks = (TextView) view.findViewById(R.id.tvLinks);
-            tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
-
-            ImageView ivErro = (ImageView) view.findViewById(R.id.iVerro);
-            ivErro.setVisibility(View.VISIBLE);
         }
     }
 
-    @Override
-    public void onUpdate(Calendar dia) {
-        this.setDia(dia);
-        searchOrDownload(getView());
+    public void update(Meditacao m) {
+        setMeditacao(m);
+        setupContent();
     }
 }

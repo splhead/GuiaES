@@ -19,8 +19,10 @@ import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.io.Preferences;
+import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -32,11 +34,18 @@ public class MainActivity extends ThemedActivity implements
     private AdView mAdView;
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
+    private MeditacaoDBAdapter mdba;
+    private ArrayList<Integer> queeToDownload = new ArrayList<>();
+    private int[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
+            Meditacao.JUVENIL, Meditacao.ABJANELAS};
+    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
+
+        mdba = new MeditacaoDBAdapter(this);
 
         setupGoogleAnalytics();
 
@@ -46,7 +55,7 @@ public class MainActivity extends ThemedActivity implements
 
         setupToolbar();
 
-        setupViewPager();
+        initMeditacoes();
 
 
         setupAd();
@@ -87,22 +96,54 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
+    public void initMeditacoes() {
+        meditacoes.clear();
+        for (int tipo : tipos) {
+            try {
+                Meditacao meditacao = mdba.buscaMeditacao(dia, tipo);
+
+                if (meditacao != null) {
+                    meditacoes.add(meditacao);
+                } else {
+                    queeToDownload.add(tipo);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (meditacoes.size() > 0) {
+            setupViewPager();
+        }
+
+        if (queeToDownload.size() > 0) {
+            Integer[] tipos = queeToDownload.toArray(new Integer[queeToDownload.size()]);
+            new ProcessaMeditacoesTask(this, this, dia).execute(tipos);
+        }
+
+    }
+
     private void setupViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
         if (mViewPager != null) {
-            tabAdapter = new TabAdapter(getSupportFragmentManager(), dia);
 
-            mViewPager.setAdapter(tabAdapter);
-            //corrige a troca de data para atualizar todas as tabs
-            mViewPager.setOffscreenPageLimit(tabAdapter.getCount());
+            if (meditacoes.size() > 0) {
 
-            mViewPager.setCurrentItem((Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(Preferences.TYPE_DEFAULT, "0"))));
+                tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
 
-            TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
+//                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
+//                mViewPager.setOffscreenPageLimit(meditacoes.size());
 
-            mTablayout.setupWithViewPager(mViewPager);
+                mViewPager.setAdapter(tabAdapter);
+
+                mViewPager.setCurrentItem((Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString(Preferences.TYPE_DEFAULT, "0"))));
+
+                TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
+
+                mTablayout.setupWithViewPager(mViewPager);
+            }
         }
     }
 
@@ -255,6 +296,7 @@ public class MainActivity extends ThemedActivity implements
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         dia.set(year, month, day);
-        tabAdapter.updateFragments(dia);
+        initMeditacoes();
+        tabAdapter.updateFragments();
     }
 }
