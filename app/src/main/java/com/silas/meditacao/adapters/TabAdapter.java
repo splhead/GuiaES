@@ -22,10 +22,6 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         meditacoes = colecao;
     }
 
-    public List<ContentFragment> getContentFragmentList() {
-        return mList;
-    }
-
     @Override
     public Fragment getItem(int position) {
         return ContentFragment.newInstance(meditacoes.get(position));

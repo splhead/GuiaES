@@ -215,8 +215,8 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private String preparaCompartilhamento() {
-        Meditacao meditacao = tabAdapter.getContentFragmentList()
-                .get(mViewPager.getCurrentItem()).getMeditacao();
+        Meditacao meditacao = meditacoes
+                .get(mViewPager.getCurrentItem());
 
         if (meditacao == null) {
             return "Olhe que aplicativo bacana \"Meditação Cristã Adventista\"\n" +
