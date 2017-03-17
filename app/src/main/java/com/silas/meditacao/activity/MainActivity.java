@@ -86,7 +86,6 @@ public class MainActivity extends ThemedActivity implements
     private void setupToolbar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         if (mToolbar != null) {
-            mToolbar.setTitle(getString(R.string.app_name));
             mToolbar.setOnMenuItemClickListener(this);
             if (!PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(Preferences.DARK_THEME, false)) {
