@@ -72,28 +72,6 @@ public class ContentFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//
-//    }
-
-    /*private void searchOrDownload() {
-        try {
-            if (meditacao == null) {
-                mdba = new MeditacaoDBAdapter(getActivity());
-                meditacao = mdba.buscaMeditacao(dia, tipo);
-            }
-
-            if (meditacao == null && Util.internetDisponivel(getActivity())) {
-                new ProcessaMeditacoesTask(getActivity(), this, dia).execute(tipo);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("meditacao", meditacao);
@@ -102,7 +80,7 @@ public class ContentFragment extends Fragment {
 
     private void setupContent() {
         if (meditacao != null) {
-            tvTitulo.setText(meditacao.getTitulo());
+            tvTitulo.setText(meditacao.getTitulo().toUpperCase());
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
             tvData.setText(meditacao.getDataPorExtenso());
             tvTexto.setText(meditacao.getTexto());

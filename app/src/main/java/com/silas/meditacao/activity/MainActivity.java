@@ -15,6 +15,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
@@ -40,6 +41,8 @@ public class MainActivity extends ThemedActivity implements
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +50,7 @@ public class MainActivity extends ThemedActivity implements
 
         mdba = new MeditacaoDBAdapter(this);
 
-        setupGoogleAnalytics();
+        setupAnalytics();
 
         setupScreenKeepOn();
 
@@ -71,7 +74,7 @@ public class MainActivity extends ThemedActivity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    private void setupGoogleAnalytics() {
+    private void setupAnalytics() {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         Tracker trackerAd = analytics.newTracker("UA-64551284-1");
         Tracker tracker = analytics.newTracker("UA-64551284-2");
@@ -81,6 +84,8 @@ public class MainActivity extends ThemedActivity implements
         tracker.enableAdvertisingIdCollection(true);
         trackerAd.enableAutoActivityTracking(true);
         tracker.enableAutoActivityTracking(true);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     private void setupToolbar() {
@@ -137,14 +142,24 @@ public class MainActivity extends ThemedActivity implements
 
                 mViewPager.setAdapter(tabAdapter);
 
-                mViewPager.setCurrentItem((Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(Preferences.TYPE_DEFAULT, "0"))));
+                int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString(Preferences.TYPE_DEFAULT, "0")));
+
+                mViewPager.setCurrentItem(tabDefault);
+
+                recordTabDefaultAnalytics(tabDefault);
 
                 TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
 
                 mTablayout.setupWithViewPager(mViewPager);
             }
         }
+    }
+
+    private void recordTabDefaultAnalytics(int position) {
+        String tabName = tabAdapter.getPageTitle(position).toString();
+
+        mFirebaseAnalytics.setCurrentScreen(this, tabName, null);
     }
 
 
@@ -246,6 +261,12 @@ public class MainActivity extends ThemedActivity implements
         out.append("\n\n");
         out.append(meditacao.getTexto());
 
+        //Analytics
+        Bundle params = new Bundle();
+        params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+        params.putString("devotional_date", meditacao.getData());
+        mFirebaseAnalytics.logEvent("share_devotional", params);
+
         return out.toString();
     }
 
@@ -298,5 +319,10 @@ public class MainActivity extends ThemedActivity implements
         dia.set(year, month, day);
         initMeditacoes();
         tabAdapter.updateFragments();
+
+        // Analytics
+        Bundle params = new Bundle();
+        params.putString("new_date", dia.toString());
+        mFirebaseAnalytics.logEvent("change_date", params);
     }
 }

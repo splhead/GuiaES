@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.silas.guiaes.app"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 25
     }
     buildTypes {
@@ -27,13 +27,14 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.android.gms:play-services-ads:10.0.1'
-    compile 'com.google.android.gms:play-services-analytics:10.0.1'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.google.code.gson:gson:2.8+'
+    compile 'com.google.android.gms:play-services-ads:10.2.1'
+    compile 'com.google.android.gms:play-services-analytics:10.2.1'
+    compile 'com.android.support:design:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'org.jsoup:jsoup:1.10.2'
+    compile 'com.google.firebase:firebase-core:10.0.2'
 }
 
 def getVersionCode = { ->
@@ -70,4 +71,6 @@ android {
         versionName getVersionName()
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
 

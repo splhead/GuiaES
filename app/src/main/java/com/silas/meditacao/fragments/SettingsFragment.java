@@ -6,22 +6,23 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.Util;
 
-/**
- * Created by splhead on 18/01/16.
- */
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String KEY_FONT_SIZE = "pref_font_size";
     public final static String KEY_DARK_THEME = "pref_night_mode";
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
     }
 
     @Override
@@ -45,7 +46,11 @@ public class SettingsFragment extends PreferenceFragment
                     Util.restart(getActivity());
                     break;
             }
+
+            mFirebaseAnalytics.setUserProperty("font_size", fontSize);
+
         } else if (key.equals(KEY_DARK_THEME)) {
+            mFirebaseAnalytics.setUserProperty("theme", "darktheme");
             Util.restart(getActivity());
         }
     }
