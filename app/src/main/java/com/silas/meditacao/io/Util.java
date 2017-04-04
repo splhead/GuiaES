@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,11 +26,10 @@ public class Util {
         try {
             ConnectivityManager connectivityManager = (ConnectivityManager) con
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifiInfo = connectivityManager
-                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            NetworkInfo mobileInfo = connectivityManager
-                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if (wifiInfo.isConnected() || mobileInfo.isConnected()) {
+            NetworkInfo internet = connectivityManager
+                    .getActiveNetworkInfo();
+
+            if (internet.isConnected()) {
 //                Log.i("TestaInternet", "Está conectado.");
                 return true;
             }
@@ -60,8 +58,8 @@ public class Util {
                 return url + "inspiracao-juvenil/mensal";
 
             case Meditacao.ABJANELAS:
-                //janelas
-                return "https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json";
+                //janelas https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json
+                return "https://gist.githubusercontent.com/anonymous/386f9d8d5ea404c14d6da332e7a4a744/raw/5b2a5f10eaa84e54e5da7029ce121ed1717a5fe5/janelas_para_a_vida.json";
         }
         return "";
     }
@@ -86,9 +84,9 @@ public class Util {
             // give it 30 seconds to respond
             connection.setReadTimeout(30 * 1000);
 
-            if (Build.VERSION.SDK_INT > 13) {
+//            if (Build.VERSION.SDK_INT > 13) {
                 connection.setRequestProperty("Connection", "close");
-            }
+//            }
 
             connection.connect();
 

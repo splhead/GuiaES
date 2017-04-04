@@ -37,8 +37,9 @@ public class MainActivity extends ThemedActivity implements
     private TabAdapter tabAdapter;
     private MeditacaoDBAdapter mdba;
     private ArrayList<Integer> queeToDownload = new ArrayList<>();
-    private int[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
-            Meditacao.JUVENIL, Meditacao.ABJANELAS};
+    private int[] tipos = {//Meditacao.ADULTO, Meditacao.MULHER,
+            //Meditacao.JUVENIL,
+            Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -145,9 +146,13 @@ public class MainActivity extends ThemedActivity implements
                 int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
                         .getString(Preferences.TYPE_DEFAULT, "0")));
 
-                mViewPager.setCurrentItem(tabDefault);
+                if (tabDefault <= tabAdapter.getCount()) {
 
-                recordTabDefaultAnalytics(tabDefault);
+                    mViewPager.setCurrentItem(tabDefault);
+
+                    recordTabDefaultAnalytics(tabDefault);
+
+                }
 
                 TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
 
