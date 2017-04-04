@@ -21,6 +21,7 @@ import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
+import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
@@ -37,9 +38,8 @@ public class MainActivity extends ThemedActivity implements
     private TabAdapter tabAdapter;
     private MeditacaoDBAdapter mdba;
     private ArrayList<Integer> queeToDownload = new ArrayList<>();
-    private int[] tipos = {//Meditacao.ADULTO, Meditacao.MULHER,
-            //Meditacao.JUVENIL,
-            Meditacao.ABJANELAS};
+    private int[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
+            Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -121,7 +121,7 @@ public class MainActivity extends ThemedActivity implements
             setupViewPager();
         }
 
-        if (queeToDownload.size() > 0) {
+        if (queeToDownload.size() > 0 && Util.internetDisponivel(this)) {
             Integer[] tipos = queeToDownload.toArray(new Integer[queeToDownload.size()]);
             new ProcessaMeditacoesTask(this, this, dia).execute(tipos);
             queeToDownload.clear();
@@ -223,10 +223,10 @@ public class MainActivity extends ThemedActivity implements
         }
 
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-        long[] dates = mdba.buscaDataMinMax(mViewPager.getCurrentItem() + 1);
+        long[] dates = mdba.buscaDataMinMax(tipos[mViewPager.getCurrentItem()]);
 
         mDateDialog.getDatePicker().setMinDate(dates[0]);
-        mDateDialog.getDatePicker().setMaxDate(dates[1]);
+        mDateDialog.getDatePicker().setMaxDate(dia.getTimeInMillis());
         mDateDialog.setTitle("Qual dia?");
         mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
         mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);

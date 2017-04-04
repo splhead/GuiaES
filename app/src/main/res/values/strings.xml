@@ -4,12 +4,10 @@
     <string name="app_name">Meditação</string>
     <string name="action_about">Sobre</string>
     <string name="action_date">Escolher dia</string>
-    <string name="tvLink">Ouça os podcast\'s:\n<a href="http://terceiramargemdorio.org/podcasts/">Terceira Margem do Rio em Revista</a>\n<a href="http://biblecast.com.br">Biblecast</a>\n<a href="https://soundcloud.com/heroisbc">Maná com Cevada</a>\n<a href="http://novotempo.com/audios/categoria/contracultura/">Contracultura</a>\n<a href="http://cristaoscansados.com.br/">Cristãos Cansados</a>\n<a href="http://pupilasembrasas.com.br/">Pupilas em brasa</a>\n\n Acesse:\n<a href="http://novotempo.com/hiperlinkados/">Hiperlinkados</a>\n<a href="http://terceiramargemdorio.org/">Terceira Margem do Rio</a>\n<a href="http://www.tracosdoreino.com.br/">Traços do Reino</a>\n\n\n\n\n\n</string>
+    <string name="tvLink">Ouça os podcast\'s:\n<a href="http://terceiramargemdorio.org/podcasts/">Terceira Margem do Rio em Revista</a>\n<a href="http://biblecast.com.br">Biblecast</a>\n<a href="https://soundcloud.com/heroisbc">Maná com Cevada</a>\n<a href="http://novotempo.com/audios/categoria/contracultura/">Contracultura</a>\n<a href="http://cristaoscansados.com.br/">Cristãos Cansados</a>\n<a href="http://pupilasembrasas.com.br/">Pupilas em brasa</a>\n\n Acesse:\n<a href="http://novotempo.com/hiperlinkados/">Hiperlinkados</a>\n<a href="http://terceiramargemdorio.org/">Terceira Margem do Rio</a>\n<a href="http://www.tracosdoreino.com.br/">Traços do Reino</a>\n<a href="http://mais.cpb.com.br/">Casa Publicadora Brasileira</a>\n\n\n\n\n\n</string>
     <string name="send_to">Enviar para</string>
     <string name="action_share">Compartilhar</string>
     <string name="title_activity_main">Guia ES</string>
-    <string name="twitter_text">\@splhead - Woody</string>
-    <string name="history_text">Sim, este app foi feito por um PECADOR! Que erra tentando acertar! Que de graça recebeu e de graça também te dá - rimou :p\n\nCaso não consiga instalar pela playstore posso te enviar, mande um e-mail para splhead@gmail.com\n O Reino VEM!\n\n\nObrigado Heróis!</string>
     <!-- This is an ad unit ID for a test ad. Replace with your own banner ad unit id. -->
     <string name="banner_ad_unit_id">ca-app-pub-5765621569845430/3645256504</string>
     <string name="action_share_app">Compartilhar este APP</string>

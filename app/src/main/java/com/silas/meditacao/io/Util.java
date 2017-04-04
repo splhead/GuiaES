@@ -44,21 +44,19 @@ public class Util {
     }
 
     static String getURL(int type) {
-        String url = "http://iasdcolonial.org.br/index.php/"; //
 
         switch (type) {
             case Meditacao.ADULTO:
                 //adultos
-                return url + "meditacao-diaria/mensal";
+                return "https://gist.githubusercontent.com/anonymous/a91302485781c31b840f93b055266b0f/raw/16d082773d6122aadc32b63301a2c091046fc918/a_caminho_do_lar.json";
             case Meditacao.MULHER:
                 //mulher
-                return url + "meditacao-da-mulher/mensal";
+                return "https://gist.githubusercontent.com/anonymous/833850532b13aef66b39d45838bc2816/raw/414cae89310e2e37f4f779428077d0905940a0f2/totalmente_amavel.json";
             case Meditacao.JUVENIL:
                 //juvenil
-                return url + "inspiracao-juvenil/mensal";
+                return "https://gist.githubusercontent.com/anonymous/00b246e71aa73375621547219fd3aecf/raw/cd80726fb8c14ce7f29a2e3c55a3a944d99a87c2/siga_o_mestre.json";
 
             case Meditacao.ABJANELAS:
-                //janelas https://gist.githubusercontent.com/splhead/c5e0e611a917bc6f2df9a7c2493a576f/raw/e6f4a51ea5d87583e9fcca1f2a26cb54b969ee02/med_janelas_para_vida.json
                 return "https://gist.githubusercontent.com/anonymous/386f9d8d5ea404c14d6da332e7a4a744/raw/5b2a5f10eaa84e54e5da7029ce121ed1717a5fe5/janelas_para_a_vida.json";
         }
         return "";
@@ -111,12 +109,6 @@ public class Util {
         } catch (IOException e) {
             Log.d("getContent", "erro ao baixar o conteúdo!");
             e.printStackTrace();
-            /*if (tentativa < 3) {
-                tentativa++;
-                Log.d("tentativa", String.valueOf(tentativa));
-                getContent(con, address, tentativa);
-            }
-            */
         } finally {
             // close the reader; this can throw an exception too, so
             // wrap it in another try/catch block.

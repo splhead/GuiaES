@@ -92,7 +92,7 @@ public class ProcessaMeditacoesTask extends
             case Meditacao.ADULTO:
             case Meditacao.MULHER:
             case Meditacao.JUVENIL:
-                return new ColonialExtractable(content);
+//                return new ColonialExtractable(content);
             case Meditacao.ABJANELAS:
                 return new JsonExtractable(content);
         }
