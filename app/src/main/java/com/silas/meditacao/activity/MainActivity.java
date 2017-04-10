@@ -146,11 +146,11 @@ public class MainActivity extends ThemedActivity implements
                 int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
                         .getString(Preferences.TYPE_DEFAULT, "0")));
 
-                if (tabDefault <= tabAdapter.getCount()) {
+                if (tabDefault < tabAdapter.getCount()) {
 
                     mViewPager.setCurrentItem(tabDefault);
 
-                    recordTabDefaultAnalytics(tabDefault);
+//                    recordTabDefaultAnalytics(tabDefault);
 
                 }
 
@@ -161,11 +161,11 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private void recordTabDefaultAnalytics(int position) {
-        String tabName = tabAdapter.getPageTitle(position).toString();
-
-        mFirebaseAnalytics.setCurrentScreen(this, tabName, null);
-    }
+//    private void recordTabDefaultAnalytics(int position) {
+//        String tabName = tabAdapter.getPageTitle(position).toString();
+//
+//        mFirebaseAnalytics.setCurrentScreen(this, tabName, null);
+//    }
 
 
     @Override
