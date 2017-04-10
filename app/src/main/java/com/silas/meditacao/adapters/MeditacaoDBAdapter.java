@@ -211,7 +211,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         }
     }
     /*
-	private List<Meditacao> meditacoes(long trimestreID) {
+    private List<Meditacao> meditacoes(long trimestreID) {
 		List<Licao> licoesList = new ArrayList<Licao>();
 		Cursor c = bancoDados.query(BD_TABELA, 
 				new String[] {ROWID, DATA, NUMERO, TITULO, TRIMESTREID, CAPA}
@@ -236,12 +236,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 		}
 		return licoesList;
 	}
-	
-	*//**
-     * Busca todos as lições
-     *
-     * @return List<Licao>
-     *//*
+
 	public List<Meditacao> buscaTodasMeditacoes(long trimestreID) {
 		try {
 			abrir();

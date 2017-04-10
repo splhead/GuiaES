@@ -12,7 +12,7 @@ import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 public class DBHelper extends SQLiteOpenHelper {
 	private static final String NOME_BANCO_DADOS = "guia";
 
-	private static final int VERSAO_BANCO_DADOS = 3;
+	private static final int VERSAO_BANCO_DADOS = 4;
 
 	// Declaracao do SQL de criacao do banco de dados
 	private static final String[] SQL_BANCO_DADOS = {
@@ -53,11 +53,18 @@ public class DBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase bancodados, int versao_antiga,
 			int nova_versao) {
+//		Log.w(DBHelper.class.getName(),
+//				"Atualizando o banco de dados da versão " + versao_antiga
+//						+ " para " + nova_versao
+//						+ ", que apagará todos os dados da versão antiga");
+//		bancodados.execSQL("DROP TABLE IF EXISTS meditacao");
 		Log.w(DBHelper.class.getName(),
 				"Atualizando o banco de dados da versão " + versao_antiga
 						+ " para " + nova_versao
-						+ ", que apagará todos os dados da versão antiga");
-		bancodados.execSQL("DROP TABLE IF EXISTS meditacao");
+						+ ", que apagará todos os dados da meditação da mulher e add " +
+						" a coluna de favoritos");
+		//apaga a meditação da mulher antiga
+		bancodados.execSQL("DELETE FROM meditacao WHERE tipo=2");
 		onCreate(bancodados);
 	}
 
