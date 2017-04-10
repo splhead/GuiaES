@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "163866335155",
+    "firebase_url": "https://admob-app-id-9691790109.firebaseio.com",
+    "project_id": "admob-app-id-9691790109",
+    "storage_bucket": "admob-app-id-9691790109.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163866335155:android:915090e60453bfb0",
+        "android_client_info": {
+          "package_name": "com.silas.guiaes.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163866335155-ftasol73p98uhvi39j42fk2mhtm9kiqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZG9RQWs9X7NaW7-axsHclK2fNwv0p0es"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
