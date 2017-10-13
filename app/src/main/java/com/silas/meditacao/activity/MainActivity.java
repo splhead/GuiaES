@@ -90,7 +90,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupToolbar() {
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        Toolbar mToolbar = findViewById(R.id.toolbar_main);
         if (mToolbar != null) {
             mToolbar.setOnMenuItemClickListener(this);
             if (!PreferenceManager.getDefaultSharedPreferences(this)
@@ -130,7 +130,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupViewPager() {
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
 
         if (mViewPager != null) {
 
@@ -154,7 +154,7 @@ public class MainActivity extends ThemedActivity implements
 
                 }
 
-                TabLayout mTablayout = (TabLayout) findViewById(R.id.tablayout);
+                TabLayout mTablayout = findViewById(R.id.tablayout);
 
                 mTablayout.setupWithViewPager(mViewPager);
             }
@@ -308,7 +308,7 @@ public class MainActivity extends ThemedActivity implements
         Calendar hoje = Calendar.getInstance();
         if (notShabbat(hoje)) {
             // if not Shabbat load advertise
-            mAdView = (AdView) findViewById(R.id.ad_view);
+            mAdView = findViewById(R.id.ad_view);
 
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice("1DDC6B87A119F01DE92D910C6F5B9F5C")
