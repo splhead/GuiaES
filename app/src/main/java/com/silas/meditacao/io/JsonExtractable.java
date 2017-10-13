@@ -12,10 +12,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-/**
- * Created by silas on 15/12/16.
- */
-
 class JsonExtractable implements Extractable {
     private ArrayList<Meditacao> dias = new ArrayList<>();
     private String contentJSON;
