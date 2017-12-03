@@ -4,15 +4,15 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -33,7 +33,7 @@ public class MainActivity extends ThemedActivity implements
         DatePickerDialog.OnDateSetListener {
 
     private Calendar dia = Calendar.getInstance();
-    private AdView mAdView;
+
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
     private MeditacaoDBAdapter mdba;
@@ -61,8 +61,8 @@ public class MainActivity extends ThemedActivity implements
 
         initMeditacoes();
 
+        setupFAB();
 
-        setupAd();
     }
 
 
@@ -183,14 +183,6 @@ public class MainActivity extends ThemedActivity implements
             case R.id.action_date:
                 setupDatePicker();
                 break;
-            case R.id.action_share:
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent,
-                        getResources().getText(R.string.send_to)));
-                break;
             case R.id.action_share_app:
                 Intent s = new Intent();
                 s.setAction(Intent.ACTION_SEND);
@@ -231,6 +223,22 @@ public class MainActivity extends ThemedActivity implements
         mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
         mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
         mDateDialog.show();
+    }
+
+    private void setupFAB() {
+        FloatingActionButton fab = findViewById(R.id.fab_share);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent,
+                        getResources().getText(R.string.send_to)));
+            }
+        });
     }
 
     private String preparaCompartilhamento() {
@@ -275,49 +283,7 @@ public class MainActivity extends ThemedActivity implements
         return out.toString();
     }
 
-    @Override
-    public void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
-        super.onPause();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mAdView != null) {
-            mAdView.resume();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
-        super.onDestroy();
-    }
-
-    private boolean notShabbat(Calendar hoje) {
-        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
-                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
-    }
-
-    private void setupAd() {
-        Calendar hoje = Calendar.getInstance();
-        if (notShabbat(hoje)) {
-            // if not Shabbat load advertise
-            mAdView = findViewById(R.id.ad_view);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice("1DDC6B87A119F01DE92D910C6F5B9F5C")
-                    .build();
-
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-        }
-    }
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {

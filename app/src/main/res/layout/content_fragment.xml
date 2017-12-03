@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -71,5 +72,14 @@
             android:fontFamily="sans-serif-thin"
             android:paddingTop="8dp"
             android:text="@string/tvLink" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/ad_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:adSize="BANNER"
+            app:adUnitId="@string/banner_ad_unit_id"
+            app:layout_anchor="@id/pager"
+            app:layout_anchorGravity="bottom|right|end" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
