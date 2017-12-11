@@ -5,7 +5,7 @@
     <color name="colorAccent">#F44336</color>
     <color name="colorPrimaryInverse">#212121</color>
     <color name="colorPrimaryDarkInverse">#000000</color>
-    <color name="colorAccentInverse">#212121</color>
+    <color name="colorAccentInverse">#F44336</color>
     <color name="colorTabInactive">#96ffffff</color>
     <!-- text color: white -->
     <color name="textColorPrimary">#FFFFFF</color>

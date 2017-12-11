@@ -14,9 +14,9 @@
     <style name="AppTheme.DialogThemeInverse" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:colorPrimary">@color/colorPrimaryInverse</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
-        <item name="android:colorAccent">@color/colorAccentInverse</item>
+        <item name="android:colorAccent">@android:color/white</item>
         <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlActivated">@color/colorAccentInverse</item>
+        <item name="colorControlActivated">@android:color/white</item>
         <item name="textColorAlertDialogListItem">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:windowBackground">@color/colorPrimaryInverse</item>
