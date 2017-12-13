@@ -123,7 +123,7 @@ public class MainActivity extends ThemedActivity implements
 
         if (queeToDownload.size() > 0 && Util.internetDisponivel(this)) {
             Integer[] tipos = queeToDownload.toArray(new Integer[queeToDownload.size()]);
-            new ProcessaMeditacoesTask(this, this, dia).execute(tipos);
+            new ProcessaMeditacoesTask(this, dia).execute(tipos);
             queeToDownload.clear();
         }
 
@@ -161,6 +161,13 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
+    public View getCoordnatorLayout() {
+        return findViewById(R.id.coordinator_layout);
+    }
+
+    /*public View getProgressBar() {
+        return findViewById(R.id.progress_bar);
+    }*/
 //    private void recordTabDefaultAnalytics(int position) {
 //        String tabName = tabAdapter.getPageTitle(position).toString();
 //
@@ -250,29 +257,15 @@ public class MainActivity extends ThemedActivity implements
                     "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
         }
 
-        StringBuilder out = new StringBuilder();
-        switch (meditacao.getTipo()) {
-            case Meditacao.ADULTO:
-                out.append("Meditação Matinal\n\n");
-                break;
-            case Meditacao.MULHER:
-                out.append("Meditação da Mulher\n\n");
-                break;
-            case Meditacao.JUVENIL:
-                out.append("Inspiração Juvenil\n\n");
-                break;
-            case Meditacao.ABJANELAS:
-                out.append("Janelas para Vida\n\n");
-                break;
-        }
-
-        out.append(meditacao.getTitulo());
-        out.append("\n\n");
-        out.append(meditacao.getTextoBiblico());
-        out.append("\n\n");
-        out.append(meditacao.getDataPorExtenso());
-        out.append("\n\n");
-        out.append(meditacao.getTexto());
+        String out = Meditacao.getDevotionalName(meditacao.getTipo()) +
+                "\n\n" +
+                meditacao.getTitulo() +
+                "\n\n" +
+                meditacao.getTextoBiblico() +
+                "\n\n" +
+                meditacao.getDataPorExtenso() +
+                "\n\n" +
+                meditacao.getTexto();
 
         //Analytics
         Bundle params = new Bundle();
@@ -280,7 +273,7 @@ public class MainActivity extends ThemedActivity implements
         params.putString("devotional_date", meditacao.getData());
         mFirebaseAnalytics.logEvent("share_devotional", params);
 
-        return out.toString();
+        return out;
     }
 
 

@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.models.Meditacao;
@@ -16,29 +16,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Util {
 
-    public static Boolean internetDisponivel(Context con) {
+    public static Boolean internetDisponivel(MainActivity activity) {
+        WeakReference<MainActivity> wr = new WeakReference<>(activity);
         try {
-            ConnectivityManager connectivityManager = (ConnectivityManager) con
+            ConnectivityManager connectivityManager = (ConnectivityManager) wr.get()
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo internet = connectivityManager
-                    .getActiveNetworkInfo();
-
-            if (internet.isConnected()) {
+            NetworkInfo internet;
+            if (connectivityManager != null) {
+                internet = connectivityManager
+                        .getActiveNetworkInfo();
+                if (internet.isConnected()) {
 //                Log.i("TestaInternet", "Está conectado.");
-                return true;
+                    return true;
+                }
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Toast.makeText(con, "Ops! Parece que você está sem gravata (digo, INTERNET)" +
-                        " assim o poder (a meditação) não desce! ;)",
-                Toast.LENGTH_SHORT).show();
+        Snackbar.make(wr.get().getCoordnatorLayout(), "Ops! Sem gravata (digo, INTERNET)" +
+                        " o poder (a meditação) não desce! ;)",
+                Snackbar.LENGTH_LONG).show();
 //        Log.i("TestaInternet", "Não está conectado.");
         return false;
     }

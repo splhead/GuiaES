@@ -42,16 +42,15 @@ public class Meditacao implements Parcelable {
         this.tipo = tipo;
     }
 
-
-    public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
+    /*public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
         this.titulo = titulo;
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
         this.tipo = tipo;
-    }
+    }*/
 
-    protected Meditacao(Parcel in) {
+    private Meditacao(Parcel in) {
         this.id = in.readLong();
         this.data = in.readString();
         this.titulo = in.readString();
@@ -72,6 +71,21 @@ public class Meditacao implements Parcelable {
                 return "A. Bullon";
         }
         return "";
+    }
+
+    public static String getDevotionalName(int tipo) {
+        switch (tipo) {
+            case ADULTO:
+                return "Meditação dos Adultos";
+            case MULHER:
+                return "Meditação das Mulheres";
+            case JUVENIL:
+                return "Inspiração Juvenil";
+            case ABJANELAS:
+                return "Janelas para Vida";
+            default:
+                return "";
+        }
     }
 
     public long getId() {

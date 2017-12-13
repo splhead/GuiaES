@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:paddingBottom="0dp">
     <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_main"
@@ -22,4 +23,11 @@
         app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="@color/colorTabInactive" />
 
+    <!--<ProgressBar
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:progressTint="@android:color/white"
+        android:layout_margin="0dp"/>-->
 </android.support.design.widget.AppBarLayout>
