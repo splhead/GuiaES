@@ -59,7 +59,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     /**
      * Grava a meditacao no banco
-     *
      *//*
     public long addMeditacao(Meditacao meditacao) {
         try {
@@ -69,7 +68,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
             fechar();
         }
     }*/
-
     private void add(ArrayList<Meditacao> meditacoes) {
 
         //Log.d("adapter", licao.toString());
@@ -131,7 +129,13 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     private Meditacao meditacao(Calendar data, int tipo) {
         Cursor c = null;
+
+        if (data.get(Calendar.YEAR) == 2018) {
+            data.set(Calendar.YEAR, 2017);
+        }
+
         String sData = sdf.format(data.getTime());
+
         try {
             c = bancoDados.query(true, BD_TABELA,
                     new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
@@ -155,7 +159,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     /**
      * Busca a lição com base em seu número!
-     *
      */
     public Meditacao buscaMeditacao(Calendar data, int iTipo) {
         try {
