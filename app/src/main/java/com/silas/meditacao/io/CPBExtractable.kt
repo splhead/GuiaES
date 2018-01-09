@@ -12,26 +12,21 @@ import org.jsoup.nodes.Element
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CPBExtractable(context: Context) : Extractable {
+class CPBExtractable(context: Context, tp: Int) : Extractable {
     lateinit var document: Document
     lateinit var date: String
     var devotionals = ArrayList<Meditacao>()
     val ctx = context
-
+    var type = tp
 
     override fun extractDevotional(): ArrayList<Meditacao> {
         try {
-            var next: String
-            var type = 1
 
-            initUrl(Meditacao.ADULTO)
-            initUrl(Meditacao.MULHER)
-            initUrl(Meditacao.JUVENIL)
+            initUrl(type)
+            val lastDay = getLastDayOfMonth()
 
             do {
                 document = Jsoup.connect(getLastUrlPreference(type)).get()
-
-                next = document.selectFirst("link[rel=next]").attr("href")
 
                 val title = document.selectFirst("div.titleMeditacao").text()
 
@@ -49,19 +44,13 @@ class CPBExtractable(context: Context) : Extractable {
                 devotionals.add(devotional)
 
                 val day: Int = idate.substring(8, 10).toInt()
-                if (day < getLastDayOfMonth()) setLastUrlPreference(type, next)
-
-                if (day == getLastDayOfMonth()) {
-                    if (type == 3) {
-                        val a = getLastUrlPreference(Meditacao.ADULTO)
-                        val m = getLastUrlPreference(Meditacao.MULHER)
-                        val j = getLastUrlPreference(Meditacao.JUVENIL)
-                    }
-                    type++
-                }
 
 
-            } while (type < 4)
+                setLastUrlPreference(type, document.selectFirst("link[rel=next]")
+                        .attr("href"))
+
+
+            } while (day < lastDay)
         } catch (e: HttpStatusException) {
 //            e.printStackTrace()
 

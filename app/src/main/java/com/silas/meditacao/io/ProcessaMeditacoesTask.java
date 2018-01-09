@@ -59,24 +59,24 @@ public class ProcessaMeditacoesTask extends
 //        int tipo = tipos[0];
 
         for (int tipo : tipos) {
-            if (tipo == 1 || tipo == 4) {
-                counter++;
-                extrator = howToGet(tipo, Util.getURL(tipo));
-                try {
-                    if (extrator != null) {
-                        dias = extrator.extractDevotional();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+            counter++;
+            extrator = howToGet(tipo, Util.getURL(tipo));
+            try {
+                if (extrator != null) {
+                    dias = extrator.extractDevotional();
                 }
-                if (dias == null || dias.size() == 0) {
-                    status.add(Meditacao.getDevotionalName(tipo)
-                            + " indisponível \n tente mais tarde!");
-                } else {
-                    mdba.addMeditacoes(dias);
-                }
-//                publishProgress((counter * 100) / tipos.length);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            if (dias == null || dias.size() == 0) {
+                status.add(Meditacao.getDevotionalName(tipo)
+                        + " indisponível \n tente mais tarde!");
+            } else {
+                mdba.addMeditacoes(dias);
+            }
+//                publishProgress((counter * 100) / tipos.length);
+
         }
 
 
@@ -84,14 +84,13 @@ public class ProcessaMeditacoesTask extends
     }
 
     private Extractable howToGet(int type, String url) {
-        String content = Util.getContent(url);
-
         switch (type) {
             case Meditacao.ADULTO:
             case Meditacao.MULHER:
             case Meditacao.JUVENIL:
-                return new CPBExtractable(wr.get());
+                return new CPBExtractable(wr.get(), type);
             case Meditacao.ABJANELAS:
+                String content = Util.getContent(url);
                 return new JsonExtractable(content);
         }
         return null;
