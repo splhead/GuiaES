@@ -35,8 +35,8 @@ public class ProcessaMeditacoesTask extends
 //        progressBar.setVisibility(View.VISIBLE);
         //progressBar.setIndeterminate(true);
         progress = new ProgressDialog(wr.get());
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//        progress.setIndeterminate(true);
+//        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
         progress.setMessage("Ore pelo meu criador e aguarde...");
         progress.setCancelable(false);
@@ -59,22 +59,24 @@ public class ProcessaMeditacoesTask extends
 //        int tipo = tipos[0];
 
         for (int tipo : tipos) {
-            counter++;
-            extrator = howToGet(tipo, Util.getURL(tipo));
-            try {
-                if (extrator != null) {
-                    dias = extrator.extraiMeditacao(dia, tipo);
+            if (tipo == 1 || tipo == 4) {
+                counter++;
+                extrator = howToGet(tipo, Util.getURL(tipo));
+                try {
+                    if (extrator != null) {
+                        dias = extrator.extractDevotional();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (dias == null || dias.size() == 0) {
+                    status.add(Meditacao.getDevotionalName(tipo)
+                            + " indisponível \n tente mais tarde!");
+                } else {
+                    mdba.addMeditacoes(dias);
+                }
+//                publishProgress((counter * 100) / tipos.length);
             }
-            if (dias == null || dias.size() == 0) {
-                status.add(Meditacao.getDevotionalName(tipo)
-                        + " indisponível \n tente mais tarde!");
-            } else {
-                mdba.addMeditacoes(dias);
-            }
-            publishProgress((counter * 100) / tipos.length);
         }
 
 
@@ -88,7 +90,7 @@ public class ProcessaMeditacoesTask extends
             case Meditacao.ADULTO:
             case Meditacao.MULHER:
             case Meditacao.JUVENIL:
-//                return new ColonialExtractable(content);
+                return new CPBExtractable(wr.get());
             case Meditacao.ABJANELAS:
                 return new JsonExtractable(content);
         }

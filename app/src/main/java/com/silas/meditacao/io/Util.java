@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -55,6 +56,30 @@ public class Util {
             case Meditacao.ADULTO:
                 //adultos
                 return "https://gist.githubusercontent.com/anonymous/a91302485781c31b840f93b055266b0f/raw/16d082773d6122aadc32b63301a2c091046fc918/a_caminho_do_lar.json";
+            case Meditacao.MULHER:
+                //mulher
+                return "https://gist.githubusercontent.com/anonymous/2e25e4eca84fae894d0c10e0cc4e86ae/raw/df61d4a63b5756fbb3441b1a5431304c100977f6/vivendo_seu_amor.json";
+            case Meditacao.JUVENIL:
+                //juvenil
+                return "https://gist.githubusercontent.com/anonymous/00b246e71aa73375621547219fd3aecf/raw/cd80726fb8c14ce7f29a2e3c55a3a944d99a87c2/siga_o_mestre.json";
+
+            case Meditacao.ABJANELAS:
+                return "https://gist.githubusercontent.com/anonymous/386f9d8d5ea404c14d6da332e7a4a744/raw/5b2a5f10eaa84e54e5da7029ce121ed1717a5fe5/janelas_para_a_vida.json";
+        }
+        return "";
+    }
+
+    static String getURI(int type) {
+        final String BASE_URL = "https://mais.cpb.com.br/?post_type=meditacao&p=45805";
+        final String POST_TYPE_PARAM = "post_type";
+        final String POST_TYPE_VALUE = "meditacao";
+        Uri.Builder uri = Uri.parse(BASE_URL).buildUpon()
+                .appendQueryParameter(POST_TYPE_PARAM, POST_TYPE_VALUE);
+
+        switch (type) {
+            case Meditacao.ADULTO:
+                //adultos
+
             case Meditacao.MULHER:
                 //mulher
                 return "https://gist.githubusercontent.com/anonymous/2e25e4eca84fae894d0c10e0cc4e86ae/raw/df61d4a63b5756fbb3441b1a5431304c100977f6/vivendo_seu_amor.json";

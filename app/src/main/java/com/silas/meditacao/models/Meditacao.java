@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
+
 public class Meditacao implements Parcelable {
     public static final int ADULTO = 1;
     public static final int MULHER = 2;
@@ -42,13 +44,13 @@ public class Meditacao implements Parcelable {
         this.tipo = tipo;
     }
 
-    /*public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
+    public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
         this.titulo = titulo;
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
         this.tipo = tipo;
-    }*/
+    }
 
     private Meditacao(Parcel in) {
         this.id = in.readLong();
@@ -118,9 +120,16 @@ public class Meditacao implements Parcelable {
         String mes[] = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
         try {
+            String ano;
+            if (tipo == Meditacao.ABJANELAS) {
+                Calendar agora = Calendar.getInstance();
+                ano = String.valueOf(agora.get(Calendar.YEAR));
+            } else {
+                ano = data.substring(0, 4);
+            }
             out = data.substring(8) + " de "
                     + mes[Integer.parseInt(data.substring(5, 7)) - 1]
-                    + " de " + data.substring(0, 4);
+                    + " de " + ano;
         } catch (Exception e) {
 //            e.printStackTrace();
         }

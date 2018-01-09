@@ -1,5 +1,6 @@
 package com.silas.meditacao.io;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -9,7 +10,6 @@ import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 class JsonExtractable implements Extractable {
@@ -20,8 +20,9 @@ class JsonExtractable implements Extractable {
         contentJSON = content;
     }
 
+    @NonNull
     @Override
-    public ArrayList<Meditacao> extraiMeditacao(Calendar dia, int type) {
+    public ArrayList<Meditacao> extractDevotional() {
         if (contentJSON != null && !contentJSON.isEmpty()) {
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setDateFormat("yyyy-MM-dd");
@@ -40,8 +41,9 @@ class JsonExtractable implements Extractable {
         return dias;
     }
 
+
     @Override
-    public boolean conteudoEstaAtualizado(Calendar day) {
+    public boolean contentIsUpdated() {
         return true;
     }
 }

@@ -130,7 +130,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
     private Meditacao meditacao(Calendar data, int tipo) {
         Cursor c = null;
 
-        if (data.get(Calendar.YEAR) == 2018) {
+        if (data.get(Calendar.YEAR) == 2018 && tipo == Meditacao.ABJANELAS) {
             data.set(Calendar.YEAR, 2017);
         }
 
