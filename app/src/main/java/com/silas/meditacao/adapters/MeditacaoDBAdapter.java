@@ -129,12 +129,14 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
     private Meditacao meditacao(Calendar data, int tipo) {
         Cursor c = null;
+        Calendar dia = data;
 
-        if (data.get(Calendar.YEAR) == 2018 && tipo == Meditacao.ABJANELAS) {
-            data.set(Calendar.YEAR, 2017);
+        if (tipo == Meditacao.ABJANELAS) {
+            dia = Calendar.getInstance();
+            dia.set(Calendar.YEAR, 2017);
         }
 
-        String sData = sdf.format(data.getTime());
+        String sData = sdf.format(dia.getTime());
 
         try {
             c = bancoDados.query(true, BD_TABELA,

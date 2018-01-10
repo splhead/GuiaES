@@ -35,8 +35,8 @@ public class ProcessaMeditacoesTask extends
 //        progressBar.setVisibility(View.VISIBLE);
         //progressBar.setIndeterminate(true);
         progress = new ProgressDialog(wr.get());
-//        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
         progress.setMessage("Ore pelo meu criador e aguarde...");
         progress.setCancelable(false);
@@ -75,7 +75,7 @@ public class ProcessaMeditacoesTask extends
             } else {
                 mdba.addMeditacoes(dias);
             }
-//                publishProgress((counter * 100) / tipos.length);
+            publishProgress((counter * 100) / tipos.length);
 
         }
 
@@ -88,7 +88,9 @@ public class ProcessaMeditacoesTask extends
             case Meditacao.ADULTO:
             case Meditacao.MULHER:
             case Meditacao.JUVENIL:
-                return new CPBExtractable(wr.get(), type);
+                if (dia.get(Calendar.YEAR) == 2018) {
+                    return new CPBExtractable(wr.get(), type);
+                }
             case Meditacao.ABJANELAS:
                 String content = Util.getContent(url);
                 return new JsonExtractable(content);

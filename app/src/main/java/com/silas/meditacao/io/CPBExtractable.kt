@@ -23,7 +23,7 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         try {
 
             initUrl(type)
-            val lastDay = getLastDayOfMonth()
+            var lastDay = 28
 
             do {
                 document = Jsoup.connect(getLastUrlPreference(type)).get()
@@ -44,10 +44,14 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
                 devotionals.add(devotional)
 
                 val day: Int = idate.substring(8, 10).toInt()
+                if (day == 1) {
+                    lastDay = getLastDayOfMonth(idate.substring(5, 7).toInt())
+                }
 
-
-                setLastUrlPreference(type, document.selectFirst("link[rel=next]")
-                        .attr("href"))
+                if (day < lastDay) {
+                    setLastUrlPreference(type, document.selectFirst("link[rel=next]")
+                            .attr("href"))
+                }
 
 
             } while (day < lastDay)
@@ -57,6 +61,7 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         } catch (e: Exception) {
 
 //            e.printStackTrace()
+            setLastUrlPreference(type, "")
         }
         return devotionals
     }
@@ -75,8 +80,10 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun getLastDayOfMonth(): Int {
-        return Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
+    fun getLastDayOfMonth(month: Int): Int {
+        val day = Calendar.getInstance()
+        day.set(Calendar.MONTH, month - 1)
+        return day.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
 
     fun convertDate(date: String): String {
