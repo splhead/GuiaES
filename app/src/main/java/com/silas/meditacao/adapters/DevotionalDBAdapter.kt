@@ -5,9 +5,11 @@ import android.content.Context
 import android.database.Cursor
 import com.silas.meditacao.helpers.DevotionalContract
 import com.silas.meditacao.models.Meditacao
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
+    private val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     fun add(devotionals: ArrayList<Meditacao>) {
 
         try {
@@ -36,7 +38,8 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
     }
 
     fun getDevotional(date: Calendar, type: Int) {
-        var cursor: Cursor
+        val cursor: Cursor
+
         val columns = arrayOf(DevotionalContract.COLUMN_ID
                 , DevotionalContract.COLUMN_TITLE
                 , DevotionalContract.COLUMN_DATE
@@ -44,7 +47,15 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
                 , DevotionalContract.COLUMN_TEXT
                 , DevotionalContract.COLUMN_TYPE
         )
-        val selection = "${DevotionalContract.COLUMN_DATE} like '%'" +
+        var day = date
+        if (type == Meditacao.ABJANELAS) {
+            day = Calendar.getInstance()
+            day.set(Calendar.YEAR, 2017)
+        }
+
+        val sDate = sdf.format(day.time)
+
+        val selection = "${DevotionalContract.COLUMN_DATE} like '$sDate%'" +
                 " AND ${DevotionalContract.COLUMN_TYPE}  =  $type"
         try {
             cursor = db.query(true, DevotionalContract.TABLE_NAME, columns, selection,
@@ -55,10 +66,10 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
                         , cursor.getString(2), cursor.getString(3)
                         , cursor.getString(4), cursor.getInt(5))
             }
+            cursor?.close()
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-//            cursor?.close()
             close()
         }
     }
