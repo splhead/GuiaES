@@ -49,6 +49,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private int getNotificationIcon() {
         boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
-        return useWhiteIcon ? R.drawable.notification : R.drawable.ic_launcher;
+        return useWhiteIcon ? R.drawable.notification : R.mipmap.ic_launcher;
     }
 }
