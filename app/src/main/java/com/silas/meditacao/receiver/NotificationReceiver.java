@@ -12,13 +12,14 @@ import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.MainActivity;
 
 public class NotificationReceiver extends BroadcastReceiver {
+    public final String CHANNEL_ID = "com.silas.meditacao";
     public NotificationReceiver() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(getNotificationIcon())
                         .setContentTitle("Bom dia!")
                         .setContentText("Que tal começar o dia bem?!");
@@ -44,7 +45,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, n);
+        if (mNotifyMgr != null) {
+            mNotifyMgr.notify(mNotificationId, n);
+        }
     }
 
     private int getNotificationIcon() {

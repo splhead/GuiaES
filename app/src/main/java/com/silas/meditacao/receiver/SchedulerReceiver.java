@@ -20,30 +20,7 @@ public class SchedulerReceiver extends BroadcastReceiver {
     public SchedulerReceiver() {
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Intent myIntent = new Intent(context, NotificationReceiver.class);
-        PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-
-        boolean alarmeAtivo = (mPendingIntent != null);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        if (!alarmeAtivo) {
-
-            setAlarm(context, myIntent, alarmManager);
-//            Log.i("Alarm", "Novo alarm");
-        } else {
-            Log.i("Alarm", "alarm ja ativado");
-            if (alarmManager != null) {
-                Log.i("Alarm", "canceling old alarm");
-                alarmManager.cancel(mPendingIntent);
-                setAlarm(context, myIntent, alarmManager);
-            }
-        }
-    }
-
-    private void setAlarm(Context context, Intent myIntent, AlarmManager alarmManager) {
+    public static void setAlarm(Context context, Intent myIntent, AlarmManager alarmManager) {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -57,9 +34,27 @@ public class SchedulerReceiver extends BroadcastReceiver {
         c.set(Calendar.SECOND, 0);
 
         if (alarmManager != null) {
-            Log.i("Alarm", "setting an alarm");
+            Log.i("Alarm", "setting an alarm at " + pair.toString());
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pendingIntent);//set repeating every 24
+        }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        if (action != null && action.equals("AGENDADOR")) {
+            Intent myIntent = new Intent("ALARME_DISPARADO");
+//            PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+            PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+            boolean alarmeAtivo = (mPendingIntent != null);
+
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+            if (!alarmeAtivo) {
+                //            Log.i("Alarm", "Novo alarm");
+                setAlarm(context, myIntent, alarmManager);
+            }
         }
     }
 }

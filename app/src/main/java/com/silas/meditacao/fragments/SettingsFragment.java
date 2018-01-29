@@ -1,11 +1,16 @@
 package com.silas.meditacao.fragments;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
@@ -13,6 +18,7 @@ import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.TimePreference;
 import com.silas.meditacao.io.TimePreferenceDialogFragmentCompat;
 import com.silas.meditacao.io.Util;
+import com.silas.meditacao.receiver.SchedulerReceiver;
 
 public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -79,6 +85,20 @@ public class SettingsFragment extends PreferenceFragmentCompat
         } else if (key.equals(KEY_DARK_THEME)) {
             mFirebaseAnalytics.setUserProperty("theme", "darktheme");
             Util.restart(getActivity());
+        } else if (key.equals(TimePreference.TIMEPREFERENCE_KEY)) {
+            Intent myIntent = new Intent("ALARME_DISPARADO");
+            PendingIntent mPendingIntent = PendingIntent.getBroadcast(getContext(), 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+
+            Context ctx = getContext();
+            if (ctx != null) {
+                AlarmManager alarmManager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+                if (alarmManager != null) {
+                    alarmManager.cancel(mPendingIntent);
+                    Log.i("Alarm", "canceling old alarm");
+                    SchedulerReceiver.setAlarm(ctx, myIntent, alarmManager);
+                }
+            }
+
         }
     }
 

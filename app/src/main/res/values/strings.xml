@@ -21,6 +21,6 @@
     <string name="action_settings">Configurações</string>
     <string name="pref_font_size_cancel">cancelar</string>
     <string name="erro">Ops! eu falhei! Mas Jesus não falha e pagou o preço</string>
-    <string name="cancel">Cancelar</string>
-    <string name="ok">Escolher</string>
+    <string name="pref_timepreference_title">Define quando quer ser lembrado(a) de ler</string>
+    <string name="pref_timepreference_dialog_title">Me lembre as</string>
 </resources>
