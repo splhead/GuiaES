@@ -11,6 +11,8 @@ import android.support.v4.app.NotificationCompat;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.MainActivity;
 
+import java.util.Calendar;
+
 public class NotificationReceiver extends BroadcastReceiver {
     public final String CHANNEL_ID = "com.silas.meditacao";
     public NotificationReceiver() {
@@ -18,11 +20,12 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String[] msg = getGreeting();
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(getNotificationIcon())
-                        .setContentTitle("Bom dia!")
-                        .setContentText("Que tal começar o dia bem?!");
+                        .setContentTitle(msg[0])
+                        .setContentText(msg[1]);
 
         Intent resultIntent = new Intent(context, MainActivity.class);
 
@@ -53,5 +56,18 @@ public class NotificationReceiver extends BroadcastReceiver {
     private int getNotificationIcon() {
         boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
         return useWhiteIcon ? R.drawable.notification : R.mipmap.ic_launcher;
+    }
+
+    private String[] getGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        if (hour < 13) {
+            return new String[]{"Bom dia!", "Que tal começar o dia bem!"};
+        } else if (hour < 19) {
+            return new String[]{"Boa tarde!", "Que bom que você reservou um tempo para mim!"};
+        } else {
+            return new String[]{"Boa noite!", "Como foi seu dia? Agora vai ficar melhor!"};
+        }
     }
 }
