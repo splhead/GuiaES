@@ -14,7 +14,9 @@
         <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="verseColor">@color/colorPrimary</item>
-
+        <item name="preferenceTheme">
+            @style/PreferenceThemeOverlay.v14.Material
+        </item>
     </style>
 
     <style name="Theme.Light.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -33,6 +35,9 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="verseColor">@color/textColorPrimary</item>
+        <item name="preferenceTheme">
+            @style/PreferenceThemeOverlay.v14.Material
+        </item>
     </style>
 
     <style name="FontStyle" />

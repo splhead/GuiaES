@@ -25,11 +25,10 @@
         android:negativeButtonText="@string/pref_font_size_cancel"
         android:summary="@string/pref_sum_type"
         android:title="@string/pref_title_type" />
-    <!-- <com.silas.meditacao.fragments.TimePreference
-         android:dialogTitle="Me lembre as"
-         android:key="pref_notification_hour"
-         android:summary="A hora padrão é 06:00"
-         android:title="Define qual hora quer ser lembrado de ler"
 
-         />-->
+    <!--suppress AndroidElementNotAllowed -->
+    <com.silas.meditacao.io.TimePreference
+        android:dialogTitle="Me lembre as"
+        android:key="pref_notification_hour"
+        android:title="Define quando quer ser lembrado(a) de ler" />
 </PreferenceScreen>
