@@ -3,6 +3,7 @@ package com.silas.meditacao.fragments;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
@@ -68,7 +69,7 @@ public class ContentFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_fragment, container, false);
         tvTitulo = view.findViewById(R.id.tvTitulo);
@@ -83,7 +84,7 @@ public class ContentFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable("meditacao", meditacao);
         super.onSaveInstanceState(outState);
     }
@@ -138,7 +139,7 @@ public class ContentFragment extends Fragment {
         Calendar hoje = Calendar.getInstance();
         if (notShabbat(hoje)) {
             AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice("1DDC6B87A119F01DE92D910C6F5B9F5C")
+                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
                     .build();
 
             // Start loading the ad in the background.
