@@ -42,8 +42,8 @@ class JsonExtractable implements Extractable {
     }
 
 
-    @Override
-    public boolean contentIsUpdated() {
-        return true;
-    }
+//    @Override
+//    public boolean contentIsUpdated() {
+//        return true;
+//    }
 }

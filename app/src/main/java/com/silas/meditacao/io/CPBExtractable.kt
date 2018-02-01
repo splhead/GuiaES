@@ -105,44 +105,38 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         }
     }
 
-    override fun contentIsUpdated(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    fun getLastDayOfMonth(month: Int): Int {
+    private fun getLastDayOfMonth(month: Int): Int {
         val day = Calendar.getInstance()
         day.set(Calendar.MONTH, month - 1)
         return day.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
 
-    fun convertDate(date: String): String {
+    private fun convertDate(date: String): String {
         try {
             val iday: Int = date.substring(0, 2).toInt()
             var imonth = ""
             val months = arrayOf("janeiro", "fevereiro", "março", "abril", "maio", "junho",
                     "julho", "agosto", "setembro", "outubro", "novembro", "dezembro")
-            for (month in months) {
-                if (date.contains(month)) {
-                    imonth = (months.indexOf(month) + 1).toString()
-                }
-            }
+            months
+                    .filter { date.contains(it) }
+                    .forEach { imonth = (months.indexOf(it) + 1).toString() }
             val currentYear = Calendar.getInstance()
             // YYYY-MM-DD
             return "${currentYear.get(Calendar.YEAR)}-${imonth.padStart(2, '0')}" +
                     "-${iday.toString().padStart(2, '0')}"
         } catch (e: Exception) {
-            val devoltional = devotionals.get(devotionals.lastIndex)
+            val devoltional = devotionals[devotionals.lastIndex]
             val dia = devoltional.data.substring(8, 10).toInt() + 1
             return "${devoltional.data.substring(0, 8)}${dia.toString().padStart(2, '0')}"
         }
     }
 
-    fun getLastUrlPreference(type: Int): String {
+    private fun getLastUrlPreference(type: Int): String {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         return prefs.getString(getNomeTipo(type), "")
     }
 
-    fun setLastUrlPreference(type: Int, url: String) {
+    private fun setLastUrlPreference(type: Int, url: String) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         prefs.edit().putString(getNomeTipo(type), url).apply()
     }

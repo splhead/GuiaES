@@ -9,7 +9,7 @@ interface Extractable {
     fun extractDevotional(): ArrayList<Meditacao>
 
     //    verifica se esta extraindo conteudo atual
-    fun contentIsUpdated(): Boolean
+//    fun contentIsUpdated(): Boolean
 
 }
 
