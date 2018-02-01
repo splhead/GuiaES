@@ -21,9 +21,14 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
 
     override fun extractDevotional(): ArrayList<Meditacao> {
         try {
-
+//            if (type == Meditacao.ADULTO) setLastUrlPreference(type, "https://mais.cpb.com.br/meditacao/fidelidade-incondicional/")
+//            val lub = getLastUrlPreference(type)
+//            Log.d("CPB", "Last url before $lub")
             initUrl(type)
-            var lastDay = 28
+            val today = Calendar.getInstance()
+            val currentMonth = today.get(Calendar.MONTH) + 1
+            val lastDay = getLastDayOfMonth(currentMonth)
+
 
             do {
                 document = Jsoup.connect(getLastUrlPreference(type)).get()
@@ -44,17 +49,21 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
                 devotionals.add(devotional)
 
                 val day: Int = idate.substring(8, 10).toInt()
-                if (day == 1) {
-                    lastDay = getLastDayOfMonth(idate.substring(5, 7).toInt())
+                val month: Int = idate.substring(5, 7).toInt()
+
+                /*if (day == 1 || day == 31) {
+                    lastDay = getLastDayOfMonth(month)
+                }*/
+
+                if ((day < lastDay && month == currentMonth) || month < currentMonth) {
+                    val url: String = getUrl(document)
+                    setLastUrlPreference(type, url)
                 }
 
-                if (day < lastDay) {
-                    setLastUrlPreference(type, document.selectFirst("link[rel=next]")
-                            .attr("href"))
-                }
 
-
-            } while (day < lastDay)
+            } while ((day < lastDay && month == currentMonth) || month < currentMonth)
+//            val lua = getLastUrlPreference(type)
+//            Log.d("CPB", "Last url after $lua")
         } catch (e: HttpStatusException) {
 //            e.printStackTrace()
 
@@ -64,6 +73,26 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
             setLastUrlPreference(type, "")
         }
         return devotionals
+    }
+
+    private fun getUrl(document: Document): String {
+        val urlElement = document.selectFirst("a.nextMeditacao")
+        val nextElement = document.selectFirst("link[rel=next]")
+        var href = ""
+        if (urlElement != null) {
+            if (urlElement.hasAttr("href")) {
+                href = urlElement.attr("href")
+                return href
+            } else {
+                if (nextElement != null) {
+                    if (nextElement.hasAttr("href"))
+                        href = nextElement.attr("href")
+                    return href
+                }
+            }
+        }
+        href = getLastUrlPreference(type)
+        return href
     }
 
     private fun initUrl(type: Int) {
@@ -108,7 +137,7 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         }
     }
 
-    fun getLastUrlPreference(type: Int): String? {
+    fun getLastUrlPreference(type: Int): String {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         return prefs.getString(getNomeTipo(type), "")
     }
