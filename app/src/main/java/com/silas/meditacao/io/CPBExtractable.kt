@@ -66,6 +66,7 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
 //            Log.d("CPB", "Last url after $lua")
         } catch (e: HttpStatusException) {
 //            e.printStackTrace()
+            extractDevotional()
 
         } catch (e: Exception) {
 

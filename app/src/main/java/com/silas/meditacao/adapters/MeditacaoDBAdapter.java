@@ -133,6 +133,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
         if (tipo == Meditacao.ABJANELAS) {
             dia = Calendar.getInstance();
+            dia.setTimeInMillis(data.getTimeInMillis());
             dia.set(Calendar.YEAR, 2017);
         }
 
