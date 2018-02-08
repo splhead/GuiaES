@@ -67,7 +67,7 @@ public class MainActivity extends ThemedActivity implements
 
 
     private void setupNotification() {
-        Intent myIntent = new Intent("AGENDADOR");
+        Intent myIntent = new Intent("com.silas.meditacao.AGENDADOR");
         sendBroadcast(myIntent);
     }
 

@@ -86,8 +86,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             mFirebaseAnalytics.setUserProperty("theme", "darktheme");
             Util.restart(getActivity());
         } else if (key.equals(TimePreference.TIMEPREFERENCE_KEY)) {
-            Intent myIntent = new Intent("ALARME_DISPARADO");
-            PendingIntent mPendingIntent = PendingIntent.getBroadcast(getContext(), 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+            Intent myIntent = new Intent("com.silas.meditacao.ALARME_DISPARADO");
+            PendingIntent mPendingIntent = PendingIntent.getBroadcast(getContext(), 0, myIntent, 0);
 
             Context ctx = getContext();
             if (ctx != null) {

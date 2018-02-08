@@ -43,8 +43,8 @@ public class SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (action != null && action.equals("AGENDADOR")) {
-            Intent myIntent = new Intent("ALARME_DISPARADO");
+        if (action != null && action.equals("com.silas.meditacao.AGENDADOR")) {
+            Intent myIntent = new Intent("com.silas.meditacao.ALARME_DISPARADO");
 //            PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
             PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
             boolean alarmeAtivo = (mPendingIntent != null);

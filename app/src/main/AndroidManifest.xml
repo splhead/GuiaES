@@ -45,14 +45,14 @@
 
         <receiver android:name="com.silas.meditacao.receiver.NotificationReceiver">
             <intent-filter>
-                <action android:name="ALARME_DISPARADO" />
+                <action android:name="com.silas.meditacao.ALARME_DISPARADO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
         <receiver android:name="com.silas.meditacao.receiver.SchedulerReceiver">
             <intent-filter>
-                <action android:name="AGENDADOR" />
+                <action android:name="com.silas.meditacao.AGENDADOR" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
