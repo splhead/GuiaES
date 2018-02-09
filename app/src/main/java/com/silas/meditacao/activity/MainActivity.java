@@ -253,16 +253,16 @@ public class MainActivity extends ThemedActivity implements
                 .get(mViewPager.getCurrentItem());
 
         if (meditacao == null) {
-            return "Olhe que aplicativo bacana \"Meditação Cristã Adventista\"\n" +
+            return "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
                     "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
         }
 
         String out = Meditacao.getDevotionalName(meditacao.getTipo()) +
-                "\n\n" +
+                "\n\n*" +
                 meditacao.getTitulo() +
-                "\n\n" +
+                "*\n\n_" +
                 meditacao.getTextoBiblico() +
-                "\n\n" +
+                "_\n\n" +
                 meditacao.getDataPorExtenso() +
                 "\n\n" +
                 meditacao.getTexto();
