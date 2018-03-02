@@ -1,3 +1,4 @@
+/*
 package com.silas.meditacao.io
 
 import android.content.Context
@@ -51,9 +52,11 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
                 val day: Int = idate.substring(8, 10).toInt()
                 val month: Int = idate.substring(5, 7).toInt()
 
-                /*if (day == 1 || day == 31) {
+                */
+/*if (day == 1 || day == 31) {
                     lastDay = getLastDayOfMonth(month)
-                }*/
+                }*//*
+
 
                 if ((day < lastDay && month == currentMonth) || month < currentMonth) {
                     val url: String = getUrl(document)
@@ -142,3 +145,4 @@ class CPBExtractable(context: Context, tp: Int) : Extractable {
         prefs.edit().putString(getNomeTipo(type), url).apply()
     }
 }
+*/

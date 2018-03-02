@@ -36,6 +36,7 @@ public class ProcessaMeditacoesTask extends
         //progressBar.setIndeterminate(true);
         progress = new ProgressDialog(wr.get());
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setCanceledOnTouchOutside(true);
 //        progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
         progress.setMessage("Ore pelo meu criador e aguarde...");
@@ -88,9 +89,9 @@ public class ProcessaMeditacoesTask extends
             case Meditacao.ADULTO:
             case Meditacao.MULHER:
             case Meditacao.JUVENIL:
-                if (dia.get(Calendar.YEAR) == 2018) {
+                /*if (dia.get(Calendar.YEAR) == 2018) {
                     return new CPBExtractable(wr.get(), type);
-                }
+                }*/
             case Meditacao.ABJANELAS:
                 String content = Util.getContent(url);
                 return new JsonExtractable(content);
