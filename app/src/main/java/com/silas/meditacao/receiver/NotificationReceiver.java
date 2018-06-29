@@ -6,26 +6,35 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.MainActivity;
+import com.silas.meditacao.adapters.MeditacaoDBAdapter;
+import com.silas.meditacao.io.Preferences;
+import com.silas.meditacao.models.Meditacao;
 
 import java.util.Calendar;
 
 public class NotificationReceiver extends BroadcastReceiver {
     public final String CHANNEL_ID = "com.silas.meditacao";
+    private Context mContext;
     public NotificationReceiver() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        mContext = context;
         String[] msg = getGreeting();
+        String notificationText = getVerseFromPreferedDevotional();
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(getNotificationIcon())
                         .setContentTitle(msg[0])
-                        .setContentText(msg[1]);
+                        .setContentText(notificationText)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(notificationText));
 
         Intent resultIntent = new Intent(context, MainActivity.class);
 
@@ -69,5 +78,20 @@ public class NotificationReceiver extends BroadcastReceiver {
         } else {
             return new String[]{"Boa noite!", "Como foi seu dia? Agora vai ficar melhor!"};
         }
+    }
+
+    private String getVerseFromPreferedDevotional() {
+        Calendar today = Calendar.getInstance();
+        MeditacaoDBAdapter meditacaoDBAdapter = new MeditacaoDBAdapter(mContext);
+        Meditacao meditacao = meditacaoDBAdapter.buscaMeditacao(today, getPreferedDevotionalType());
+        if( meditacao != null) {
+            return meditacao.getTextoBiblico();
+        }
+        return getGreeting()[1];
+    }
+
+    private int getPreferedDevotionalType() {
+        return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getString(Preferences.TYPE_DEFAULT, "0")) + 1;
     }
 }

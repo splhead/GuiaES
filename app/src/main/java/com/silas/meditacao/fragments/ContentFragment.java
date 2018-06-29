@@ -13,13 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.models.Meditacao;
-
-import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +27,6 @@ public class ContentFragment extends Fragment {
     private Meditacao meditacao;
     private TextView tvTitulo, tvTextoBiblico, tvData, tvTexto, tvLinks;
     private ImageView ivErro;
-    private AdView mAdView;
 
     public ContentFragment() {
         // Required empty public constructor
@@ -58,7 +53,6 @@ public class ContentFragment extends Fragment {
             meditacao = savedInstanceState.getParcelable("meditacao");
         }
 
-        setupAd();
         setupContent();
 
     }
@@ -78,7 +72,6 @@ public class ContentFragment extends Fragment {
         tvTexto = view.findViewById(R.id.tvTexto);
         tvLinks = view.findViewById(R.id.tvLinks);
         ivErro = view.findViewById(R.id.iVerro);
-        mAdView = view.findViewById(R.id.ad_view);
 
         return view;
     }
@@ -91,7 +84,7 @@ public class ContentFragment extends Fragment {
 
     private void setupContent() {
         if (meditacao != null) {
-            tvTitulo.setText(meditacao.getTitulo().toUpperCase());
+            tvTitulo.setText(String.format("%s%s",getText(R.string.new_line), meditacao.getTitulo().toUpperCase()));
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
             tvData.setText(meditacao.getDataPorExtenso());
             tvTexto.setText(meditacao.getTexto());
@@ -104,47 +97,6 @@ public class ContentFragment extends Fragment {
     public void update(Meditacao m) {
         setMeditacao(m);
         setupContent();
-    }
-
-    @Override
-    public void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mAdView != null) {
-            mAdView.resume();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
-        super.onDestroy();
-    }
-
-    private boolean notShabbat(Calendar hoje) {
-        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
-                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
-    }
-
-    private void setupAd() {
-        Calendar hoje = Calendar.getInstance();
-        if (notShabbat(hoje)) {
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
-                    .build();
-
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-        }
     }
 
     private void fixLinksColor() {

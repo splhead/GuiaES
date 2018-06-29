@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -36,11 +38,11 @@ public class MainActivity extends ThemedActivity implements
 
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
-    private MeditacaoDBAdapter mdba;
     private ArrayList<Integer> queeToDownload = new ArrayList<>();
     private int[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+    private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -49,7 +51,7 @@ public class MainActivity extends ThemedActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
 
-        mdba = new MeditacaoDBAdapter(this);
+        setupAd();
 
         setupAnalytics();
 
@@ -102,6 +104,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void initMeditacoes() {
+        MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
         meditacoes.clear();
         for (int tipo : tipos) {
             try {
@@ -276,7 +279,47 @@ public class MainActivity extends ThemedActivity implements
         return out;
     }
 
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    private boolean notShabbat(Calendar hoje) {
+        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
+                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
+    }
+
+    private void setupAd() {
+        mAdView = findViewById(R.id.ad_view);
+        Calendar hoje = Calendar.getInstance();
+        if (notShabbat(hoje)) {
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
+                    .build();
+
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+        }
+    }
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
