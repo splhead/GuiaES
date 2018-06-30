@@ -57,20 +57,12 @@ public class MainActivity extends ThemedActivity implements
 
         setupScreenKeepOn();
 
-        setupNotification();
-
         setupToolbar();
 
         initMeditacoes();
 
         setupFAB();
 
-    }
-
-
-    private void setupNotification() {
-        Intent myIntent = new Intent("com.silas.meditacao.AGENDADOR");
-        sendBroadcast(myIntent);
     }
 
     private void setupScreenKeepOn() {
@@ -167,16 +159,6 @@ public class MainActivity extends ThemedActivity implements
     public View getCoordnatorLayout() {
         return findViewById(R.id.coordinator_layout);
     }
-
-    /*public View getProgressBar() {
-        return findViewById(R.id.progress_bar);
-    }*/
-//    private void recordTabDefaultAnalytics(int position) {
-//        String tabName = tabAdapter.getPageTitle(position).toString();
-//
-//        mFirebaseAnalytics.setCurrentScreen(this, tabName, null);
-//    }
-
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {

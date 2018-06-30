@@ -20,12 +20,16 @@ public class SchedulerReceiver extends BroadcastReceiver {
     public SchedulerReceiver() {
     }
 
-    public static void setAlarm(Context context, Intent myIntent, AlarmManager alarmManager) {
+    public static void setAlarm(Context context) {
+        Intent myIntent = new Intent("com.silas.meditacao.ALARME_DISPARADO");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        boolean alarmeAtivo = (pendingIntent != null);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int minutesPref = preferences.getInt(TimePreference.TIMEPREFERENCE_KEY, TimePreference.DEFAULT_VALUE);
-        Pair<Integer,Integer> pair = TimePreferenceDialogFragmentCompat.hoursAndMinutes(minutesPref);
+        Pair<Integer, Integer> pair = TimePreferenceDialogFragmentCompat.hoursAndMinutes(minutesPref);
 
         Calendar c = Calendar.getInstance();
 
@@ -34,6 +38,10 @@ public class SchedulerReceiver extends BroadcastReceiver {
         c.set(Calendar.SECOND, 0);
 
         if (alarmManager != null) {
+            if (alarmeAtivo) {
+                Log.i("Alarm", "canceling old alarm");
+                alarmManager.cancel(pendingIntent);
+            }
             Log.i("Alarm", "setting an alarm at " + pair.toString());
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pendingIntent);//set repeating every 24
@@ -43,19 +51,7 @@ public class SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (action != null && (action.equals("com.silas.meditacao.AGENDADOR")
-                || action.equals("android.intent.action.BOOT_COMPLETED"))) {
-            Intent myIntent = new Intent("com.silas.meditacao.ALARME_DISPARADO");
-//            PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-            PendingIntent mPendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-            boolean alarmeAtivo = (mPendingIntent != null);
-
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-            if (!alarmeAtivo) {
-                //            Log.i("Alarm", "Novo alarm");
-                setAlarm(context, myIntent, alarmManager);
-            }
-        }
+        if (action != null &&
+                action.equals("android.intent.action.BOOT_COMPLETED")) setAlarm(context);
     }
 }
