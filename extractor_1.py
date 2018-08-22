@@ -1,7 +1,9 @@
 #!/usr/bin/python
 #encoding: utf-8
-import glob, os, re, json, sys
+import glob, os, re, json, sys, datetime
 from bs4 import BeautifulSoup
+
+currentDate = datetime.datetime.now();
 
 numbers = re.compile(r'(\d+)')
 def numericalSort(value):
@@ -28,7 +30,7 @@ def dateFormat(date):
 				sDia = '0' + str(dia[0])
 			else:
 				sDia = str(dia[0])
-			return "2017-" + sMes + "-" + sDia
+			return str(currentDate.year) + "-" + sMes + "-" + sDia
 
 os.chdir(".")
 
@@ -43,13 +45,13 @@ for file in sorted(glob.glob("*.xhtml"),key=numericalSort):
 
 	# doc =  BeautifulSoup(content, "lxml", exclude_encodings="utf-8")
 
-	dia = doc.find(attrs={"class":"dia_mes"})
+	dia = doc.find(attrs={"class":"_1_Date"})
 	if dia is not None:
 		dia = dia.text.encode('utf-8')
 
-		titulo = doc.select_one('h1[class="titulo"]').text.encode('utf-8').upper()
+		titulo = doc.select_one('h1[class="Titulo"]').text.encode('utf-8').upper()
 		
-		verso = doc.select_one('p[class="verso"]')
+		verso = doc.select_one('h3[class="versobiblico"]')
 
 		json_obj += "{'day':'" + str(dateFormat(dia)) + "',"
 		json_obj += "'title':'" + titulo + "',"
@@ -69,4 +71,4 @@ json_obj  = json_obj[:-1]
 json_obj += ']'
 out = json.dumps(json_obj)
 
-print out
+print out[1:-1]
