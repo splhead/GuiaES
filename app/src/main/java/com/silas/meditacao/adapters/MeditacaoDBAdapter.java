@@ -150,8 +150,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
                         , c.getString(3), c.getString(4), c.getInt(5));
 //                Log.i(getClass().getName(), meditacao.toString());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             if (c != null) {
                 c.close();
@@ -160,13 +158,12 @@ public class MeditacaoDBAdapter extends DBAdapter {
         return null;
     }
 
-    /**
-     * Busca a lição com base em seu número!
-     */
     public Meditacao buscaMeditacao(Calendar data, int iTipo) {
         try {
             abrir();
             return meditacao(data, iTipo);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             try {
                 fechar();
@@ -174,6 +171,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     private long[] minMax(int tipo) {

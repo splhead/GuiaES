@@ -2,6 +2,7 @@ package com.silas.meditacao.io;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 
 import com.silas.meditacao.activity.MainActivity;
@@ -16,28 +17,24 @@ import java.util.Calendar;
 public class ProcessaMeditacoesTask extends
         AsyncTask<Integer, Integer, ArrayList<String>> {
     private ProgressDialog progress;
-    //    private ProgressBar progressBar;
     private WeakReference<MainActivity> wr;
     private MeditacaoDBAdapter mdba;
     private Calendar dia;
+    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
     public ProcessaMeditacoesTask(MainActivity activity, Calendar dia) {
         wr = new WeakReference<>(activity);
         this.dia = dia;
         mdba = new MeditacaoDBAdapter(wr.get());
-
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-//        progressBar = (ProgressBar) wr.get().getProgressBar();
-//        progressBar.setVisibility(View.VISIBLE);
-        //progressBar.setIndeterminate(true);
+
         progress = new ProgressDialog(wr.get());
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progress.setCanceledOnTouchOutside(true);
-//        progress.setIndeterminate(true);
         progress.setTitle("Recebendo poder!");
         progress.setMessage("Ore pelo meu criador e aguarde...");
         progress.setCancelable(false);
@@ -47,37 +44,54 @@ public class ProcessaMeditacoesTask extends
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-//        progressBar.setProgress(values[0]);
         progress.setProgress(values[0]);
     }
 
     @Override
     protected final ArrayList<String> doInBackground(Integer... tipos) {
-        ArrayList<Meditacao> dias = null;
         ArrayList<String> status = new ArrayList<>();
-        Extractable extrator;
         int counter = 0;
-//        int tipo = tipos[0];
 
         for (int tipo : tipos) {
 
             counter++;
-            extrator = howToGet(tipo, Util.getURL(tipo));
-            try {
-                if (extrator != null) {
-                    dias = extrator.extractDevotional();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (dias == null || dias.size() == 0) {
-                status.add(Meditacao.getDevotionalName(tipo)
-                        + " indisponível \n tente mais tarde!");
-            } else {
-                mdba.addMeditacoes(dias);
-            }
-            publishProgress((counter * 100) / tipos.length);
 
+            Meditacao meditacao = mdba.buscaMeditacao(dia, tipo);
+
+            if (meditacao == null && Util.internetDisponivel(wr.get())) {
+                // do download
+                status = doExtraction(tipo);
+                // search again after download it
+                meditacao = mdba.buscaMeditacao(dia, tipo);
+            }
+
+            meditacoes.add(meditacao);
+
+            publishProgress((counter * 100) / tipos.length);
+        }
+
+        return status;
+    }
+
+    @NonNull
+    private ArrayList<String> doExtraction(int tipo) {
+        ArrayList<Meditacao> dias = null;
+        ArrayList<String> status = new ArrayList<>();
+        Extractable extrator;
+
+        extrator = howToGet(tipo, Util.getURL(tipo));
+        try {
+            if (extrator != null) {
+                dias = extrator.extractDevotional();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (dias == null || dias.size() == 0) {
+            status.add(Meditacao.getDevotionalName(tipo)
+                    + " indisponível \n tente mais tarde!");
+        } else {
+            mdba.addMeditacoes(dias);
         }
 
 
@@ -102,11 +116,11 @@ public class ProcessaMeditacoesTask extends
     @Override
     protected void onPostExecute(ArrayList<String> messages) {
         progress.dismiss();
-//        progressBar.setVisibility(View.GONE);
 
 //      Atualiza
         if (messages.isEmpty()) {
-            wr.get().initMeditacoes();
+            wr.get().setMeditacoes(meditacoes);
+            wr.get().setupViewPager();
         } else {
             for (String status : messages)
                 Snackbar.make(wr.get().getCoordnatorLayout(), status, Snackbar.LENGTH_SHORT).show();

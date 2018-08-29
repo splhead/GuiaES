@@ -4,10 +4,13 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,23 +26,27 @@ import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
-import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends ThemedActivity implements
         Toolbar.OnMenuItemClickListener,
-        DatePickerDialog.OnDateSetListener {
+        DatePickerDialog.OnDateSetListener,
+        TextToSpeech.OnInitListener {
 
     private Calendar dia = Calendar.getInstance();
 
+    private TextToSpeech tts;
     private ViewPager mViewPager;
-    private TabAdapter tabAdapter;
-    private ArrayList<Integer> queeToDownload = new ArrayList<>();
-    private int[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
+    private Integer[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
     private AdView mAdView;
@@ -62,6 +69,8 @@ public class MainActivity extends ThemedActivity implements
         initMeditacoes();
 
         setupFAB();
+
+        setupTTS();
 
     }
 
@@ -95,43 +104,28 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    public void initMeditacoes() {
-        MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-        meditacoes.clear();
-        for (int tipo : tipos) {
-            try {
-                Meditacao meditacao = mdba.buscaMeditacao(dia, tipo);
 
-                if (meditacao != null) {
-                    meditacoes.add(meditacao);
-                } else {
-                    queeToDownload.add(tipo);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (meditacoes.size() > 0) {
-            setupViewPager();
-        }
-
-        if (queeToDownload.size() > 0 && Util.internetDisponivel(this)) {
-            Integer[] tipos = queeToDownload.toArray(new Integer[queeToDownload.size()]);
-            new ProcessaMeditacoesTask(this, dia).execute(tipos);
-            queeToDownload.clear();
-        }
-
+    private void setupTTS() {
+        tts = new TextToSpeech(this, this);
     }
 
-    private void setupViewPager() {
+    public void initMeditacoes() {
+        meditacoes.clear();
+        new ProcessaMeditacoesTask(this, dia).execute(tipos);
+    }
+
+    public void setMeditacoes(ArrayList<Meditacao> meditacoes) {
+        this.meditacoes = meditacoes;
+    }
+
+    public void setupViewPager() {
         mViewPager = findViewById(R.id.pager);
 
         if (mViewPager != null) {
 
             if (meditacoes.size() > 0) {
 
-                tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
+                TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
 
 //                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
 //                mViewPager.setOffscreenPageLimit(meditacoes.size());
@@ -184,6 +178,9 @@ public class MainActivity extends ThemedActivity implements
                 s.setType("text/plain");
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
+            case R.id.action_speakout:
+                speakOut();
+                break;
 
         }
         return false;
@@ -242,14 +239,14 @@ public class MainActivity extends ThemedActivity implements
                     "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
         }
 
-        String out = Meditacao.getDevotionalName(meditacao.getTipo()) +
+        String sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
                 "\n\n*" +
                 meditacao.getTitulo() +
                 "*\n\n_" +
-                meditacao.getTextoBiblico() +
-                "_\n\n" +
                 meditacao.getDataPorExtenso() +
-                "\n\n" +
+                "_\n\n*" +
+                meditacao.getTextoBiblico() +
+                "*\n\n" +
                 meditacao.getTexto();
 
         //Analytics
@@ -258,7 +255,7 @@ public class MainActivity extends ThemedActivity implements
         params.putString("devotional_date", meditacao.getData());
         mFirebaseAnalytics.logEvent("share_devotional", params);
 
-        return out;
+        return sb;
     }
 
     @Override
@@ -282,6 +279,12 @@ public class MainActivity extends ThemedActivity implements
         if (mAdView != null) {
             mAdView.destroy();
         }
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+
         super.onDestroy();
     }
 
@@ -296,6 +299,7 @@ public class MainActivity extends ThemedActivity implements
         if (notShabbat(hoje)) {
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
+                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
                     .build();
 
             // Start loading the ad in the background.
@@ -307,11 +311,128 @@ public class MainActivity extends ThemedActivity implements
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         dia.set(year, month, day);
         initMeditacoes();
-        tabAdapter.updateFragments();
 
         // Analytics
         Bundle params = new Bundle();
         params.putString("new_date", dia.toString());
         mFirebaseAnalytics.logEvent("change_date", params);
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(new Locale("pt", "POR"));
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                ActionMenuItemView actionSpeakeout = findViewById(R.id.action_speakout);
+                actionSpeakeout.setEnabled(true);
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void speakOut() {
+        tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    private String prepareTextToSpeak() {
+        Meditacao meditacao = meditacoes
+                .get(mViewPager.getCurrentItem());
+
+        if (meditacao == null) {
+            return "Texto indisponível no momento. Por favor tente novamente mais tarde.";
+        }
+
+        String tmpOut = Meditacao.getDevotionalName(meditacao.getTipo()) + "." +
+                meditacao.getTitulo() + "." +
+                meditacao.getDataPorExtenso() + "." +
+                meditacao.getTextoBiblico() + "." +
+                meditacao.getTexto();
+
+        String out = tmpOut.replace(":", " ").replace("\n", "");
+
+        return changeAbbreviation(out);
+    }
+
+    private String changeAbbreviation(String in) {
+        Pattern pattern = Pattern.compile("[A-Za-z]{2}(?=\\s+\\d)");
+        Matcher matcher = pattern.matcher(in);
+        StringBuffer sb = new StringBuffer(in.length());
+        Map<String, String> map = new HashMap<>();
+        map.put("gn", "Gênisis");
+        map.put("êx", "Êxodo");
+        map.put("lv", "Levítico");
+        map.put("nm", "Números");
+        map.put("dt", "Deuteronômio");
+        map.put("js", "Josué");
+        map.put("jz", "Juízes");
+        map.put("rt", "Rute");
+        map.put("sm", "Samuel");
+        map.put("rs", "Reis");
+        map.put("cr", "Crônicas");
+        map.put("ed", "Esdras");
+        map.put("ne", "Neemias");
+        map.put("et", "Ester");
+        map.put("jó", "Jó");
+        map.put("sl", "Salmos");
+        map.put("pv", "Provérbios");
+        map.put("ec", "Eclesiastes");
+        map.put("ct", "Cantares");
+        map.put("is", "Isaías");
+        map.put("jr", "Jeremias");
+        map.put("lm", "Lamentações de Jeremias");
+        map.put("ez", "Ezequiel");
+        map.put("dn", "Daniel");
+        map.put("os", "Oséias");
+        map.put("jl", "Joel");
+        map.put("am", "Amós");
+        map.put("ob", "Obadias");
+        map.put("jn", "Jonas");
+        map.put("mq", "Miquéias");
+        map.put("na", "Naum");
+        map.put("hc", "Habacuque");
+        map.put("sf", "Sofonias");
+        map.put("ag", "Ageu");
+        map.put("zc", "Zacarias");
+        map.put("ml", "Malaquias");
+        map.put("mt", "Mateus");
+        map.put("mc", "Marcos");
+        map.put("lc", "Lucas");
+        map.put("jo", "João");
+        map.put("at", "Atos dos Apóstolos");
+        map.put("rm", "Romanos");
+        map.put("co", "Corintios");
+        map.put("gl", "Gálatas");
+        map.put("ef", "Efésios");
+        map.put("fp", "Filipenses");
+        map.put("cl", "Colossenses");
+        map.put("ts", "Tessalonissenses");
+        map.put("tn", "Timóteo");
+        map.put("tt", "Tito");
+        map.put("fm", "Filemon");
+        map.put("hb", "Hebreus");
+        map.put("tg", "Tiago");
+        map.put("pe", "Pedro");
+        map.put("jd", "Judas");
+        map.put("ap", "Apocalipse");
+
+        while (matcher.find()) {
+            String abbreviation = matcher.group().toLowerCase();
+            if (map.containsKey(abbreviation)) {
+                abbreviation = map.get(abbreviation);
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(abbreviation));
+            }
+//            Log.i("Encontrou", matcher.group());
+        }
+
+        matcher.appendTail(sb);
+//        Log.i("Encontrou", sb.toString());
+        return sb.toString();
     }
 }

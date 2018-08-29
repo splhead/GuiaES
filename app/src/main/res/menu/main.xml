@@ -8,6 +8,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_speakout"
+        android:icon="@drawable/ic_baseline_play_circle_outline_24px"
+        android:title="@string/action_speakout"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_share_app"
         android:title="@string/action_share_app"
         app:showAsAction="never" />
