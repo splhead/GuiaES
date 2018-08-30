@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +19,6 @@ import android.widget.DatePicker;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -79,16 +78,6 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupAnalytics() {
-        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-        Tracker trackerAd = analytics.newTracker("UA-64551284-1");
-        Tracker tracker = analytics.newTracker("UA-64551284-2");
-        trackerAd.enableExceptionReporting(true);
-        tracker.enableExceptionReporting(true);
-        trackerAd.enableAdvertisingIdCollection(true);
-        tracker.enableAdvertisingIdCollection(true);
-        trackerAd.enableAutoActivityTracking(true);
-        tracker.enableAutoActivityTracking(true);
-
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
@@ -179,11 +168,23 @@ public class MainActivity extends ThemedActivity implements
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
             case R.id.action_speakout:
-                speakOut();
+                if (tts.isSpeaking()) {
+                    tts.stop();
+                    changeMenuItemIcon(item, R.drawable.ic_baseline_play_circle_outline_24px);
+                } else {
+                    speakOut();
+
+                    changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
+                }
                 break;
 
         }
         return false;
+    }
+
+    private void changeMenuItemIcon(MenuItem item, int id) {
+        invalidateOptionsMenu();
+        item.setIcon(ContextCompat.getDrawable(this, id));
     }
 
     private void setupDatePicker() {
@@ -349,10 +350,10 @@ public class MainActivity extends ThemedActivity implements
             return "Texto indisponível no momento. Por favor tente novamente mais tarde.";
         }
 
-        String tmpOut = Meditacao.getDevotionalName(meditacao.getTipo()) + "." +
-                meditacao.getTitulo() + "." +
-                meditacao.getDataPorExtenso() + "." +
-                meditacao.getTextoBiblico() + "." +
+        String tmpOut = Meditacao.getDevotionalName(meditacao.getTipo()) + "... " +
+                meditacao.getTitulo() + "... " +
+                meditacao.getDataPorExtenso() + "... " +
+                meditacao.getTextoBiblico() + "... " +
                 meditacao.getTexto();
 
         String out = tmpOut.replace(":", " ").replace("\n", "");

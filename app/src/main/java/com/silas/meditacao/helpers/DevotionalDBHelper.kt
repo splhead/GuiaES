@@ -32,6 +32,6 @@ class DevotionalDBHelper(context: Context) : SQLiteOpenHelper(context,
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersionNumber: Int, newVersionNumber: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
