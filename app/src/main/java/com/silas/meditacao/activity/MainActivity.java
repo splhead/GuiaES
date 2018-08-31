@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -44,6 +45,7 @@ public class MainActivity extends ThemedActivity implements
     private Calendar dia = Calendar.getInstance();
 
     private TextToSpeech tts;
+    private MenuItem menuItem;
     private ViewPager mViewPager;
     private Integer[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
@@ -95,7 +97,34 @@ public class MainActivity extends ThemedActivity implements
 
 
     private void setupTTS() {
+
         tts = new TextToSpeech(this, this);
+
+        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {
+//                Log.i("speech", "started");
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        // Stuff that updates the UI
+                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                Log.e("speech", "error");
+            }
+        });
     }
 
     public void initMeditacoes() {
@@ -175,7 +204,9 @@ public class MainActivity extends ThemedActivity implements
                     speakOut();
 
                     changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
+                    menuItem = item;
                 }
+
                 break;
 
         }
@@ -339,7 +370,9 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void speakOut() {
-        tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, null);
+        HashMap<String, String> mParams = new HashMap<>();
+        mParams.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "DEVOTIONAL");
+        tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, mParams);
     }
 
     private String prepareTextToSpeak() {
