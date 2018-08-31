@@ -373,6 +373,11 @@ public class MainActivity extends ThemedActivity implements
         HashMap<String, String> mParams = new HashMap<>();
         mParams.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "DEVOTIONAL");
         tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, mParams);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("tts_devotional", mViewPager.getCurrentItem() + 1);
+        mFirebaseAnalytics.logEvent("play_tts", bundle);
+
     }
 
     private String prepareTextToSpeak() {
