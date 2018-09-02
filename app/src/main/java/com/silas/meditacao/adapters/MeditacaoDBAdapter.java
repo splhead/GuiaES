@@ -183,8 +183,10 @@ public class MeditacaoDBAdapter extends DBAdapter {
                     , null, TIPO, null, null, null);
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                return new long[]{sdf.parse(c.getString(0)).getTime(),
-                        sdf.parse(c.getString(1)).getTime()};
+                long[] minMax = new long[2];
+                minMax[0] = sdf.parse(c.getString(0)).getTime();
+                minMax[1] = sdf.parse(c.getString(1)).getTime();
+                return minMax;
                /* return new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
                         , c.getString(3), c.getString(4), c.getInt(5));*/
 //                Log.i(getClass().getName(), meditacao.toString());

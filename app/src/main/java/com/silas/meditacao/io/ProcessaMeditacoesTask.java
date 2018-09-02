@@ -79,7 +79,7 @@ public class ProcessaMeditacoesTask extends
         ArrayList<String> status = new ArrayList<>();
         Extractable extrator;
 
-        extrator = howToGet(tipo, Util.getURL(tipo));
+        extrator = howToGet(tipo, Util.getURL(tipo, dia));
         try {
             if (extrator != null) {
                 dias = extrator.extractDevotional();
