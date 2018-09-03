@@ -1,6 +1,5 @@
 package com.silas.meditacao.io;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -16,7 +15,6 @@ import java.util.Calendar;
 
 public class ProcessaMeditacoesTask extends
         AsyncTask<Integer, Integer, ArrayList<String>> {
-    private ProgressDialog progress;
     private WeakReference<MainActivity> wr;
     private MeditacaoDBAdapter mdba;
     private Calendar dia;
@@ -31,20 +29,14 @@ public class ProcessaMeditacoesTask extends
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        wr.get().showProgressDialog();
 
-        progress = new ProgressDialog(wr.get());
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setCanceledOnTouchOutside(true);
-        progress.setTitle("Recebendo poder!");
-        progress.setMessage("Ore pelo meu criador e aguarde...");
-        progress.setCancelable(false);
-        progress.show();
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        progress.setProgress(values[0]);
+        wr.get().getProgressDialog().setProgress(values[0]);
     }
 
     @Override
@@ -115,7 +107,11 @@ public class ProcessaMeditacoesTask extends
 
     @Override
     protected void onPostExecute(ArrayList<String> messages) {
-        progress.dismiss();
+        if (wr.get().isDestroyed()) {
+            return;
+        }
+
+        wr.get().dismissProgressDialog();
 
 //      Atualiza
         if (messages.isEmpty()) {

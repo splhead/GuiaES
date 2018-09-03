@@ -1,6 +1,7 @@
 package com.silas.meditacao.activity;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -47,6 +48,7 @@ public class MainActivity extends ThemedActivity implements
 
     private TextToSpeech tts;
     private MenuItem menuItem;
+    private ProgressDialog progress;
     private ViewPager mViewPager;
     private Integer[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
@@ -73,7 +75,27 @@ public class MainActivity extends ThemedActivity implements
         setupFAB();
 
         setupTTS();
+    }
 
+    public void showProgressDialog() {
+
+        progress = new ProgressDialog(this);
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setCanceledOnTouchOutside(true);
+        progress.setTitle("Recebendo poder!");
+        progress.setMessage("Ore pelo meu criador e aguarde...");
+        progress.setCancelable(false);
+        progress.show();
+    }
+
+    public void dismissProgressDialog() {
+        if (progress != null) {
+            progress.dismiss();
+        }
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progress;
     }
 
     private void setupScreenKeepOn() {
@@ -327,6 +349,9 @@ public class MainActivity extends ThemedActivity implements
 
     @Override
     public void onDestroy() {
+
+        dismissProgressDialog();
+
         if (mAdView != null) {
             mAdView.destroy();
         }
