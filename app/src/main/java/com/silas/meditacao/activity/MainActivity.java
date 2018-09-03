@@ -42,6 +42,7 @@ public class MainActivity extends ThemedActivity implements
         DatePickerDialog.OnDateSetListener,
         TextToSpeech.OnInitListener {
 
+    private static final int MY_DATA_CHECK_CODE = 7;
     private Calendar dia = Calendar.getInstance();
 
     private TextToSpeech tts;
@@ -97,34 +98,52 @@ public class MainActivity extends ThemedActivity implements
 
 
     private void setupTTS() {
+        Intent checkIntent = new Intent();
+        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+    }
 
-        tts = new TextToSpeech(this, this);
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                // success, create the TTS instance
+                tts = new TextToSpeech(this, this);
 
-        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-            @Override
-            public void onStart(String utteranceId) {
+                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
 //                Log.i("speech", "started");
-            }
-
-            @Override
-            public void onDone(String utteranceId) {
-                runOnUiThread(new Runnable() {
+                    }
 
                     @Override
-                    public void run() {
+                    public void onDone(String utteranceId) {
+                        runOnUiThread(new Runnable() {
 
-                        // Stuff that updates the UI
-                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                            @Override
+                            public void run() {
+
+                                // Stuff that updates the UI
+                                changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+                        Log.e("speech", "error");
                     }
                 });
-
+            } else {
+                // missing data, install it
+                Intent installIntent = new Intent();
+                installIntent.setAction(
+                        TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installIntent);
             }
-
-            @Override
-            public void onError(String utteranceId) {
-                Log.e("speech", "error");
-            }
-        });
+        }
     }
 
     public void initMeditacoes() {
