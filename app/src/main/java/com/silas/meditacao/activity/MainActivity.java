@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -119,54 +118,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
 
-    private void setupTTS() {
-        Intent checkIntent = new Intent();
-        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-    }
 
-    @Override
-    protected void onActivityResult(
-            int requestCode, int resultCode, Intent data) {
-        if (requestCode == MY_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                // success, create the TTS instance
-                tts = new TextToSpeech(this, this);
-
-                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                    @Override
-                    public void onStart(String utteranceId) {
-//                Log.i("speech", "started");
-                    }
-
-                    @Override
-                    public void onDone(String utteranceId) {
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                // Stuff that updates the UI
-                                changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onError(String utteranceId) {
-                        Log.e("speech", "error");
-                    }
-                });
-            } else {
-                // missing data, install it
-                Intent installIntent = new Intent();
-                installIntent.setAction(
-                        TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installIntent);
-            }
-        }
-    }
 
     public void initMeditacoes() {
         meditacoes.clear();
@@ -394,6 +346,55 @@ public class MainActivity extends ThemedActivity implements
         mFirebaseAnalytics.logEvent("change_date", params);
     }
 
+    private void setupTTS() {
+        Intent checkIntent = new Intent();
+        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                // success, create the TTS instance
+                tts = new TextToSpeech(this, this);
+
+                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
+//                Log.i("speech", "started");
+                    }
+
+                    @Override
+                    public void onDone(String utteranceId) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                // Stuff that updates the UI
+                                changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+                        Log.e("speech", "error");
+                    }
+                });
+            } else {
+                // missing data, install it
+                Intent installIntent = new Intent();
+                installIntent.setAction(
+                        TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installIntent);
+            }
+        }
+    }
+
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
@@ -403,9 +404,6 @@ public class MainActivity extends ThemedActivity implements
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
-            } else {
-                ActionMenuItemView actionSpeakeout = findViewById(R.id.action_speakout);
-                actionSpeakeout.setEnabled(true);
             }
 
         } else {
