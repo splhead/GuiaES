@@ -33,7 +33,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return meditacoes.size();
+        return meditacoes != null ? meditacoes.size() : 0;
     }
 
     @Override
