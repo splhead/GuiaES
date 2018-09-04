@@ -5,6 +5,7 @@ buildscript {
     ext.support_version = '27.1.1'
     ext.firebase_core_version = '16.0.3'
     ext.firebase_ads_version = '15.0.1'
+    ext.firebase_perf_version = '16.1.0'
     ext.crashlytics_version = '2.9.5'
     ext.gson_version = '2.8.2'
     repositories {
@@ -19,6 +20,7 @@ buildscript {
         classpath 'com.google.gms:google-services:4.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath 'com.google.firebase:firebase-plugins:1.1.5'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
