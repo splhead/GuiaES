@@ -2,6 +2,7 @@ package com.silas.meditacao.activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -49,7 +50,7 @@ public class MainActivity extends ThemedActivity implements
     private MenuItem menuItem;
     private ProgressDialog progress;
     private ViewPager mViewPager;
-    private Integer[] tipos = {Meditacao.ADULTO, Meditacao.MULHER,
+    public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
     private AdView mAdView;
@@ -122,11 +123,14 @@ public class MainActivity extends ThemedActivity implements
 
     public void initMeditacoes() {
         meditacoes.clear();
-        new ProcessaMeditacoesTask(this, dia).execute(tipos);
+        new ProcessaMeditacoesTask(this, dia).execute(TYPES);
     }
 
     public void setMeditacoes(ArrayList<Meditacao> meditacoes) {
-        this.meditacoes = meditacoes;
+        if (meditacoes != null) {
+            this.meditacoes.clear();
+            this.meditacoes = meditacoes;
+        }
     }
 
     public void setupViewPager() {
@@ -190,14 +194,16 @@ public class MainActivity extends ThemedActivity implements
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
             case R.id.action_speakout:
-                if (tts.isSpeaking()) {
-                    tts.stop();
-                    changeMenuItemIcon(item, R.drawable.ic_baseline_play_circle_outline_24px);
-                } else {
-                    speakOut();
+                if (tts != null) {
+                    if (tts.isSpeaking()) {
+                        tts.stop();
+                        changeMenuItemIcon(item, R.drawable.ic_baseline_play_circle_outline_24px);
+                    } else {
+                        speakOut();
 
-                    changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
-                    menuItem = item;
+                        changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
+                        menuItem = item;
+                    }
                 }
 
                 break;
@@ -229,7 +235,7 @@ public class MainActivity extends ThemedActivity implements
         }
 
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-        long[] dates = mdba.buscaDataMinMax(tipos[mViewPager.getCurrentItem()]);
+        long[] dates = mdba.buscaDataMinMax(TYPES[mViewPager.getCurrentItem()]);
 
         mDateDialog.getDatePicker().setMinDate(dates[0]);
         mDateDialog.getDatePicker().setMaxDate(dia.getTimeInMillis());
@@ -347,9 +353,14 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupTTS() {
-        Intent checkIntent = new Intent();
-        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+        try {
+            Intent checkIntent = new Intent();
+            checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+            startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+        } catch (ActivityNotFoundException e) {
+            Log.e("TTS", "Oops! The function is not available in your device.");
+            e.printStackTrace();
+        }
     }
 
     @Override
