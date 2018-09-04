@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.fragments.ContentFragment;
 import com.silas.meditacao.models.Meditacao;
 
@@ -37,7 +38,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return Meditacao.getNomeTipo(meditacoes.get(position).getTipo());
+        return Meditacao.getNomeTipo(MainActivity.TYPES[position]);
     }
 
     /*@Override
