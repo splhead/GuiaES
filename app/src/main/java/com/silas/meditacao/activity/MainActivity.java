@@ -25,6 +25,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
+import com.silas.meditacao.fragments.SettingsFragment;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
@@ -68,7 +69,7 @@ public class MainActivity extends ThemedActivity implements
 
         setupScreenKeepOn();
 
-        setupToolbar();
+//        setupToolbar();
 
         initMeditacoes();
 
@@ -118,9 +119,6 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-
-
-
     public void initMeditacoes() {
         meditacoes.clear();
         new ProcessaMeditacoesTask(this, dia).execute(TYPES);
@@ -134,6 +132,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void setupViewPager() {
+        setupToolbar();
         mViewPager = findViewById(R.id.pager);
 
         if (mViewPager != null) {
@@ -262,29 +261,31 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private String preparaCompartilhamento() {
-        Meditacao meditacao = meditacoes
-                .get(mViewPager.getCurrentItem());
+        String sb;
+        if (meditacoes != null) {
+            Meditacao meditacao = meditacoes
+                    .get(mViewPager.getCurrentItem());
 
-        if (meditacao == null) {
+            sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
+                    "\n\n*" +
+                    meditacao.getTitulo() +
+                    "*\n\n_" +
+                    meditacao.getDataPorExtenso() +
+                    "_\n\n*" +
+                    meditacao.getTextoBiblico() +
+                    "*\n\n" +
+                    meditacao.getTexto();
+
+            //Analytics
+            Bundle params = new Bundle();
+            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+            params.putString("devotional_date", meditacao.getData());
+            mFirebaseAnalytics.logEvent("share_devotional", params);
+        } else {
+
             return "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
                     "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
         }
-
-        String sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
-                "\n\n*" +
-                meditacao.getTitulo() +
-                "*\n\n_" +
-                meditacao.getDataPorExtenso() +
-                "_\n\n*" +
-                meditacao.getTextoBiblico() +
-                "*\n\n" +
-                meditacao.getTexto();
-
-        //Analytics
-        Bundle params = new Bundle();
-        params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-        params.putString("devotional_date", meditacao.getData());
-        mFirebaseAnalytics.logEvent("share_devotional", params);
 
         return sb;
     }
@@ -398,10 +399,14 @@ public class MainActivity extends ThemedActivity implements
                 });
             } else {
                 // missing data, install it
-                Intent installIntent = new Intent();
-                installIntent.setAction(
-                        TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installIntent);
+                try {
+                    Intent installIntent = new Intent();
+                    installIntent.setAction(
+                            TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                    startActivity(installIntent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -423,6 +428,14 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void speakOut() {
+        int pitch = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getInt(SettingsFragment.KEY_TTS_PITCH, 4);
+        tts.setPitch(pitch * .25f);
+
+        int speechRate = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getInt(SettingsFragment.KEY_TTS_RATE, 2);
+        tts.setSpeechRate(speechRate * .5f);
+
         HashMap<String, String> mParams = new HashMap<>();
         mParams.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "DEVOTIONAL");
         tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, mParams);
