@@ -217,31 +217,33 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupDatePicker() {
-        dia = Calendar.getInstance();
-        DatePickerDialog mDateDialog;
-
-        if (!PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Preferences.DARK_THEME, false)) {
-            mDateDialog = new DatePickerDialog(this,
-                    R.style.AppTheme_DialogTheme, this
-                    , dia.get(Calendar.YEAR),
-                    dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
-        } else {
-            mDateDialog = new DatePickerDialog(this,
-                    R.style.AppTheme_DialogThemeInverse, this
-                    , dia.get(Calendar.YEAR),
-                    dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
-        }
-
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
         long[] dates = mdba.buscaDataMinMax(TYPES[mViewPager.getCurrentItem()]);
+        if (dates != null) {
+            dia = Calendar.getInstance();
+            DatePickerDialog mDateDialog;
 
-        mDateDialog.getDatePicker().setMinDate(dates[0]);
-        mDateDialog.getDatePicker().setMaxDate(dia.getTimeInMillis());
-        mDateDialog.setTitle("Qual dia?");
-        mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
-        mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
-        mDateDialog.show();
+            if (!PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(Preferences.DARK_THEME, false)) {
+                mDateDialog = new DatePickerDialog(this,
+                        R.style.AppTheme_DialogTheme, this
+                        , dia.get(Calendar.YEAR),
+                        dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+            } else {
+                mDateDialog = new DatePickerDialog(this,
+                        R.style.AppTheme_DialogThemeInverse, this
+                        , dia.get(Calendar.YEAR),
+                        dia.get(Calendar.MONTH), dia.get(Calendar.DAY_OF_MONTH));
+            }
+
+
+            mDateDialog.getDatePicker().setMinDate(dates[0]);
+            mDateDialog.getDatePicker().setMaxDate(dia.getTimeInMillis());
+            mDateDialog.setTitle("Qual dia?");
+            mDateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancelar", mDateDialog);
+            mDateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Escolher", mDateDialog);
+            mDateDialog.show();
+        }
     }
 
     private void setupFAB() {
