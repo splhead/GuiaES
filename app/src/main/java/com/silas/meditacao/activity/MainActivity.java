@@ -262,7 +262,7 @@ public class MainActivity extends ThemedActivity implements
 
     private String preparaCompartilhamento() {
         String sb;
-        if (meditacoes != null) {
+        if (meditacoes != null && mViewPager != null) {
             Meditacao meditacao = meditacoes
                     .get(mViewPager.getCurrentItem());
 
