@@ -21,8 +21,7 @@
         android:importantForAccessibility="no"
         app:adSize="SMART_BANNER"
         app:adUnitId="@string/banner_ad_unit_id"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_share"
@@ -32,6 +31,28 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_share_white_24dp"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:layout_anchor="@id/pager"
+        app:layout_anchorGravity="bottom|end" />
+
+    <View
+        android:id="@+id/dummy"
+        android:layout_width="1dp"
+        android:layout_height="16dp"
+        app:layout_anchor="@id/fab_share"
+        app:layout_anchorGravity="top|right|end" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="85dp"
+        android:contentDescription="@string/fab_label"
+        android:src="@drawable/ic_round_favorite_border_24px"
+        app:fabSize="normal"
+        app:layout_anchor="@id/dummy"
+        app:layout_anchorGravity="top|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>
