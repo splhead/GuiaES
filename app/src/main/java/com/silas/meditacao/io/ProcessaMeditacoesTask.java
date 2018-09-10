@@ -57,7 +57,9 @@ public class ProcessaMeditacoesTask extends
                 meditacao = mdba.buscaMeditacao(dia, tipo);
             }
 
-            meditacoes.add(meditacao);
+            if (meditacao != null) {
+                meditacoes.add(meditacao);
+            }
 
             publishProgress((counter * 100) / tipos.length);
         }
@@ -114,9 +116,11 @@ public class ProcessaMeditacoesTask extends
         wr.get().dismissProgressDialog();
 
 //      Atualiza
-        if (messages.isEmpty()) {
+        if (messages.isEmpty() && meditacoes.size() > 0) {
+
             wr.get().setMeditacoes(meditacoes);
             wr.get().setupViewPager();
+
         } else {
             for (String status : messages)
                 Snackbar.make(wr.get().getCoordnatorLayout(), status, Snackbar.LENGTH_SHORT).show();

@@ -263,30 +263,32 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private String preparaCompartilhamento() {
-        String sb;
-        if (meditacoes != null && mViewPager != null) {
+        String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
+                "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
+
+        if ((meditacoes != null)
+                && (meditacoes.size() > 0)
+                && (mViewPager != null)) {
             Meditacao meditacao = meditacoes
                     .get(mViewPager.getCurrentItem());
 
-            sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
-                    "\n\n*" +
-                    meditacao.getTitulo() +
-                    "*\n\n_" +
-                    meditacao.getDataPorExtenso() +
-                    "_\n\n*" +
-                    meditacao.getTextoBiblico() +
-                    "*\n\n" +
-                    meditacao.getTexto();
+            if (meditacao != null) {
+                sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
+                        "\n\n*" +
+                        meditacao.getTitulo() +
+                        "*\n\n_" +
+                        meditacao.getDataPorExtenso() +
+                        "_\n\n*" +
+                        meditacao.getTextoBiblico() +
+                        "*\n\n" +
+                        meditacao.getTexto();
 
-            //Analytics
-            Bundle params = new Bundle();
-            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-            params.putString("devotional_date", meditacao.getData());
-            mFirebaseAnalytics.logEvent("share_devotional", params);
-        } else {
-
-            return "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
-                    "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
+                //Analytics
+                Bundle params = new Bundle();
+                params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+                params.putString("devotional_date", meditacao.getData());
+                mFirebaseAnalytics.logEvent("share_devotional", params);
+            }
         }
 
         return sb;
