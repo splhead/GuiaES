@@ -22,6 +22,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
     public static final String TEXTO_BIBLICO = "texto_biblico";
     public static final String TEXTO = "texto";
     public static final String TIPO = "tipo";
+    public static final String FAVORITE = "favorite";
 
     private static final String BD_TABELA = "meditacao";
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -79,19 +80,21 @@ public class MeditacaoDBAdapter extends DBAdapter {
                     Log.w(getClass().getName(),
                             "A meditacao já existe e não será gravada");
                 }
+
                 ContentValues valores = new ContentValues();
                 valores.put(DATA, meditacao.getData());
                 valores.put(TITULO, meditacao.getTitulo());
                 valores.put(TEXTO_BIBLICO, meditacao.getTextoBiblico());
                 valores.put(TEXTO, meditacao.getTexto());
                 valores.put(TIPO, meditacao.getTipo());
+                valores.put(FAVORITE, booleanToInt(meditacao.isFavorite()));
 
 
                 bancoDados.insert(BD_TABELA, null, valores);
 //                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
             }
             bancoDados.setTransactionSuccessful();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             bancoDados.endTransaction();
@@ -120,7 +123,43 @@ public class MeditacaoDBAdapter extends DBAdapter {
         } finally {
             try {
                 fechar();
-            } catch (SQLException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private int booleanToInt(boolean fav) {
+        return fav ? 1 : 0;
+    }
+
+    private boolean intToBoolean(int num) {
+        return num == 1;
+    }
+
+    private void updateFavorite(Meditacao meditacao) {
+
+        String id = String.valueOf(meditacao.getId());
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(FAVORITE, booleanToInt(meditacao.isFavorite()));
+            bancoDados.beginTransaction();
+            bancoDados.update(BD_TABELA, values, "id=?", new String[]{id});
+            bancoDados.setTransactionSuccessful();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateDevotionalFavorite(Meditacao meditacao) {
+        try {
+            abrir();
+            updateFavorite(meditacao);
+        } finally {
+            try {
+                fechar();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -141,13 +180,19 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
         try {
             c = bancoDados.query(true, BD_TABELA,
-                    new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO}
+                    new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
                     , DATA + " like '" + sData + "%' AND " + TIPO + " = " + tipo
                     , null, null, null, null, null);
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                return new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
-                        , c.getString(3), c.getString(4), c.getInt(5));
+                return new Meditacao(c.getLong(0)
+                        , c.getString(1)
+                        , c.getString(2)
+                        , c.getString(3)
+                        , c.getString(4)
+                        , c.getInt(5)
+                        , intToBoolean(c.getInt(6))
+                );
 //                Log.i(getClass().getName(), meditacao.toString());
             }
         } finally {
@@ -162,12 +207,12 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             return meditacao(data, iTipo);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
                 fechar();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -211,7 +256,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         } finally {
             try {
                 fechar();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

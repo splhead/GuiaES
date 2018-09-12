@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -30,6 +32,7 @@ import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -51,6 +54,7 @@ public class MainActivity extends ThemedActivity implements
     private MenuItem menuItem;
     private ProgressDialog progress;
     private ViewPager mViewPager;
+    private FloatingActionButton fabFavorite;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
@@ -73,7 +77,7 @@ public class MainActivity extends ThemedActivity implements
 
         initMeditacoes();
 
-        setupFAB();
+//        setupFABs();
 
         setupTTS();
     }
@@ -246,20 +250,86 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private void setupFAB() {
-        FloatingActionButton fab = findViewById(R.id.fab_share);
+    public void setupFABs() {
+        if ((meditacoes != null)
+                && (meditacoes.size() > 0)
+                && (mViewPager != null)) {
+            FloatingActionButton fab = findViewById(R.id.fab_share);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent,
-                        getResources().getText(R.string.send_to)));
+            if (fab != null) {
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent,
+                                getResources().getText(R.string.send_to)));
+                    }
+                });
             }
-        });
+
+            fabFavorite = findViewById(R.id.fab_favorite);
+
+            Meditacao meditacao = meditacoes
+                    .get(mViewPager.getCurrentItem());
+
+            changeFavoriteFabIcon(meditacao.isFavorite());
+
+            if (fabFavorite != null) {
+
+                fabFavorite.setOnClickListener(new View.OnClickListener() {
+
+                    Meditacao meditacao = meditacoes
+                            .get(mViewPager.getCurrentItem());
+
+                    @Override
+                    public void onClick(View v) {
+
+
+                        new updateFavoriteTask(MainActivity.this).execute(meditacao);
+
+                        Toast.makeText(getApplicationContext(), "clicou "
+                                , Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+
+            }
+        }
+    }
+
+    public void changeFavoriteFabIcon(boolean isFavorite) {
+        if (isFavorite) {
+            fabFavorite.setImageResource(R.drawable.ic_round_favorite_24px);
+        } else {
+            fabFavorite.setImageResource(R.drawable.ic_round_favorite_border_24px);
+        }
+    }
+
+
+    private static class updateFavoriteTask extends AsyncTask<Meditacao, Void, Meditacao> {
+
+        private WeakReference<MainActivity> wr;
+
+        updateFavoriteTask(MainActivity mainActivity) {
+            wr = new WeakReference<>(mainActivity);
+        }
+
+        @Override
+        protected Meditacao doInBackground(Meditacao... meditacoes) {
+            meditacoes[0].toogleFavorite();
+            MeditacaoDBAdapter meditacaoDBAdapter = new MeditacaoDBAdapter(wr.get());
+            meditacaoDBAdapter.updateDevotionalFavorite(meditacoes[0]);
+            return meditacoes[0];
+        }
+
+        @Override
+        protected void onPostExecute(Meditacao meditacao) {
+            super.onPostExecute(meditacao);
+            wr.get().changeFavoriteFabIcon(meditacao.isFavorite());
+        }
     }
 
     private String preparaCompartilhamento() {

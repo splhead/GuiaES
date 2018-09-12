@@ -35,13 +35,17 @@ public class Meditacao implements Parcelable {
     @SerializedName("type")
     private int tipo;
 
-    public Meditacao(long id, String titulo, String data, String textoBiblico, String texto, int tipo) {
+    private boolean favorite = false;
+
+    public Meditacao(long id, String titulo, String data,
+                     String textoBiblico, String texto, int tipo, boolean favorite) {
         this.id = id;
         this.titulo = titulo;
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
         this.tipo = tipo;
+        this.favorite = favorite;
     }
 
     public Meditacao(String titulo, String data, String textoBiblico, String texto, int tipo) {
@@ -102,17 +106,9 @@ public class Meditacao implements Parcelable {
         return data;
     }
 
-//    public void setTitulo(String titulo) {
-//        this.titulo = titulo;
-//    }
-
     public void setData(String data) {
         this.data = data;
     }
-
-//    public void setTextoBiblico(String textoBiblico) {
-//        this.textoBiblico = textoBiblico;
-//    }
 
     public String getDataPorExtenso() {
         //yyyy-MM-dd
@@ -131,15 +127,11 @@ public class Meditacao implements Parcelable {
                     + mes[Integer.parseInt(data.substring(5, 7)) - 1]
                     + " de " + ano;
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         return out;
     }
-
-//    public void setTexto(String texto) {
-//        this.texto = texto;
-//    }
 
     public String getTitulo() {
         return titulo;
@@ -153,16 +145,20 @@ public class Meditacao implements Parcelable {
         return texto;
     }
 
-    /*public Fragment createFragment() {
-        return ContentFragment.newInstance(this);
-    }*/
-
     public String toString() {
         return this.getTitulo() + " " + this.getData() + " " + getTipo();
     }
 
     public int getTipo() {
         return tipo;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void toogleFavorite() {
+        this.favorite = !this.favorite;
     }
 
     @Override

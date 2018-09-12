@@ -23,6 +23,7 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
                 content.put(DevotionalContract.COLUMN_VERSE, devotional.textoBiblico)
                 content.put(DevotionalContract.COLUMN_TEXT, devotional.texto)
                 content.put(DevotionalContract.COLUMN_TYPE, devotional.tipo)
+                content.put(DevotionalContract.COLUMN_FAVORITE, booleanToInt(devotional.isFavorite))
 
                 db.insert(DevotionalContract.TABLE_NAME, null, content)
             }
@@ -62,9 +63,14 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
                     null, null, null, null, null)
             if (cursor.count > 0) {
                 cursor.moveToFirst()
-                Meditacao(cursor.getLong(0), cursor.getString(1)
-                        , cursor.getString(2), cursor.getString(3)
-                        , cursor.getString(4), cursor.getInt(5))
+                Meditacao(cursor.getLong(0)
+                        , cursor.getString(1)
+                        , cursor.getString(2)
+                        , cursor.getString(3)
+                        , cursor.getString(4)
+                        , cursor.getInt(5)
+                        , intToBoolean(cursor.getInt(6))
+                )
             }
             cursor?.close()
         } catch (e: Exception) {
@@ -72,5 +78,13 @@ class DevotionalDBAdapter(context: Context) : BaseDBAdapter(context) {
         } finally {
             close()
         }
+    }
+
+    private fun booleanToInt(fav: Boolean): Int {
+        return if (fav) 1 else 0
+    }
+
+    private fun intToBoolean(num: Int): Boolean {
+        return num == 1
     }
 }

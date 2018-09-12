@@ -11,5 +11,6 @@ class DevotionalContract : BaseColumns {
         val COLUMN_VERSE: String = "texto_biblico"
         val COLUMN_TEXT: String = "texto"
         val COLUMN_TYPE: String = "tipo"
+        val COLUMN_FAVORITE: String = "favorite"
     }
 }

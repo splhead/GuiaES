@@ -120,6 +120,7 @@ public class ProcessaMeditacoesTask extends
 
             wr.get().setMeditacoes(meditacoes);
             wr.get().setupViewPager();
+            wr.get().setupFABs();
 
         } else {
             for (String status : messages)
