@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MeditacaoDBAdapter extends DBAdapter {
+    //    private static final String TAG = MeditacaoDBAdapter.class.getSimpleName();
     public static final String ROWID = "_id";
     public static final String DATA = "data";
     public static final String TITULO = "titulo";
@@ -145,10 +146,14 @@ public class MeditacaoDBAdapter extends DBAdapter {
             ContentValues values = new ContentValues();
             values.put(FAVORITE, booleanToInt(meditacao.isFavorite()));
             bancoDados.beginTransaction();
-            bancoDados.update(BD_TABELA, values, "id=?", new String[]{id});
+            bancoDados.update(BD_TABELA, values
+                    , ROWID + "=?", new String[]{id});
             bancoDados.setTransactionSuccessful();
+//            Log.i(TAG, id + " atualizado");
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            bancoDados.endTransaction();
         }
     }
 

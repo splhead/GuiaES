@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -73,11 +72,11 @@ public class MainActivity extends ThemedActivity implements
 
         setupScreenKeepOn();
 
-//        setupToolbar();
-
         initMeditacoes();
 
 //        setupFABs();
+
+        setupToolbar();
 
         setupTTS();
     }
@@ -136,7 +135,6 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void setupViewPager() {
-        setupToolbar();
         mViewPager = findViewById(R.id.pager);
 
         if (mViewPager != null) {
@@ -164,6 +162,23 @@ public class MainActivity extends ThemedActivity implements
                 TabLayout mTablayout = findViewById(R.id.tablayout);
 
                 mTablayout.setupWithViewPager(mViewPager);
+
+                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        setupFavoriteFab();
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
             }
         }
     }
@@ -271,33 +286,33 @@ public class MainActivity extends ThemedActivity implements
             }
 
             fabFavorite = findViewById(R.id.fab_favorite);
+            setupFavoriteFab();
 
-            Meditacao meditacao = meditacoes
-                    .get(mViewPager.getCurrentItem());
-
-            changeFavoriteFabIcon(meditacao.isFavorite());
-
-            if (fabFavorite != null) {
-
-                fabFavorite.setOnClickListener(new View.OnClickListener() {
-
-                    Meditacao meditacao = meditacoes
-                            .get(mViewPager.getCurrentItem());
-
-                    @Override
-                    public void onClick(View v) {
-
-
-                        new updateFavoriteTask(MainActivity.this).execute(meditacao);
-
-                        Toast.makeText(getApplicationContext(), "clicou "
-                                , Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                });
-
-            }
         }
+
+    }
+
+    private void setupFavoriteFab() {
+        Meditacao meditacao = meditacoes
+                .get(mViewPager.getCurrentItem());
+
+        changeFavoriteFabIcon(meditacao.isFavorite());
+
+        if (fabFavorite != null) {
+
+            fabFavorite.setOnClickListener(new View.OnClickListener() {
+
+                Meditacao meditacao = meditacoes
+                        .get(mViewPager.getCurrentItem());
+
+                @Override
+                public void onClick(View v) {
+                    new updateFavoriteTask(MainActivity.this).execute(meditacao);
+                }
+            });
+
+        }
+
     }
 
     public void changeFavoriteFabIcon(boolean isFavorite) {
@@ -336,30 +351,28 @@ public class MainActivity extends ThemedActivity implements
         String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
                 "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
 
-        if ((meditacoes != null)
-                && (meditacoes.size() > 0)
-                && (mViewPager != null)) {
-            Meditacao meditacao = meditacoes
-                    .get(mViewPager.getCurrentItem());
 
-            if (meditacao != null) {
-                sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
-                        "\n\n*" +
-                        meditacao.getTitulo() +
-                        "*\n\n_" +
-                        meditacao.getDataPorExtenso() +
-                        "_\n\n*" +
-                        meditacao.getTextoBiblico() +
-                        "*\n\n" +
-                        meditacao.getTexto();
+        Meditacao meditacao = meditacoes
+                .get(mViewPager.getCurrentItem());
 
-                //Analytics
-                Bundle params = new Bundle();
-                params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-                params.putString("devotional_date", meditacao.getData());
-                mFirebaseAnalytics.logEvent("share_devotional", params);
-            }
+        if (meditacao != null) {
+            sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
+                    "\n\n*" +
+                    meditacao.getTitulo() +
+                    "*\n\n_" +
+                    meditacao.getDataPorExtenso() +
+                    "_\n\n*" +
+                    meditacao.getTextoBiblico() +
+                    "*\n\n" +
+                    meditacao.getTexto();
+
+            //Analytics
+            Bundle params = new Bundle();
+            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+            params.putString("devotional_date", meditacao.getData());
+            mFirebaseAnalytics.logEvent("share_devotional", params);
         }
+
 
         return sb;
     }
