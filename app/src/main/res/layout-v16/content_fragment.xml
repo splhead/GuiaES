@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -45,13 +44,6 @@
             android:textSize="?attr/font_medium"
             android:textStyle="italic" />
 
-        <ImageView
-            android:id="@+id/iVerro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:contentDescription="@string/erro"
-            android:src="@drawable/erro" />
 
         <TextView
             android:id="@+id/tvTexto"
