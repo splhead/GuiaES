@@ -23,10 +23,18 @@ class FavoritesListAdapter(private val devotionals: List<Meditacao>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val devotional = devotionals[position]
-        holder.title.text = devotional.titulo
+        holder.bindView(devotional)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title = itemView.tvTitulo
+
+
+        fun bindView(devotional: Meditacao) {
+            val title = itemView.tvTitle
+            val verse = itemView.tvVerse
+
+            title.text = devotional.titulo
+            verse.text = devotional.textoBiblico
+        }
     }
 }

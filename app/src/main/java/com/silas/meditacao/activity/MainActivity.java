@@ -192,8 +192,10 @@ public class MainActivity extends ThemedActivity implements
 
         switch (item.getItemId()) {
             case R.id.action_about:
-                Intent i = new Intent(this, AboutActivity.class);
-                startActivity(i);
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
+            case R.id.action_favorites_activity:
+                startActivity(new Intent(this, FavoritesActivity.class));
                 break;
             case R.id.action_settings:
                 Intent intent = new Intent(this, PreferencesActivity.class);

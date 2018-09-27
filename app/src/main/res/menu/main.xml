@@ -17,6 +17,10 @@
         android:id="@+id/action_share_app"
         android:title="@string/action_share_app"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_favorites_activity"
+        android:title="@string/action_favorites"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"

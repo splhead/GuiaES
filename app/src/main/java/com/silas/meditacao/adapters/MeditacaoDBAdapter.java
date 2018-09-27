@@ -170,9 +170,46 @@ public class MeditacaoDBAdapter extends DBAdapter {
         }
     }
 
+    private ArrayList<Meditacao> getFavorites() {
+        ArrayList<Meditacao> devotionals = new ArrayList<>();
+        try (Cursor c = bancoDados.query(BD_TABELA
+                , new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
+                , FAVORITE + "=1"
+                , null
+                , null
+                , null
+                , DATA + " DESC"
+                , null)) {
+            if (c.getCount() > 0) {
+                while (c.moveToNext()) {
+                    devotionals.add(new Meditacao(c.getLong(0)
+                            , c.getString(1)
+                            , c.getString(2)
+                            , c.getString(3)
+                            , c.getString(4)
+                            , c.getInt(5)
+                            , intToBoolean(c.getInt(6)))
+                    );
+                }
+            }
+        }
+        return devotionals;
+    }
+
+    public ArrayList<Meditacao> fetchFavorites() {
+        try {
+            abrir();
+            return getFavorites();
+        } finally {
+            try {
+                fechar();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private Meditacao meditacao(Calendar data, int tipo) {
-        Cursor c = null;
         Calendar dia = data;
 
         if (tipo == Meditacao.ABJANELAS) {
@@ -183,11 +220,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
         String sData = sdf.format(dia.getTime());
 
-        try {
-            c = bancoDados.query(true, BD_TABELA,
-                    new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
-                    , DATA + " like '" + sData + "%' AND " + TIPO + " = " + tipo
-                    , null, null, null, null, null);
+        try (Cursor c = bancoDados.query(true, BD_TABELA,
+                new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
+                , DATA + " = ? AND " + TIPO + " = ?"
+                , new String[]{sData, String.valueOf(tipo)}
+                , null, null, null, null)) {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 return new Meditacao(c.getLong(0)
@@ -199,10 +236,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
                         , intToBoolean(c.getInt(6))
                 );
 //                Log.i(getClass().getName(), meditacao.toString());
-            }
-        } finally {
-            if (c != null) {
-                c.close();
             }
         }
         return null;
@@ -225,12 +258,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
     }
 
     private long[] minMax(int tipo) {
-        Cursor c = null;
-        try {
-            c = bancoDados.query(true, BD_TABELA,
-                    new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}
-                    , TIPO + " = " + tipo
-                    , null, TIPO, null, null, null);
+        try (Cursor c = bancoDados.query(true, BD_TABELA,
+                new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}
+                , TIPO + " = ?"
+                , new String[]{String.valueOf(tipo)}
+                , TIPO, null, null, null)) {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 long[] minMax = new long[2];
@@ -243,10 +275,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (c != null) {
-                c.close();
-            }
         }
         return null;
     }
