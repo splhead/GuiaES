@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.silas.guiaes.activity.R;
@@ -28,6 +29,11 @@ public class ContentFragment extends Fragment {
 
     public ContentFragment() {
         // Required empty public constructor
+    }
+
+    public static ContentFragment newInstance() {
+        ContentFragment fragment = new ContentFragment();
+        return fragment;
     }
 
     public static ContentFragment newInstance(Meditacao m) {
@@ -70,6 +76,7 @@ public class ContentFragment extends Fragment {
         tvTexto = view.findViewById(R.id.tvTexto);
         tvLinks = view.findViewById(R.id.tvLinks);
 
+
         return view;
     }
 
@@ -87,13 +94,15 @@ public class ContentFragment extends Fragment {
             tvTexto.setText(meditacao.getTexto());
             tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
             fixLinksColor();
+        } else {
+            tvTexto.setText("Carregando...");
         }
     }
 
-    /*public void update(Meditacao m) {
+    public void update(Meditacao m) {
         setMeditacao(m);
         setupContent();
-    }*/
+    }
 
     private void fixLinksColor() {
         if (PreferenceManager.getDefaultSharedPreferences(getActivity())

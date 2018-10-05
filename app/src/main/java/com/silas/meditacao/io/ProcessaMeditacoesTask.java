@@ -118,8 +118,9 @@ public class ProcessaMeditacoesTask extends
 //      Atualiza
         if (messages.isEmpty() && meditacoes.size() > 0) {
 
-            wr.get().setMeditacoes(meditacoes);
-            wr.get().setupViewPager();
+//            wr.get().setMeditacoes(meditacoes);
+//            wr.get().setupViewPager();
+            wr.get().getTabAdapter().setMeditacoes(meditacoes);
             wr.get().setupFABs();
 
         } else {

@@ -32,7 +32,6 @@ import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -53,10 +52,11 @@ public class MainActivity extends ThemedActivity implements
     private MenuItem menuItem;
     private ProgressDialog progress;
     private ViewPager mViewPager;
+    private TabAdapter tabAdapter;
     private FloatingActionButton fabFavorite;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
-    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+//    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -66,19 +66,19 @@ public class MainActivity extends ThemedActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
 
-        setupAd();
-
-        setupAnalytics();
-
-        setupScreenKeepOn();
-
         initMeditacoes();
-
-//        setupFABs();
 
         setupToolbar();
 
+        setupViewPager();
+
         setupTTS();
+
+        setupScreenKeepOn();
+
+        setupAd();
+
+        setupAnalytics();
     }
 
     public void showProgressDialog() {
@@ -123,15 +123,12 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void initMeditacoes() {
-        meditacoes.clear();
+//        meditacoes.clear();
         new ProcessaMeditacoesTask(this, dia).execute(TYPES);
     }
 
-    public void setMeditacoes(ArrayList<Meditacao> meditacoes) {
-        if (meditacoes != null) {
-            this.meditacoes.clear();
-            this.meditacoes = meditacoes;
-        }
+    public TabAdapter getTabAdapter() {
+        return tabAdapter;
     }
 
     public void setupViewPager() {
@@ -139,47 +136,45 @@ public class MainActivity extends ThemedActivity implements
 
         if (mViewPager != null) {
 
-            if (meditacoes.size() > 0) {
-
-                TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
+            tabAdapter = new TabAdapter(getSupportFragmentManager());
 
 //                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
-//                mViewPager.setOffscreenPageLimit(meditacoes.size());
+                mViewPager.setOffscreenPageLimit(TYPES.length);
 
-                mViewPager.setAdapter(tabAdapter);
+            mViewPager.setAdapter(tabAdapter);
 
-                int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(Preferences.TYPE_DEFAULT, "0")));
+            int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(Preferences.TYPE_DEFAULT, "0")));
 
-                if (tabDefault < tabAdapter.getCount()) {
+            if (tabDefault < tabAdapter.getCount()) {
 
-                    mViewPager.setCurrentItem(tabDefault);
+                mViewPager.setCurrentItem(tabDefault);
 
 //                    recordTabDefaultAnalytics(tabDefault);
 
+            }
+
+            TabLayout mTablayout = findViewById(R.id.tablayout);
+
+            mTablayout.setupWithViewPager(mViewPager);
+
+            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
                 }
 
-                TabLayout mTablayout = findViewById(R.id.tablayout);
+                @Override
+                public void onPageSelected(int position) {
+//                    setupFavoriteFab(tabAdapter.getMeditacao(mViewPager.getCurrentItem()));
+                    setupFABs();
+                }
 
-                mTablayout.setupWithViewPager(mViewPager);
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-                        setupFavoriteFab();
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-
-                    }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -219,8 +214,8 @@ public class MainActivity extends ThemedActivity implements
                         tts.stop();
                         changeMenuItemIcon(item, R.drawable.ic_baseline_play_circle_outline_24px);
                     } else {
-                        speakOut();
-
+                        int i = mViewPager.getCurrentItem();
+                        speakOut(tabAdapter.getMeditacao(i));
                         changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
                         menuItem = item;
                     }
@@ -268,8 +263,8 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void setupFABs() {
-        if ((meditacoes != null)
-                && (meditacoes.size() > 0)
+        final Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
+        if ((meditacao != null)
                 && (mViewPager != null)) {
             FloatingActionButton fab = findViewById(R.id.fab_share);
 
@@ -279,7 +274,7 @@ public class MainActivity extends ThemedActivity implements
                     public void onClick(View v) {
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento());
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent,
                                 getResources().getText(R.string.send_to)));
@@ -288,31 +283,28 @@ public class MainActivity extends ThemedActivity implements
             }
 
             fabFavorite = findViewById(R.id.fab_favorite);
-            setupFavoriteFab();
+            setupFavoriteFab(meditacao);
 
         }
 
     }
 
-    private void setupFavoriteFab() {
-        Meditacao meditacao = meditacoes
-                .get(mViewPager.getCurrentItem());
+    private void setupFavoriteFab(Meditacao med) {
+        final Meditacao meditacao = med;
+        if ( meditacao != null ) {
+            changeFavoriteFabIcon(meditacao.isFavorite());
 
-        changeFavoriteFabIcon(meditacao.isFavorite());
+            if (fabFavorite != null) {
 
-        if (fabFavorite != null) {
+                fabFavorite.setOnClickListener(new View.OnClickListener() {
 
-            fabFavorite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new updateFavoriteTask(MainActivity.this).execute(meditacao);
+                    }
+                });
 
-                Meditacao meditacao = meditacoes
-                        .get(mViewPager.getCurrentItem());
-
-                @Override
-                public void onClick(View v) {
-                    new updateFavoriteTask(MainActivity.this).execute(meditacao);
-                }
-            });
-
+            }
         }
 
     }
@@ -349,13 +341,9 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private String preparaCompartilhamento() {
+    private String preparaCompartilhamento(Meditacao meditacao) {
         String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
                 "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
-
-
-        Meditacao meditacao = meditacoes
-                .get(mViewPager.getCurrentItem());
 
         if (meditacao != null) {
             sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
@@ -374,7 +362,6 @@ public class MainActivity extends ThemedActivity implements
             params.putString("devotional_date", meditacao.getData());
             mFirebaseAnalytics.logEvent("share_devotional", params);
         }
-
 
         return sb;
     }
@@ -516,7 +503,7 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private void speakOut() {
+    private void speakOut(Meditacao meditacao) {
         int pitch = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .getInt(SettingsFragment.KEY_TTS_PITCH, 4);
         tts.setPitch(pitch * .25f);
@@ -527,7 +514,7 @@ public class MainActivity extends ThemedActivity implements
 
         HashMap<String, String> mParams = new HashMap<>();
         mParams.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "DEVOTIONAL");
-        tts.speak(prepareTextToSpeak(), TextToSpeech.QUEUE_FLUSH, mParams);
+        tts.speak(prepareTextToSpeak(meditacao), TextToSpeech.QUEUE_FLUSH, mParams);
 
         Bundle bundle = new Bundle();
         bundle.putInt("tts_devotional", mViewPager.getCurrentItem() + 1);
@@ -535,11 +522,9 @@ public class MainActivity extends ThemedActivity implements
 
     }
 
-    private String prepareTextToSpeak() {
-        Meditacao meditacao = meditacoes
-                .get(mViewPager.getCurrentItem());
+    private String prepareTextToSpeak(Meditacao meditacao) {
 
-        if (meditacao == null) {
+        if ( meditacao == null ) {
             return "Texto indisponível no momento. Por favor tente novamente mais tarde.";
         }
 
