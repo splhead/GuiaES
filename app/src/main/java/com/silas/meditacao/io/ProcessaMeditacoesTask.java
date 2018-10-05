@@ -122,6 +122,7 @@ public class ProcessaMeditacoesTask extends
 //            wr.get().setupViewPager();
             wr.get().getTabAdapter().setMeditacoes(meditacoes);
             wr.get().setupFABs();
+            wr.get().setupTabDefault();
 
         } else {
             for (String status : messages)

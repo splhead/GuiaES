@@ -143,16 +143,7 @@ public class MainActivity extends ThemedActivity implements
 
             mViewPager.setAdapter(tabAdapter);
 
-            int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(Preferences.TYPE_DEFAULT, "0")));
-
-            if (tabDefault < tabAdapter.getCount()) {
-
-                mViewPager.setCurrentItem(tabDefault);
-
-//                    recordTabDefaultAnalytics(tabDefault);
-
-            }
+//            setupTabDefault();
 
             TabLayout mTablayout = findViewById(R.id.tablayout);
 
@@ -175,6 +166,19 @@ public class MainActivity extends ThemedActivity implements
 
                 }
             });
+        }
+    }
+
+    public void setupTabDefault() {
+        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Preferences.TYPE_DEFAULT, "0")));
+
+        if (tabAdapter.getMeditacao(tabDefault) != null) {
+
+            mViewPager.setCurrentItem(tabDefault);
+
+//                    recordTabDefaultAnalytics(tabDefault);
+
         }
     }
 

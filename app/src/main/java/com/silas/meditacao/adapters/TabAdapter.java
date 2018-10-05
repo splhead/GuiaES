@@ -3,7 +3,7 @@ package com.silas.meditacao.adapters;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 import com.silas.meditacao.activity.MainActivity;
@@ -13,7 +13,7 @@ import com.silas.meditacao.models.Meditacao;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabAdapter extends FragmentStatePagerAdapter {
+public class TabAdapter extends FragmentPagerAdapter {
 
     private List<ContentFragment> mList = new ArrayList<>();
 
