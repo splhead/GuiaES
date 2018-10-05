@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -46,6 +47,7 @@ public class MainActivity extends ThemedActivity implements
         TextToSpeech.OnInitListener {
 
     private static final int MY_DATA_CHECK_CODE = 7;
+    private static final String FIRST_TIME_NOTIFICATION_KEY = "first_time";
     private Calendar dia = Calendar.getInstance();
 
     private TextToSpeech tts;
@@ -56,7 +58,7 @@ public class MainActivity extends ThemedActivity implements
     private FloatingActionButton fabFavorite;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
-//    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+    //    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -79,6 +81,19 @@ public class MainActivity extends ThemedActivity implements
         setupAd();
 
         setupAnalytics();
+
+        setupFirstTimeNotifications();
+    }
+
+    private void setupFirstTimeNotifications() {
+        SharedPreferences sharedPreferences
+                = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPreferences.getBoolean(FIRST_TIME_NOTIFICATION_KEY, true)) {
+            sendBroadcast(new Intent("com.silas.meditacao.AGENDADOR"));
+            sharedPreferences.edit().putBoolean(FIRST_TIME_NOTIFICATION_KEY, false).apply();
+        }
+
     }
 
     public void showProgressDialog() {
@@ -139,7 +154,7 @@ public class MainActivity extends ThemedActivity implements
             tabAdapter = new TabAdapter(getSupportFragmentManager());
 
 //                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
-                mViewPager.setOffscreenPageLimit(TYPES.length);
+            mViewPager.setOffscreenPageLimit(TYPES.length);
 
             mViewPager.setAdapter(tabAdapter);
 
@@ -295,7 +310,7 @@ public class MainActivity extends ThemedActivity implements
 
     private void setupFavoriteFab(Meditacao med) {
         final Meditacao meditacao = med;
-        if ( meditacao != null ) {
+        if (meditacao != null) {
             changeFavoriteFabIcon(meditacao.isFavorite());
 
             if (fabFavorite != null) {
@@ -528,7 +543,7 @@ public class MainActivity extends ThemedActivity implements
 
     private String prepareTextToSpeak(Meditacao meditacao) {
 
-        if ( meditacao == null ) {
+        if (meditacao == null) {
             return "Texto indisponível no momento. Por favor tente novamente mais tarde.";
         }
 

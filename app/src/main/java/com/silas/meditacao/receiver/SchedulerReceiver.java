@@ -51,7 +51,8 @@ public class SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (action != null &&
-                action.equals("android.intent.action.BOOT_COMPLETED")) setAlarm(context);
+        if (action != null
+                && (action.equals("android.intent.action.BOOT_COMPLETED")
+                || action.equals("com.silas.meditacao.AGENDADOR"))) setAlarm(context);
     }
 }

@@ -15,6 +15,12 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <!--<activity android:name="com.silas.meditacao.activity.LauncherActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
         <activity
             android:name="com.silas.meditacao.activity.MainActivity"
             android:configChanges="orientation|screenSize">
@@ -42,8 +48,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.silas.meditacao.receiver.SchedulerReceiver">
+        <receiver
+            android:name="com.silas.meditacao.receiver.SchedulerReceiver"
+            android:exported="false">
             <intent-filter>
+                <action android:name="com.silas.meditacao.AGENDADOR" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
