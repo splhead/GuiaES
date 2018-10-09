@@ -19,10 +19,10 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
-    /*public TabAdapter(FragmentManager fm, ArrayList<Meditacao> colecao) {
+    public TabAdapter(FragmentManager fm, ArrayList<Meditacao> colecao) {
         super(fm);
         meditacoes = colecao;
-    }*/
+    }
 
     public TabAdapter(FragmentManager fm) {
         super(fm);
@@ -30,8 +30,11 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-//        return ContentFragment.newInstance(meditacoes.get(position));
-        return ContentFragment.newInstance();
+        if (meditacoes.size() > 0) {
+            return ContentFragment.newInstance(meditacoes.get(position));
+        } else {
+            return ContentFragment.newInstance();
+        }
     }
 
 //    @Override

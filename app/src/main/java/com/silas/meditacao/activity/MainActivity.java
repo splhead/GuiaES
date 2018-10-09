@@ -33,6 +33,7 @@ import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.models.Meditacao;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -58,7 +59,7 @@ public class MainActivity extends ThemedActivity implements
     private FloatingActionButton fabFavorite;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
-    //    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+    private ArrayList<Meditacao> meditacoes; // = new ArrayList<>();
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -72,7 +73,9 @@ public class MainActivity extends ThemedActivity implements
 
         setupToolbar();
 
-        setupViewPager();
+        setupTabAdapter();
+
+//        setupViewPager();
 
         setupTTS();
 
@@ -138,20 +141,33 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void initMeditacoes() {
-//        meditacoes.clear();
-        new ProcessaMeditacoesTask(this, dia).execute(TYPES);
+        meditacoes = this.getIntent()
+                .getParcelableArrayListExtra(LauncherActivity.DEVOTIONALS);
+        if (meditacoes == null || meditacoes.size() < TYPES.length) {
+
+            new ProcessaMeditacoesTask(this, dia).execute(TYPES);
+        }
+        setupTabAdapter();
+        setupViewPager();
+
     }
 
     public TabAdapter getTabAdapter() {
         return tabAdapter;
     }
 
+    public void setupTabAdapter() {
+        if (meditacoes != null) {
+            tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
+        } else {
+            tabAdapter = new TabAdapter(getSupportFragmentManager());
+        }
+    }
+
     public void setupViewPager() {
         mViewPager = findViewById(R.id.pager);
 
         if (mViewPager != null) {
-
-            tabAdapter = new TabAdapter(getSupportFragmentManager());
 
 //                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
             mViewPager.setOffscreenPageLimit(TYPES.length);
@@ -440,12 +456,16 @@ public class MainActivity extends ThemedActivity implements
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         dia.set(year, month, day);
-        initMeditacoes();
+        updateMeditacoes();
 
         // Analytics
         Bundle params = new Bundle();
         params.putString("new_date", dia.toString());
         mFirebaseAnalytics.logEvent("change_date", params);
+    }
+
+    private void updateMeditacoes() {
+        new ProcessaMeditacoesTask(this, dia).execute(TYPES);
     }
 
     private void setupTTS() {

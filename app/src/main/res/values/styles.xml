@@ -40,6 +40,10 @@
         </item>
     </style>
 
+    <style name="Theme.Dark.FullScreen" parent="Theme.Dark">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="FontStyle" />
 
     <style name="FontStyle.Pequena">

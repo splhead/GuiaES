@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
+import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.interfaces.Extractable;
 import com.silas.meditacao.models.Meditacao;
 
@@ -116,11 +117,12 @@ public class ProcessaMeditacoesTask extends
         wr.get().dismissProgressDialog();
 
 //      Atualiza
-        if (messages.isEmpty() && meditacoes.size() > 0) {
+        if (messages.isEmpty() && meditacoes != null && meditacoes.size() > 0) {
 
 //            wr.get().setMeditacoes(meditacoes);
 //            wr.get().setupViewPager();
-            wr.get().getTabAdapter().setMeditacoes(meditacoes);
+            TabAdapter tabAdapter = wr.get().getTabAdapter();
+            if (tabAdapter != null) tabAdapter.setMeditacoes(meditacoes);
             wr.get().setupFABs();
             wr.get().setupTabDefault();
 
