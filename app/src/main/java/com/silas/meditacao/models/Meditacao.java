@@ -34,7 +34,7 @@ public class Meditacao implements Parcelable {
     private String texto;
     @SerializedName("type")
     private int tipo;
-
+    @SerializedName("favorite")
     private boolean favorite = false;
 
     public Meditacao(long id, String titulo, String data,
@@ -63,6 +63,7 @@ public class Meditacao implements Parcelable {
         this.textoBiblico = in.readString();
         this.texto = in.readString();
         this.tipo = in.readInt();
+        this.favorite = in.readByte() != 0;
     }
 
     public static String getNomeTipo(int tipo) {
@@ -174,5 +175,6 @@ public class Meditacao implements Parcelable {
         dest.writeString(this.textoBiblico);
         dest.writeString(this.texto);
         dest.writeInt(this.tipo);
+        dest.writeByte((byte) (this.favorite ? 1 : 0));
     }
 }

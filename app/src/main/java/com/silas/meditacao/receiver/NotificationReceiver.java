@@ -10,7 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 import com.silas.guiaes.activity.R;
-import com.silas.meditacao.activity.MainActivity;
+import com.silas.meditacao.activity.LauncherActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.models.Meditacao;
@@ -39,7 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(text));
 
-            Intent resultIntent = new Intent(context, MainActivity.class);
+            Intent resultIntent = new Intent(context, LauncherActivity.class);
 
             PendingIntent resultPendingIntent =
                     PendingIntent.getActivity(

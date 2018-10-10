@@ -110,25 +110,26 @@ public class ProcessaMeditacoesTask extends
 
     @Override
     protected void onPostExecute(ArrayList<String> messages) {
-        if (wr.get().isDestroyed()) {
+        MainActivity activity = wr.get();
+        if (activity == null || activity.isDestroyed()) {
             return;
         }
 
-        wr.get().dismissProgressDialog();
+        activity.dismissProgressDialog();
 
 //      Atualiza
         if (messages.isEmpty() && meditacoes != null && meditacoes.size() > 0) {
 
-//            wr.get().setMeditacoes(meditacoes);
-//            wr.get().setupViewPager();
-            TabAdapter tabAdapter = wr.get().getTabAdapter();
-            if (tabAdapter != null) tabAdapter.setMeditacoes(meditacoes);
-            wr.get().setupFABs();
-            wr.get().setupTabDefault();
+            TabAdapter tabAdapter = activity.getTabAdapter();
+            if (tabAdapter != null) {
+                tabAdapter.setMeditacoes(meditacoes);
+                activity.setupFABs();
+                activity.setupTabDefault();
+            }
 
         } else {
             for (String status : messages)
-                Snackbar.make(wr.get().getCoordnatorLayout(), status, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCoordnatorLayout(), status, Snackbar.LENGTH_SHORT).show();
         }
         super.onPostExecute(messages);
     }

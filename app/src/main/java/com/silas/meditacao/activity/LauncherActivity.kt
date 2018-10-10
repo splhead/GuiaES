@@ -28,6 +28,7 @@ class LauncherActivity : AwesomeSplash() {
         configSplash.titleSplash = getString(R.string.app_name)
         configSplash.titleTextColor = R.color.colorPrimaryInverse
         configSplash.animTitleDuration = 100
+        configSplash.titleFont = "fonts/GreatVibes-Regular.ttf"
 //        configSplash.animTitleTechnique = Techniques.FlipInX
     }
 

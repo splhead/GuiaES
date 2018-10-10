@@ -11,11 +11,10 @@ import com.silas.meditacao.fragments.ContentFragment;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TabAdapter extends FragmentPagerAdapter {
 
-    private List<ContentFragment> mList = new ArrayList<>();
+    private ContentFragment[] mList = new ContentFragment[getCount()];
 
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
 
@@ -61,14 +60,14 @@ public class TabAdapter extends FragmentPagerAdapter {
         Object object = super.instantiateItem(container, position);
         if (object instanceof ContentFragment) {
             ContentFragment fragment = (ContentFragment) object;
-            mList.add(fragment);
+            mList[position] = fragment;
         }
         return object;
     }
 
     private void updateFragments() {
-        for (int i = 0; i < mList.size(); i++) {
-            mList.get(i).update(meditacoes.get(i));
+        for (int i = 0; i < getCount(); i++) {
+            mList[i].update(meditacoes.get(i));
         }
     }
 

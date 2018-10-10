@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -59,7 +61,6 @@ public class MainActivity extends ThemedActivity implements
     private FloatingActionButton fabFavorite;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
-    private ArrayList<Meditacao> meditacoes; // = new ArrayList<>();
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -72,10 +73,6 @@ public class MainActivity extends ThemedActivity implements
         initMeditacoes();
 
         setupToolbar();
-
-        setupTabAdapter();
-
-//        setupViewPager();
 
         setupTTS();
 
@@ -131,6 +128,7 @@ public class MainActivity extends ThemedActivity implements
     private void setupToolbar() {
         Toolbar mToolbar = findViewById(R.id.toolbar_main);
         if (mToolbar != null) {
+            changeFontToolbar(mToolbar);
             mToolbar.setOnMenuItemClickListener(this);
             if (!PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(Preferences.DARK_THEME, false)) {
@@ -140,15 +138,31 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
+    private void changeFontToolbar(Toolbar toolbar) {
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            View view = toolbar.getChildAt(i);
+            if (view instanceof TextView
+                    && ((TextView) view).getText() == getString(R.string.app_name)) {
+                ((TextView) view).setTypeface(
+                        Typeface.createFromAsset(view.getContext().getAssets()
+                                , "fonts/GreatVibes-Regular.ttf"));
+            }
+        }
+    }
+
     public void initMeditacoes() {
-        meditacoes = this.getIntent()
+        ArrayList<Meditacao> meditacoes = this.getIntent()
                 .getParcelableArrayListExtra(LauncherActivity.DEVOTIONALS);
+
+        setupTabAdapter(meditacoes);
+        setupViewPager();
+
         if (meditacoes == null || meditacoes.size() < TYPES.length) {
 
             new ProcessaMeditacoesTask(this, dia).execute(TYPES);
+        } else {
+            setupTabDefault();
         }
-        setupTabAdapter();
-        setupViewPager();
 
     }
 
@@ -156,7 +170,7 @@ public class MainActivity extends ThemedActivity implements
         return tabAdapter;
     }
 
-    public void setupTabAdapter() {
+    public void setupTabAdapter(ArrayList<Meditacao> meditacoes) {
         if (meditacoes != null) {
             tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
         } else {
@@ -201,15 +215,15 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void setupTabDefault() {
-        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Preferences.TYPE_DEFAULT, "0")));
+        if (tabAdapter != null && mViewPager != null) {
+            int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(Preferences.TYPE_DEFAULT, "0")));
 
-        if (tabAdapter.getMeditacao(tabDefault) != null) {
+            if (tabAdapter.getMeditacao(tabDefault) != null) {
 
-            mViewPager.setCurrentItem(tabDefault);
+                mViewPager.setCurrentItem(tabDefault);
 
-//                    recordTabDefaultAnalytics(tabDefault);
-
+            }
         }
     }
 
