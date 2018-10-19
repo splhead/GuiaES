@@ -5,13 +5,13 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
-import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -128,7 +127,7 @@ public class MainActivity extends ThemedActivity implements
     private void setupToolbar() {
         Toolbar mToolbar = findViewById(R.id.toolbar_main);
         if (mToolbar != null) {
-            changeFontToolbar(mToolbar);
+//            changeFontToolbar(mToolbar);
             mToolbar.setOnMenuItemClickListener(this);
             if (!PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(Preferences.DARK_THEME, false)) {
@@ -138,7 +137,7 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private void changeFontToolbar(Toolbar toolbar) {
+    /*private void changeFontToolbar(Toolbar toolbar) {
         for (int i = 0; i < toolbar.getChildCount(); i++) {
             View view = toolbar.getChildAt(i);
             if (view instanceof TextView
@@ -148,7 +147,7 @@ public class MainActivity extends ThemedActivity implements
                                 , "fonts/GreatVibes-Regular.ttf"));
             }
         }
-    }
+    }*/
 
     public void initMeditacoes() {
         ArrayList<Meditacao> meditacoes = this.getIntent()
@@ -385,8 +384,34 @@ public class MainActivity extends ThemedActivity implements
 
         @Override
         protected void onPostExecute(Meditacao meditacao) {
+            if (!wr.get().isFinishing()) {
+
+                wr.get().changeFavoriteFabIcon(meditacao.isFavorite());
+
+                Snackbar mySnack = Snackbar.make(wr.get().getCoordnatorLayout()
+                        , "Salvo com sucesso!", Snackbar.LENGTH_SHORT);
+
+                mySnack.setAction("Desfazer", new MyUndoListener(wr.get(), meditacao));
+                mySnack.show();
+            }
             super.onPostExecute(meditacao);
-            wr.get().changeFavoriteFabIcon(meditacao.isFavorite());
+
+        }
+    }
+
+    public static class MyUndoListener implements View.OnClickListener {
+
+        private Meditacao devotional;
+        private MainActivity activity;
+
+        MyUndoListener(MainActivity mainActivity, Meditacao meditacao) {
+            devotional = meditacao;
+            activity = mainActivity;
+        }
+
+        @Override
+        public void onClick(View v) {
+            new updateFavoriteTask(activity).execute(devotional);
         }
     }
 

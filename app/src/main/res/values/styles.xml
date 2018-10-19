@@ -41,6 +41,7 @@
     </style>
 
     <style name="Theme.Dark.FullScreen" parent="Theme.Dark">
+        <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 
