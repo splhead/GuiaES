@@ -256,6 +256,7 @@ public class MainActivity extends ThemedActivity implements
                 s.setType("text/plain");
                 startActivity(Intent.createChooser(s,
                         getResources().getText(R.string.send_to)));
+                break;
             case R.id.action_speakout:
                 if (tts != null) {
                     if (tts.isSpeaking()) {
