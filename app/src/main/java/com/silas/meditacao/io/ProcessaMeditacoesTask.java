@@ -111,7 +111,7 @@ public class ProcessaMeditacoesTask extends
     @Override
     protected void onPostExecute(ArrayList<String> messages) {
         MainActivity activity = wr.get();
-        if (activity == null || activity.isDestroyed()) {
+        if (activity == null || activity.isFinishing()) {
             return;
         }
 

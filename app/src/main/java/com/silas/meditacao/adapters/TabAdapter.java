@@ -1,10 +1,8 @@
 package com.silas.meditacao.adapters;
 
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.view.ViewGroup;
 
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.fragments.ContentFragment;
@@ -29,45 +27,31 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        ContentFragment contentFragment;
         if (meditacoes.size() > 0) {
-            return ContentFragment.newInstance(meditacoes.get(position));
+            contentFragment = ContentFragment.newInstance(meditacoes.get(position));
         } else {
-            return ContentFragment.newInstance();
+            contentFragment = ContentFragment.newInstance();
         }
+        mList[position] = contentFragment;
+        return contentFragment;
     }
-
-//    @Override
-//    public int getItemPosition(Object object) {
-//        return POSITION_NONE;
-//    }
 
     @Override
     public int getCount() {
         return MainActivity.TYPES.length;
     }
-//    public int getCount() {
-//        return meditacoes != null ? meditacoes.size() : 0;
-//    }
 
     @Override
     public CharSequence getPageTitle(int position) {
         return Meditacao.getNomeTipo(MainActivity.TYPES[position]);
     }
 
-    @NonNull
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Object object = super.instantiateItem(container, position);
-        if (object instanceof ContentFragment) {
-            ContentFragment fragment = (ContentFragment) object;
-            mList[position] = fragment;
-        }
-        return object;
-    }
-
     private void updateFragments() {
         for (int i = 0; i < getCount(); i++) {
-            mList[i].update(meditacoes.get(i));
+            if (mList[i] != null && meditacoes.get(i) != null) {
+                mList[i].update(meditacoes.get(i));
+            }
         }
     }
 

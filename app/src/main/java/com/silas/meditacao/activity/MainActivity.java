@@ -367,36 +367,19 @@ public class MainActivity extends ThemedActivity implements
     }
 
 
-    private static class updateFavoriteTask extends AsyncTask<Meditacao, Void, Meditacao> {
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
 
-        private WeakReference<MainActivity> wr;
+            int result = tts.setLanguage(new Locale("pt", "BR"));
 
-        updateFavoriteTask(MainActivity mainActivity) {
-            wr = new WeakReference<>(mainActivity);
-        }
-
-        @Override
-        protected Meditacao doInBackground(Meditacao... meditacoes) {
-            meditacoes[0].toogleFavorite();
-            MeditacaoDBAdapter meditacaoDBAdapter = new MeditacaoDBAdapter(wr.get());
-            meditacaoDBAdapter.updateDevotionalFavorite(meditacoes[0]);
-            return meditacoes[0];
-        }
-
-        @Override
-        protected void onPostExecute(Meditacao meditacao) {
-            if (!wr.get().isFinishing()) {
-
-                wr.get().changeFavoriteFabIcon(meditacao.isFavorite());
-
-                Snackbar mySnack = Snackbar.make(wr.get().getCoordnatorLayout()
-                        , "Salvo com sucesso!", Snackbar.LENGTH_SHORT);
-
-                mySnack.setAction("Desfazer", new MyUndoListener(wr.get(), meditacao));
-                mySnack.show();
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
             }
-            super.onPostExecute(meditacao);
 
+        } else {
+            Log.e("TTS", "Initilization Failed!");
         }
     }
 
@@ -566,19 +549,36 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
+    private static class updateFavoriteTask extends AsyncTask<Meditacao, Void, Meditacao> {
 
-            int result = tts.setLanguage(new Locale("pt", "POR"));
+        private WeakReference<MainActivity> wr;
 
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
+        updateFavoriteTask(MainActivity mainActivity) {
+            wr = new WeakReference<>(mainActivity);
+        }
+
+        @Override
+        protected Meditacao doInBackground(Meditacao... meditacoes) {
+            meditacoes[0].toogleFavorite();
+            MeditacaoDBAdapter meditacaoDBAdapter = new MeditacaoDBAdapter(wr.get());
+            meditacaoDBAdapter.updateDevotionalFavorite(meditacoes[0]);
+            return meditacoes[0];
+        }
+
+        @Override
+        protected void onPostExecute(Meditacao meditacao) {
+            if (!wr.get().isFinishing()) {
+
+                wr.get().changeFavoriteFabIcon(meditacao.isFavorite());
+
+                Snackbar mySnack = Snackbar.make(wr.get().getCoordnatorLayout()
+                        , "Salvo!", Snackbar.LENGTH_SHORT);
+
+                mySnack.setAction("Desfazer", new MyUndoListener(wr.get(), meditacao));
+                mySnack.show();
             }
+            super.onPostExecute(meditacao);
 
-        } else {
-            Log.e("TTS", "Initilization Failed!");
         }
     }
 
