@@ -13,7 +13,7 @@ import com.silas.guiaes.activity.R
 import com.silas.meditacao.models.Meditacao
 import kotlinx.android.synthetic.main.favorites_item.view.*
 
-class FavoritesListAdapter(private val favoriteViewItems: List<Any>) :
+class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val DEVOTIONAL_ITEM_VIEW_TYPE = 0
@@ -26,6 +26,11 @@ class FavoritesListAdapter(private val favoriteViewItems: List<Any>) :
             return UNIFIED_NATIVE_AD_VIEW_TYPE
         }
         return DEVOTIONAL_ITEM_VIEW_TYPE
+    }
+
+    fun updateFavItems(list: List<Any>) {
+        favoriteViewItems = list
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -52,7 +57,7 @@ class FavoritesListAdapter(private val favoriteViewItems: List<Any>) :
         when (viewType) {
             UNIFIED_NATIVE_AD_VIEW_TYPE -> {
                 val nativeAd = favoriteViewItems[position] as UnifiedNativeAd
-                (holder as UnifiedAdViewHolder)
+                (holder as UnifiedAdViewHolder).bindView()
                 populateNativeAdView(nativeAd, holder.adView)
 
             }
@@ -63,7 +68,7 @@ class FavoritesListAdapter(private val favoriteViewItems: List<Any>) :
 
     }
 
-    fun populateNativeAdView(nativeAd: UnifiedNativeAd, adview: UnifiedNativeAdView) {
+    private fun populateNativeAdView(nativeAd: UnifiedNativeAd, adview: UnifiedNativeAdView) {
         (adview.headlineView as TextView).text = nativeAd.headline
         (adview.bodyView as TextView).text = nativeAd.body
         (adview.callToActionView as TextView).text = nativeAd.callToAction
