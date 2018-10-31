@@ -4,11 +4,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.silas.guiaes.activity.R
 import com.silas.meditacao.adapters.FavoritesListAdapter
 import com.silas.meditacao.adapters.MeditacaoDBAdapter
@@ -18,12 +13,12 @@ import java.lang.ref.WeakReference
 
 
 class FavoritesActivity : ThemedActivity() {
-    companion object {
+    /*companion object {
         const val NUMBER_OF_ADS = 2
     }
 
     private lateinit var adLoader: AdLoader
-    private val mNativeAds: ArrayList<UnifiedNativeAd> = ArrayList()
+    private val mNativeAds: ArrayList<UnifiedNativeAd> = ArrayList()*/
     private lateinit var favAdapter: FavoritesListAdapter
     private var mFavoritesItems: ArrayList<Any> = ArrayList()
     private lateinit var recyclerView: RecyclerView
@@ -38,7 +33,7 @@ class FavoritesActivity : ThemedActivity() {
 
     }
 
-    fun insertAdsInFavoritesItems() {
+    /*fun insertAdsInFavoritesItems() {
         if (mNativeAds.size <= 0) {
             return
         }
@@ -76,12 +71,12 @@ class FavoritesActivity : ThemedActivity() {
 
         // Load the Native Express ad.
         adLoader.loadAds(AdRequest.Builder().build(), NUMBER_OF_ADS)
-    }
+    }*/
 
     fun setDevotional(collection: ArrayList<Any>) {
         mFavoritesItems.clear()
         mFavoritesItems = collection
-        loadNativeAds()
+//        loadNativeAds()
         favAdapter.updateFavItems(mFavoritesItems)
     }
 

@@ -15,14 +15,14 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="20sp"
             tools:text="Titulo" />
 
         <TextView
             android:id="@+id/tvVerse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="12sp"
             tools:text="Verso" />
 
     </LinearLayout>

@@ -4,29 +4,24 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
-import com.google.android.gms.ads.formats.UnifiedNativeAd
-import com.google.android.gms.ads.formats.UnifiedNativeAdView
 import com.silas.guiaes.activity.R
 import com.silas.meditacao.models.Meditacao
 import kotlinx.android.synthetic.main.favorites_item.view.*
 
-class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
+class FavoritesListAdapter(private var favoriteViewItems: List<Any>) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    companion object {
+    /*companion object {
         private const val DEVOTIONAL_ITEM_VIEW_TYPE = 0
         private const val UNIFIED_NATIVE_AD_VIEW_TYPE = 1
-    }
+    }*/
 
-    override fun getItemViewType(position: Int): Int {
+    /*override fun getItemViewType(position: Int): Int {
         val favoriteViewItem = favoriteViewItems[position]
         if (favoriteViewItem is UnifiedNativeAd) {
             return UNIFIED_NATIVE_AD_VIEW_TYPE
         }
         return DEVOTIONAL_ITEM_VIEW_TYPE
-    }
+    }*/
 
     fun updateFavItems(list: List<Any>) {
         favoriteViewItems = list
@@ -34,7 +29,11 @@ class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.favorites_item
+                , parent, false)
+        return ViewHolder(view)
+
+        /*when (viewType) {
             UNIFIED_NATIVE_AD_VIEW_TYPE -> {
                 val unifiedNativeLayoutView = LayoutInflater.from(parent.context)
                         .inflate(R.layout.ad_unified, parent, false)
@@ -45,7 +44,7 @@ class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
                         , parent, false)
                 return ViewHolder(view)
             }
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {
@@ -53,7 +52,8 @@ class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val viewType = getItemViewType(position)
+        (holder as ViewHolder).bindView(favoriteViewItems[position] as? Meditacao)
+        /*val viewType = getItemViewType(position)
         when (viewType) {
             UNIFIED_NATIVE_AD_VIEW_TYPE -> {
                 val nativeAd = favoriteViewItems[position] as UnifiedNativeAd
@@ -64,11 +64,11 @@ class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
             else -> {
                 (holder as ViewHolder).bindView(favoriteViewItems[position] as? Meditacao)
             }
-        }
+        }*/
 
     }
 
-    private fun populateNativeAdView(nativeAd: UnifiedNativeAd, adview: UnifiedNativeAdView) {
+    /*private fun populateNativeAdView(nativeAd: UnifiedNativeAd, adview: UnifiedNativeAdView) {
         (adview.headlineView as TextView).text = nativeAd.headline
         (adview.bodyView as TextView).text = nativeAd.body
         (adview.callToActionView as TextView).text = nativeAd.callToAction
@@ -111,7 +111,7 @@ class FavoritesListAdapter(var favoriteViewItems: List<Any>) :
         }
 
         adview.setNativeAd(nativeAd)
-    }
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

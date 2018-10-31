@@ -469,7 +469,7 @@ public class MainActivity extends ThemedActivity implements
             mAdView = findViewById(R.id.ad_view);
             AdRequest adRequest = new AdRequest.Builder()
 //                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
-                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
                     .build();
 
             // Start loading the ad in the background.
