@@ -161,6 +161,7 @@ public class MainActivity extends ThemedActivity implements
             new ProcessaMeditacoesTask(this, dia).execute(TYPES);
         } else {
             setupTabDefault();
+            setupFABs();
         }
 
     }
