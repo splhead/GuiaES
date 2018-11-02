@@ -50,6 +50,30 @@ public class Util {
         return false;
     }
 
+    public static boolean notShabbat(Calendar hoje) {
+        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
+                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
+    }
+
+    public static String preparaCompartilhamento(Meditacao meditacao) {
+        String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
+                "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
+
+        if (meditacao != null) {
+            sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
+                    "\n\n*" +
+                    meditacao.getTitulo() +
+                    "*\n\n_" +
+                    meditacao.getDataPorExtenso() +
+                    "_\n\n*" +
+                    meditacao.getTextoBiblico() +
+                    "*\n\n" +
+                    meditacao.getTexto();
+        }
+
+        return sb;
+    }
+
     static String getURL(int type, Calendar day) {
 
         int year = day.get(Calendar.YEAR);

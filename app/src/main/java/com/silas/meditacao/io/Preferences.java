@@ -17,7 +17,7 @@ public class Preferences {
     }
 
     private SharedPreferences open() {
-//        return context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+//        return favoritesActivity.getSharedPreferences("prefs", Context.MODE_PRIVATE);
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 

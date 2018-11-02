@@ -1,5 +1,6 @@
 package com.silas.meditacao.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -31,6 +32,7 @@ import com.silas.meditacao.adapters.TabAdapter;
 import com.silas.meditacao.fragments.SettingsFragment;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
+import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
 
 import java.lang.ref.WeakReference;
@@ -49,6 +51,7 @@ public class MainActivity extends ThemedActivity implements
         TextToSpeech.OnInitListener {
 
     private static final int MY_DATA_CHECK_CODE = 7;
+    private static final int FAVORITES_ACTIVITY_CODE = 4;
     private static final String FIRST_TIME_NOTIFICATION_KEY = "first_time";
     private Calendar dia = Calendar.getInstance();
 
@@ -143,7 +146,7 @@ public class MainActivity extends ThemedActivity implements
             if (view instanceof TextView
                     && ((TextView) view).getText() == getString(R.string.app_name)) {
                 ((TextView) view).setTypeface(
-                        Typeface.createFromAsset(view.getContext().getAssets()
+                        Typeface.createFromAsset(view.getFavoritesActivity().getAssets()
                                 , "fonts/GreatVibes-Regular.ttf"));
             }
         }
@@ -156,11 +159,14 @@ public class MainActivity extends ThemedActivity implements
         setupTabAdapter(meditacoes);
         setupViewPager();
 
+        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Preferences.TYPE_DEFAULT, "0")));
+        setupTab(tabDefault);
+
         if (meditacoes == null || meditacoes.size() < TYPES.length) {
 
             new ProcessaMeditacoesTask(this, dia).execute(TYPES);
         } else {
-            setupTabDefault();
             setupFABs();
         }
 
@@ -188,7 +194,7 @@ public class MainActivity extends ThemedActivity implements
 
             mViewPager.setAdapter(tabAdapter);
 
-//            setupTabDefault();
+//            setupTab();
 
             TabLayout mTablayout = findViewById(R.id.tablayout);
 
@@ -214,12 +220,10 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    public void setupTabDefault() {
+    public void setupTab(int tabDefault) {
         if (tabAdapter != null && mViewPager != null) {
-            int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(Preferences.TYPE_DEFAULT, "0")));
 
-            if (tabAdapter.getMeditacao(tabDefault) != null) {
+            if (tabAdapter.getMeditacao(tabDefault) != null && tabDefault < TYPES.length) {
 
                 mViewPager.setCurrentItem(tabDefault);
 
@@ -239,7 +243,8 @@ public class MainActivity extends ThemedActivity implements
                 startActivity(new Intent(this, AboutActivity.class));
                 break;
             case R.id.action_favorites_activity:
-                startActivity(new Intent(this, FavoritesActivity.class));
+                startActivityForResult(new Intent(this, FavoritesActivity.class)
+                        , FAVORITES_ACTIVITY_CODE);
                 break;
             case R.id.action_settings:
                 Intent intent = new Intent(this, PreferencesActivity.class);
@@ -324,10 +329,15 @@ public class MainActivity extends ThemedActivity implements
                     public void onClick(View v) {
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, preparaCompartilhamento(meditacao));
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(meditacao));
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent,
                                 getResources().getText(R.string.send_to)));
+                        //Analytics
+                        Bundle params = new Bundle();
+                        params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+                        params.putString("devotional_date", meditacao.getData());
+                        mFirebaseAnalytics.logEvent("share_devotional", params);
                     }
                 });
             }
@@ -400,30 +410,6 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    private String preparaCompartilhamento(Meditacao meditacao) {
-        String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
-                "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
-
-        if (meditacao != null) {
-            sb = Meditacao.getDevotionalName(meditacao.getTipo()) +
-                    "\n\n*" +
-                    meditacao.getTitulo() +
-                    "*\n\n_" +
-                    meditacao.getDataPorExtenso() +
-                    "_\n\n*" +
-                    meditacao.getTextoBiblico() +
-                    "*\n\n" +
-                    meditacao.getTexto();
-
-            //Analytics
-            Bundle params = new Bundle();
-            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-            params.putString("devotional_date", meditacao.getData());
-            mFirebaseAnalytics.logEvent("share_devotional", params);
-        }
-
-        return sb;
-    }
 
     @Override
     public void onPause() {
@@ -458,14 +444,10 @@ public class MainActivity extends ThemedActivity implements
         super.onDestroy();
     }
 
-    private boolean notShabbat(Calendar hoje) {
-        return !((hoje.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && hoje.get(Calendar.HOUR_OF_DAY) > 17) ||
-                (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
-    }
 
     private void setupAd() {
         Calendar hoje = Calendar.getInstance();
-        if (notShabbat(hoje)) {
+        if (Util.notShabbat(hoje)) {
             mAdView = findViewById(R.id.ad_view);
             AdRequest adRequest = new AdRequest.Builder()
 //                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
@@ -488,6 +470,15 @@ public class MainActivity extends ThemedActivity implements
         mFirebaseAnalytics.logEvent("change_date", params);
     }
 
+    public void setDia(Meditacao devotional) {
+        int year = Integer.valueOf(devotional.getData().substring(0, 4));
+        int month = Integer.valueOf(devotional.getData().substring(5, 7)) - 1;
+        int day = Integer.valueOf(devotional.getData().substring(8));
+        this.dia.set(year, month, day);
+        updateMeditacoes();
+        setupTab(devotional.getTipo() - 1);
+    }
+
     private void updateMeditacoes() {
         new ProcessaMeditacoesTask(this, dia).execute(TYPES);
     }
@@ -504,49 +495,58 @@ public class MainActivity extends ThemedActivity implements
     }
 
     @Override
-    protected void onActivityResult(
+    public void onActivityResult(
             int requestCode, int resultCode, Intent data) {
-        if (requestCode == MY_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                // success, create the TTS instance
-                tts = new TextToSpeech(this, this);
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case MY_DATA_CHECK_CODE:
+                if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                    // success, create the TTS instance
+                    tts = new TextToSpeech(this, this);
 
-                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                    @Override
-                    public void onStart(String utteranceId) {
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
 //                Log.i("speech", "started");
+                        }
+
+                        @Override
+                        public void onDone(String utteranceId) {
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    // Stuff that updates the UI
+                                    changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                            Log.e("speech", "error");
+                        }
+                    });
+                } else {
+                    // missing data, install it
+                    try {
+                        Intent installIntent = new Intent();
+                        installIntent.setAction(
+                                TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                        startActivity(installIntent);
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
                     }
-
-                    @Override
-                    public void onDone(String utteranceId) {
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                // Stuff that updates the UI
-                                changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onError(String utteranceId) {
-                        Log.e("speech", "error");
-                    }
-                });
-            } else {
-                // missing data, install it
-                try {
-                    Intent installIntent = new Intent();
-                    installIntent.setAction(
-                            TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                    startActivity(installIntent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
                 }
-            }
+                break;
+            case FAVORITES_ACTIVITY_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Meditacao devotional = data.getParcelableExtra("devotional");
+                    setDia(devotional);
+                }
+                break;
         }
     }
 

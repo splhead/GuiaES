@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.silas.guiaes.activity.R
+import com.silas.meditacao.activity.FavoritesActivity
 import com.silas.meditacao.models.Meditacao
 import kotlinx.android.synthetic.main.favorites_item.view.*
 
-class FavoritesListAdapter(private var favoriteViewItems: List<Any>) :
+class FavoritesListAdapter(private var favoriteViewItems: List<Any>, val activity: FavoritesActivity) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     /*companion object {
         private const val DEVOTIONAL_ITEM_VIEW_TYPE = 0
@@ -31,16 +32,16 @@ class FavoritesListAdapter(private var favoriteViewItems: List<Any>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.favorites_item
                 , parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view, activity)
 
         /*when (viewType) {
             UNIFIED_NATIVE_AD_VIEW_TYPE -> {
-                val unifiedNativeLayoutView = LayoutInflater.from(parent.context)
+                val unifiedNativeLayoutView = LayoutInflater.from(parent.favoritesActivity)
                         .inflate(R.layout.ad_unified, parent, false)
                 return UnifiedAdViewHolder(unifiedNativeLayoutView)
             }
             else -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.favorites_item
+                val view = LayoutInflater.from(parent.favoritesActivity).inflate(R.layout.favorites_item
                         , parent, false)
                 return ViewHolder(view)
             }
@@ -52,7 +53,7 @@ class FavoritesListAdapter(private var favoriteViewItems: List<Any>) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bindView(favoriteViewItems[position] as? Meditacao)
+        (holder as ViewHolder).bindView(favoriteViewItems[position] as Meditacao)
         /*val viewType = getItemViewType(position)
         when (viewType) {
             UNIFIED_NATIVE_AD_VIEW_TYPE -> {
@@ -113,18 +114,28 @@ class FavoritesListAdapter(private var favoriteViewItems: List<Any>) :
         adview.setNativeAd(nativeAd)
     }*/
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val favoritesActivity: FavoritesActivity) : RecyclerView.ViewHolder(itemView)
+            , View.OnClickListener {
 
+        private lateinit var devotional: Meditacao
 
-        fun bindView(devotional: Meditacao?) {
+        fun bindView(d: Meditacao) {
+            devotional = d
+            itemView.setOnClickListener(this)
             val title = itemView.tvTitle
             val verse = itemView.tvVerse
 
-            devotional?.let {
+            devotional.let {
                 title.text = it.titulo
                 verse.text = it.textoBiblico
             }
 
+        }
+
+        override fun onClick(view: View?) {
+            view?.let {
+                favoritesActivity.sendBack(devotional)
+            }
         }
     }
 }

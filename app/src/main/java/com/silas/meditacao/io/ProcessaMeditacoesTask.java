@@ -124,7 +124,6 @@ public class ProcessaMeditacoesTask extends
             if (tabAdapter != null) {
                 tabAdapter.setMeditacoes(meditacoes);
                 activity.setupFABs();
-                activity.setupTabDefault();
             }
 
         } else {

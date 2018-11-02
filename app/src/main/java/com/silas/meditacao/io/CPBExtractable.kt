@@ -13,11 +13,11 @@ import org.jsoup.nodes.Element
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CPBExtractable(context: Context, tp: Int) : Extractable {
+class CPBExtractable(favoritesActivity: Context, tp: Int) : Extractable {
     lateinit var document: Document
     lateinit var date: String
     var devotionals = ArrayList<Meditacao>()
-    val ctx = context
+    val ctx = favoritesActivity
     var type = tp
 
     override fun extractDevotional(): ArrayList<Meditacao> {

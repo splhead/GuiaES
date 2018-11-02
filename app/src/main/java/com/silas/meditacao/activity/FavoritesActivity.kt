@@ -1,5 +1,7 @@
 package com.silas.meditacao.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -31,6 +33,13 @@ class FavoritesActivity : ThemedActivity() {
         setupRecyclerView()
         FetchFavoriteTask(this).execute()
 
+    }
+
+    fun sendBack(d: Meditacao) {
+        val intent = Intent()
+        intent.putExtra("devotional", d)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     /*fun insertAdsInFavoritesItems() {
@@ -86,12 +95,12 @@ class FavoritesActivity : ThemedActivity() {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
 
-        favAdapter = FavoritesListAdapter(mFavoritesItems)
+        favAdapter = FavoritesListAdapter(mFavoritesItems, this)
         recyclerView.adapter = favAdapter
     }
 
 
-    private class FetchFavoriteTask internal constructor(favoritesActivity: FavoritesActivity) : AsyncTask<Void, Void, ArrayList<Meditacao>>() {
+    private class FetchFavoriteTask(favoritesActivity: FavoritesActivity) : AsyncTask<Void, Void, ArrayList<Meditacao>>() {
 
         private val wr: WeakReference<FavoritesActivity> = WeakReference(favoritesActivity)
 
