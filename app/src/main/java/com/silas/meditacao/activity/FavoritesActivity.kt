@@ -4,26 +4,39 @@ import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.InterstitialAd
 import com.silas.guiaes.activity.R
 import com.silas.meditacao.adapters.FavoritesListAdapter
 import com.silas.meditacao.adapters.MeditacaoDBAdapter
+import com.silas.meditacao.io.Util
 import com.silas.meditacao.models.Meditacao
 import kotlinx.android.synthetic.main.favorites_activity.*
 import java.lang.ref.WeakReference
+import java.util.*
 
 
 class FavoritesActivity : ThemedActivity() {
-    /*companion object {
-        const val NUMBER_OF_ADS = 2
+    companion object {
+        const val INTERSTIAL_AD_COUNTER_KEY = "interstial_counter"
+        private const val TAG = "FavoritesActivity"
     }
 
+    /*
     private lateinit var adLoader: AdLoader
     private val mNativeAds: ArrayList<UnifiedNativeAd> = ArrayList()*/
     private lateinit var favAdapter: FavoritesListAdapter
-    private var mFavoritesItems: ArrayList<Any> = ArrayList()
+    private var mFavoritesItems: ArrayList<Meditacao> = ArrayList()
     private lateinit var recyclerView: RecyclerView
+    private var counterToShow = 0
+    private lateinit var interstitialAd: InterstitialAd
+    private lateinit var adView: AdView
 //    private var devotionals = ArrayList<Meditacao>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,13 +46,92 @@ class FavoritesActivity : ThemedActivity() {
         setupRecyclerView()
         FetchFavoriteTask(this).execute()
 
+        adView = findViewById(R.id.ad_view)
+
+        interstitialAd = InterstitialAd(this).apply {
+            adUnitId = getString(R.string.interstitial_ad_id)
+            adListener = (object : AdListener() {
+                override fun onAdClosed() {
+                    finish()
+                }
+            })
+        }
+
+        counterToShow = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(INTERSTIAL_AD_COUNTER_KEY, 0)
+
+        counterToShow++
+
+        if (counterToShow == 3) {
+            counterToShow = 0
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit().putInt(INTERSTIAL_AD_COUNTER_KEY, counterToShow).apply()
+        Log.i(TAG, counterToShow.toString())
+    }
+
+    fun setupAd() {
+
     }
 
     fun sendBack(d: Meditacao) {
         val intent = Intent()
         intent.putExtra("devotional", d)
         setResult(Activity.RESULT_OK, intent)
-        finish()
+        if (counterToShow == 0
+                && Util.notShabbat(Calendar.getInstance())) {
+
+            showInterstial()
+        } else {
+            finish()
+        }
+    }
+
+    private fun requestAd() {
+        if (!interstitialAd.isLoading && !interstitialAd.isLoaded) {
+            val adRequest = AdRequest.Builder()
+//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                    .build()
+            interstitialAd.loadAd(adRequest)
+        }
+
+        if (Util.notShabbat(Calendar.getInstance())) {
+            adView.let {
+                val adRequest = AdRequest.Builder().build()
+                it.loadAd(adRequest)
+            }
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requestAd()
+    }
+
+    override fun onPause() {
+        adView.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        adView.resume()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        adView.destroy()
+        super.onDestroy()
+    }
+
+    private fun showInterstial() {
+        if (interstitialAd.isLoaded) {
+            interstitialAd.show()
+        } else {
+            Log.d(TAG, "The interstitial wasn't loaded yet.")
+            finish()
+        }
     }
 
     /*fun insertAdsInFavoritesItems() {
@@ -82,7 +174,7 @@ class FavoritesActivity : ThemedActivity() {
         adLoader.loadAds(AdRequest.Builder().build(), NUMBER_OF_ADS)
     }*/
 
-    fun setDevotional(collection: ArrayList<Any>) {
+    fun setDevotional(collection: ArrayList<Meditacao>) {
         mFavoritesItems.clear()
         mFavoritesItems = collection
 //        loadNativeAds()
@@ -110,7 +202,7 @@ class FavoritesActivity : ThemedActivity() {
         }
 
         override fun onPostExecute(meditacoes: ArrayList<Meditacao>) {
-            wr.get()?.setDevotional(meditacoes as ArrayList<Any>)
+            wr.get()?.setDevotional(meditacoes)
             super.onPostExecute(meditacoes)
         }
     }

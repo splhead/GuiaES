@@ -21,6 +21,10 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
@@ -72,6 +76,99 @@ public class Util {
         }
 
         return sb;
+    }
+
+    public static String prepareTextToSpeak(Meditacao meditacao) {
+
+        if (meditacao == null) {
+            return "Texto indisponível no momento. Por favor tente novamente mais tarde.";
+        }
+
+        String tmpOut = Meditacao.getDevotionalName(meditacao.getTipo()) + "... " +
+                meditacao.getTitulo() + "... " +
+                meditacao.getDataPorExtenso() + "... " +
+                meditacao.getTextoBiblico() + "... " +
+                meditacao.getTexto();
+
+        String out = tmpOut.replace(":", " ").replace("\n", "");
+
+        return changeAbbreviation(out);
+    }
+
+    private static String changeAbbreviation(String in) {
+        Pattern pattern = Pattern.compile("[A-Za-z]{2}(?=\\s+\\d)");
+        Matcher matcher = pattern.matcher(in);
+        StringBuffer sb = new StringBuffer(in.length());
+        Map<String, String> map = new HashMap<>();
+        map.put("gn", "Gênisis");
+        map.put("êx", "Êxodo");
+        map.put("lv", "Levítico");
+        map.put("nm", "Números");
+        map.put("dt", "Deuteronômio");
+        map.put("js", "Josué");
+        map.put("jz", "Juízes");
+        map.put("rt", "Rute");
+        map.put("sm", "Samuel");
+        map.put("rs", "Reis");
+        map.put("cr", "Crônicas");
+        map.put("ed", "Esdras");
+        map.put("ne", "Neemias");
+        map.put("et", "Ester");
+        map.put("jó", "Jó");
+        map.put("sl", "Salmos");
+        map.put("pv", "Provérbios");
+        map.put("ec", "Eclesiastes");
+        map.put("ct", "Cantares");
+        map.put("is", "Isaías");
+        map.put("jr", "Jeremias");
+        map.put("lm", "Lamentações de Jeremias");
+        map.put("ez", "Ezequiel");
+        map.put("dn", "Daniel");
+        map.put("os", "Oséias");
+        map.put("jl", "Joel");
+        map.put("am", "Amós");
+        map.put("ob", "Obadias");
+        map.put("jn", "Jonas");
+        map.put("mq", "Miquéias");
+        map.put("na", "Naum");
+        map.put("hc", "Habacuque");
+        map.put("sf", "Sofonias");
+        map.put("ag", "Ageu");
+        map.put("zc", "Zacarias");
+        map.put("ml", "Malaquias");
+        map.put("mt", "Mateus");
+        map.put("mc", "Marcos");
+        map.put("lc", "Lucas");
+        map.put("jo", "João");
+        map.put("at", "Atos dos Apóstolos");
+        map.put("rm", "Romanos");
+        map.put("co", "Corintios");
+        map.put("gl", "Gálatas");
+        map.put("ef", "Efésios");
+        map.put("fp", "Filipenses");
+        map.put("cl", "Colossenses");
+        map.put("ts", "Tessalonissenses");
+        map.put("tn", "Timóteo");
+        map.put("tt", "Tito");
+        map.put("fm", "Filemon");
+        map.put("hb", "Hebreus");
+        map.put("tg", "Tiago");
+        map.put("pe", "Pedro");
+        map.put("jd", "Judas");
+        map.put("ap", "Apocalipse");
+
+        while (matcher.find()) {
+            String abbreviation = matcher.group().toLowerCase();
+            if (map.containsKey(abbreviation)) {
+                abbreviation = map.get(abbreviation);
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(abbreviation));
+            }
+//            Log.i("Encontrou", matcher.group());
+        }
+
+        matcher.appendTail(sb);
+//        Log.i("Encontrou", sb.toString());
+        return sb.toString();
     }
 
     static String getURL(int type, Calendar day) {

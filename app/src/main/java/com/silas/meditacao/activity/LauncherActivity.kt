@@ -5,6 +5,8 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import com.google.android.gms.ads.MobileAds
+import com.silas.guiaes.activity.R
 import com.silas.meditacao.adapters.MeditacaoDBAdapter
 import com.silas.meditacao.models.Meditacao
 import java.lang.ref.WeakReference
@@ -21,7 +23,7 @@ class LauncherActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility += View.SYSTEM_UI_FLAG_FULLSCREEN
         window.decorView.systemUiVisibility += View.SYSTEM_UI_FLAG_HIDE_NAVIGATION*/
 
-//        MobileAds.initialize(this, getString(R.string.app_ad_id))
+        MobileAds.initialize(this, getString(R.string.app_ad_id))
         LoadDevotionalTask(this).execute()
     }
 
