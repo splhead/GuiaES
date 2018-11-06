@@ -87,14 +87,16 @@ class FavoritesActivity : ThemedActivity() {
     private fun requestAd() {
         if (!interstitialAd.isLoading && !interstitialAd.isLoaded) {
             val adRequest = AdRequest.Builder()
-                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
                     .build()
             interstitialAd.loadAd(adRequest)
         }
 
         if (Util.notShabbat(Calendar.getInstance())) {
             adView.let {
-                val adRequest = AdRequest.Builder().build()
+                val adRequest = AdRequest.Builder()
+//                        .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                        .build()
                 it.loadAd(adRequest)
             }
         }
