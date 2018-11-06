@@ -531,6 +531,21 @@ public class MainActivity extends ThemedActivity implements
                                 Log.e("speech", "error");
                             }
                         });
+                    } else {
+                        tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
+                            @Override
+                            public void onUtteranceCompleted(String utteranceId) {
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+
+                                        // Stuff that updates the UI
+                                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                                    }
+                                });
+                            }
+                        });
                     }
                 } else {
                     // missing data, install it
