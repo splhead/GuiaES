@@ -71,10 +71,6 @@ class FavoritesActivity : ThemedActivity() {
         Log.i(TAG, counterToShow.toString())
     }
 
-    fun setupAd() {
-
-    }
-
     fun sendBack(d: Meditacao) {
         val intent = Intent()
         intent.putExtra("devotional", d)
@@ -91,7 +87,7 @@ class FavoritesActivity : ThemedActivity() {
     private fun requestAd() {
         if (!interstitialAd.isLoading && !interstitialAd.isLoaded) {
             val adRequest = AdRequest.Builder()
-//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
                     .build()
             interstitialAd.loadAd(adRequest)
         }

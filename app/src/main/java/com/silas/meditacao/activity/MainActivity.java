@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -50,6 +51,7 @@ public class MainActivity extends ThemedActivity implements
     private static final int MY_DATA_CHECK_CODE = 7;
     private static final int FAVORITES_ACTIVITY_CODE = 4;
     private static final String FIRST_TIME_NOTIFICATION_KEY = "first_time";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private Calendar dia = Calendar.getInstance();
 
     private TextToSpeech tts;
@@ -448,11 +450,12 @@ public class MainActivity extends ThemedActivity implements
             mAdView = findViewById(R.id.ad_view);
             AdRequest adRequest = new AdRequest.Builder()
 //                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
-//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
                     .build();
 
             // Start loading the ad in the background.
             mAdView.loadAd(adRequest);
+            Log.d(TAG, "Start loading ad");
         }
     }
 
@@ -501,31 +504,33 @@ public class MainActivity extends ThemedActivity implements
                     // success, create the TTS instance
                     tts = new TextToSpeech(this, this);
 
-                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onStart(String utteranceId) {
-//                Log.i("speech", "started");
-                        }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                            @Override
+                            public void onStart(String utteranceId) {
+                                //                Log.i("speech", "started");
+                            }
 
-                        @Override
-                        public void onDone(String utteranceId) {
-                            runOnUiThread(new Runnable() {
+                            @Override
+                            public void onDone(String utteranceId) {
+                                runOnUiThread(new Runnable() {
 
-                                @Override
-                                public void run() {
+                                    @Override
+                                    public void run() {
 
-                                    // Stuff that updates the UI
-                                    changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
-                                }
-                            });
+                                        // Stuff that updates the UI
+                                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                                    }
+                                });
 
-                        }
+                            }
 
-                        @Override
-                        public void onError(String utteranceId) {
-                            Log.e("speech", "error");
-                        }
-                    });
+                            @Override
+                            public void onError(String utteranceId) {
+                                Log.e("speech", "error");
+                            }
+                        });
+                    }
                 } else {
                     // missing data, install it
                     try {

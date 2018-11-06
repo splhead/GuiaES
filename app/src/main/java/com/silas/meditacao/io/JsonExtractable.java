@@ -9,8 +9,6 @@ import com.silas.meditacao.interfaces.Extractable;
 import com.silas.meditacao.models.Meditacao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 class JsonExtractable implements Extractable {
     private ArrayList<Meditacao> dias = new ArrayList<>();
@@ -29,8 +27,7 @@ class JsonExtractable implements Extractable {
             Gson gson = gsonBuilder.create();
 
 //          Log.i(getClass().getSimpleName(), gson.fromJson(contentJSON, Meditacao[].class).toString());
-            List<Meditacao> meditacoes = Arrays.
-                    asList(gson.fromJson(contentJSON, Meditacao[].class));
+            Meditacao[] meditacoes = gson.fromJson(contentJSON, Meditacao[].class);
 
             for (Meditacao meditacao : meditacoes) {
                 Log.i(getClass().getSimpleName() , meditacao.toString());

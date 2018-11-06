@@ -32,44 +32,6 @@ public class MeditacaoDBAdapter extends DBAdapter {
         super(contexto);
     }
 
-    /*private long add(Meditacao meditacao) {
-        // verifica se o registro já exite no banco
-        if (this.meditacao(meditacao.getData(), meditacao.getTipo()) != null) {
-            Log.w(getClass().getName(),
-                    "A meditacao já existe e não será gravada.");
-            return -1;
-        }
-        //Log.d("adapter", licao.toString());
-        ContentValues valores = new ContentValues();
-        valores.put(DATA, meditacao.getData());
-        valores.put(TITULO, meditacao.getTitulo());
-        valores.put(TEXTO_BIBLICO, meditacao.getTextoBiblico());
-        valores.put(TEXTO, meditacao.getTexto());
-        valores.put(TIPO, meditacao.getTipo());
-
-//        Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
-        try {
-            bancoDados.beginTransaction();
-            return bancoDados.insert(BD_TABELA, null, valores);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    */
-
-    /**
-     * Grava a meditacao no banco
-     *//*
-    public long addMeditacao(Meditacao meditacao) {
-        try {
-            abrir();
-            return add(meditacao);
-        } finally {
-            fechar();
-        }
-    }*/
     private void add(ArrayList<Meditacao> meditacoes) {
 
         //Log.d("adapter", licao.toString());
@@ -84,7 +46,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
                 ContentValues valores = new ContentValues();
                 valores.put(DATA, meditacao.getData());
-                valores.put(TITULO, meditacao.getTitulo());
+                valores.put(TITULO, meditacao.getTitulo().toUpperCase());
                 valores.put(TEXTO_BIBLICO, meditacao.getTextoBiblico());
                 valores.put(TEXTO, meditacao.getTexto());
                 valores.put(TIPO, meditacao.getTipo());
@@ -121,12 +83,10 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             add(meditacoes);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            try {
-                fechar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            fechar();
         }
     }
 
@@ -161,38 +121,38 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             updateFavorite(meditacao);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            try {
-                fechar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            fechar();
         }
     }
 
     private ArrayList<Meditacao> getFavorites() {
         ArrayList<Meditacao> devotionals = new ArrayList<>();
-        try (Cursor c = bancoDados.query(BD_TABELA
+        Cursor c = bancoDados.query(BD_TABELA
                 , new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
                 , FAVORITE + "=1"
                 , null
                 , null
                 , null
                 , DATA + " DESC"
-                , null)) {
-            if (c.getCount() > 0) {
-                while (c.moveToNext()) {
-                    devotionals.add(new Meditacao(c.getLong(0)
-                            , c.getString(1)
-                            , c.getString(2)
-                            , c.getString(3)
-                            , c.getString(4)
-                            , c.getInt(5)
-                            , intToBoolean(c.getInt(6)))
-                    );
-                }
-            }
+                , null);
+
+        if (c.moveToFirst()) {
+            do {
+                devotionals.add(new Meditacao(c.getLong(0)
+                        , c.getString(1)
+                        , c.getString(2)
+                        , c.getString(3)
+                        , c.getString(4)
+                        , c.getInt(5)
+                        , intToBoolean(c.getInt(6)))
+                );
+            } while (c.moveToNext());
+            c.close();
         }
+
         return devotionals;
     }
 
@@ -200,13 +160,12 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             return getFavorites();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            try {
-                fechar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            fechar();
         }
+        return null;
     }
 
     private Meditacao meditacao(Calendar data, int tipo) {
@@ -220,24 +179,26 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
         String sData = sdf.format(dia.getTime());
 
-        try (Cursor c = bancoDados.query(true, BD_TABELA,
+        Cursor c = bancoDados.query(true, BD_TABELA,
                 new String[]{ROWID, TITULO, DATA, TEXTO_BIBLICO, TEXTO, TIPO, FAVORITE}
                 , DATA + " = ? AND " + TIPO + " = ?"
                 , new String[]{sData, String.valueOf(tipo)}
-                , null, null, null, null)) {
-            if (c.getCount() > 0) {
-                c.moveToFirst();
-                return new Meditacao(c.getLong(0)
-                        , c.getString(1)
-                        , c.getString(2)
-                        , c.getString(3)
-                        , c.getString(4)
-                        , c.getInt(5)
-                        , intToBoolean(c.getInt(6))
-                );
+                , null, null, null, null);
+
+        if (c.moveToFirst()) {
+            Meditacao meditacao = new Meditacao(c.getLong(0)
+                    , c.getString(1)
+                    , c.getString(2)
+                    , c.getString(3)
+                    , c.getString(4)
+                    , c.getInt(5)
+                    , intToBoolean(c.getInt(6))
+            );
 //                Log.i(getClass().getName(), meditacao.toString());
-            }
+            c.close();
+            return meditacao;
         }
+
         return null;
     }
 
@@ -245,37 +206,36 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             return meditacao(data, iTipo);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                fechar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            fechar();
         }
         return null;
     }
 
     private long[] minMax(int tipo) {
-        try (Cursor c = bancoDados.query(true, BD_TABELA,
+        Cursor c = bancoDados.query(true, BD_TABELA,
                 new String[]{"min(" + DATA + ")", "max(" + DATA + ")"}
                 , TIPO + " = ?"
                 , new String[]{String.valueOf(tipo)}
-                , TIPO, null, null, null)) {
-            if (c.getCount() > 0) {
-                c.moveToFirst();
-                long[] minMax = new long[2];
+                , TIPO, null, null, null);
+
+        if (c.moveToFirst()) {
+            long[] minMax = new long[2];
+            try {
                 minMax[0] = sdf.parse(c.getString(0)).getTime();
                 minMax[1] = sdf.parse(c.getString(1)).getTime();
-                return minMax;
-               /* return new Meditacao(c.getLong(0), c.getString(1), c.getString(2)
-                        , c.getString(3), c.getString(4), c.getInt(5));*/
-//                Log.i(getClass().getName(), meditacao.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            c.close();
+
+            return minMax;
+//                Log.i(getClass().getName(), meditacao.toString());
         }
+
         return null;
     }
 
@@ -286,47 +246,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
         try {
             abrir();
             return minMax(iTipo);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            try {
-                fechar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            fechar();
         }
+        return null;
     }
-    /*
-    private List<Meditacao> meditacoes(long trimestreID) {
-		List<Licao> licoesList = new ArrayList<Licao>();
-		Cursor c = bancoDados.query(BD_TABELA, 
-				new String[] {ROWID, DATA, NUMERO, TITULO, TRIMESTREID, CAPA}
-				, TRIMESTREID + "=" + trimestreID, null, null, null, null);
-		try {			
-			if (c.getCount() > 0) {
-				c.moveToFirst();
-				do {
-					Licao licao = new Licao(c.getLong(0), c.getString(1),
-							c.getInt(2), c.getString(3), c.getLong(4),
-							c.getBlob(5));
-					
-					licoesList.add(licao);
-					Log.d(getClass().getName(), licao.toString());
-					
-				} while (c.moveToNext());				
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			c.close();
-		}
-		return licoesList;
-	}
-
-	public List<Meditacao> buscaTodasMeditacoes(long trimestreID) {
-		try {
-			abrir();
-			return licoes(trimestreID);
-		} finally {
-			fechar();
-		}
-	}*/
 }

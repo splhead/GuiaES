@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.silas.guiaes.app"
-        minSdkVersion 19
+        minSdkVersion 14
         targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
