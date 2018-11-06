@@ -218,7 +218,7 @@ public class MainActivity extends ThemedActivity implements
     public void setupTab(int tabDefault) {
         if (tabAdapter != null && mViewPager != null) {
 
-            if (tabDefault < TYPES.length && mViewPager.getChildCount() > 0) {
+            if (tabDefault < TYPES.length) {
 
                 mViewPager.setCurrentItem(tabDefault);
 
