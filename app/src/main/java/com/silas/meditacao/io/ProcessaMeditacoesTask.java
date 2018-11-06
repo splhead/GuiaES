@@ -20,11 +20,19 @@ public class ProcessaMeditacoesTask extends
     private MeditacaoDBAdapter mdba;
     private Calendar dia;
     private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+    private boolean setToDefaultTab = false;
 
     public ProcessaMeditacoesTask(MainActivity activity, Calendar dia) {
         wr = new WeakReference<>(activity);
         this.dia = dia;
         mdba = new MeditacaoDBAdapter(wr.get());
+    }
+
+    public ProcessaMeditacoesTask(MainActivity activity, Calendar dia, boolean moveToDefaultTab) {
+        wr = new WeakReference<>(activity);
+        this.dia = dia;
+        mdba = new MeditacaoDBAdapter(wr.get());
+        setToDefaultTab = moveToDefaultTab;
     }
 
     @Override
@@ -124,6 +132,9 @@ public class ProcessaMeditacoesTask extends
             if (tabAdapter != null) {
                 tabAdapter.setMeditacoes(meditacoes);
                 activity.setupFABs();
+                if (setToDefaultTab) {
+                    activity.setupTabDefault();
+                }
             }
 
         } else {

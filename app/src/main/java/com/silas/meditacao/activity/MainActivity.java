@@ -158,17 +158,13 @@ public class MainActivity extends ThemedActivity implements
         setupTabAdapter(meditacoes);
         setupViewPager();
 
-        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Preferences.TYPE_DEFAULT, "0")));
-        setupTab(tabDefault);
-
         if (meditacoes == null || meditacoes.size() < TYPES.length) {
 
-            new ProcessaMeditacoesTask(this, dia).execute(TYPES);
+            new ProcessaMeditacoesTask(this, dia, true).execute(TYPES);
         } else {
             setupFABs();
+            setupTabDefault();
         }
-
     }
 
     public TabAdapter getTabAdapter() {
@@ -222,12 +218,19 @@ public class MainActivity extends ThemedActivity implements
     public void setupTab(int tabDefault) {
         if (tabAdapter != null && mViewPager != null) {
 
-            if (tabDefault < TYPES.length) {
+            if (tabDefault < TYPES.length && mViewPager.getChildCount() > 0) {
 
                 mViewPager.setCurrentItem(tabDefault);
 
             }
         }
+    }
+
+    public void setupTabDefault() {
+        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Preferences.TYPE_DEFAULT, "0")));
+
+        setupTab(tabDefault);
     }
 
     public View getCoordnatorLayout() {
@@ -317,33 +320,34 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void setupFABs() {
-        final Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
-        if ((meditacao != null)
-                && (mViewPager != null)) {
-            FloatingActionButton fab = findViewById(R.id.fab_share);
+        if (tabAdapter != null && mViewPager != null) {
+            final Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
+            if (meditacao != null) {
+                FloatingActionButton fab = findViewById(R.id.fab_share);
 
-            if (fab != null) {
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(meditacao));
-                        sendIntent.setType("text/plain");
-                        startActivity(Intent.createChooser(sendIntent,
-                                getResources().getText(R.string.send_to)));
-                        //Analytics
-                        Bundle params = new Bundle();
-                        params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-                        params.putString("devotional_date", meditacao.getData());
-                        mFirebaseAnalytics.logEvent("share_devotional", params);
-                    }
-                });
+                if (fab != null) {
+                    fab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(meditacao));
+                            sendIntent.setType("text/plain");
+                            startActivity(Intent.createChooser(sendIntent,
+                                    getResources().getText(R.string.send_to)));
+                            //Analytics
+                            Bundle params = new Bundle();
+                            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
+                            params.putString("devotional_date", meditacao.getData());
+                            mFirebaseAnalytics.logEvent("share_devotional", params);
+                        }
+                    });
+                }
+
+                fabFavorite = findViewById(R.id.fab_favorite);
+                setupFavoriteFab(meditacao);
+
             }
-
-            fabFavorite = findViewById(R.id.fab_favorite);
-            setupFavoriteFab(meditacao);
-
         }
 
     }
