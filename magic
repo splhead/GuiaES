@@ -1,0 +1,129 @@
+#!/usr/bin/python
+import re, json, urllib2, datetime, calendar
+from bs4 import BeautifulSoup
+
+numbers = re.compile(r'(\d+)')
+now = datetime.datetime.now()
+counterDevotional = 0
+lastDayOfMonth = 28
+
+#def numericalSort(value):
+#    parts = numbers.split(value)
+#    parts[1::2] = map(int, parts[1::2])
+#    return parts
+
+def dateFormat(date):
+	meses = ('janeiro', 'fevereiro', 'mar\u00e7o', 'abril', 'maio', 'junho',
+		      'julho', 'agosto', 'setembro','outubro', 'novembro', 'dezembro');
+
+	dia = numbers.findall(date)
+
+	for mes in meses:
+		sMes = ""
+		sDia = ""
+		if date.__contains__(mes) :
+			if meses.index(mes) + 1 < 10 :
+				sMes = '0' + str(meses.index(mes) + 1)
+			else:
+				sMes = str(meses.index(mes) + 1)
+
+			sDia = str(dia[0])
+			return str(now.year)+ "-" + sMes + "-" + sDia
+
+def getFirstDevotionalURL(url):
+    content = urllib2.urlopen(url).read()
+    soup = BeautifulSoup(content, 'html.parser')
+    return soup.find("a", class_="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect").get("href")
+
+def getDevotional(url):
+    global counterDevotional
+    counterDevotional+=1
+    print(counterDevotional)
+    if counterDevotional == 1:
+        devotionalContent = urllib2.urlopen(getFirstDevotionalURL(url))
+    else:
+        devotionalContent = urllib2.urlopen(url)
+        
+    doc = BeautifulSoup(devotionalContent, 'html.parser')
+    try:
+        nextUrl=doc.find("link", rel="next").get("href")
+        #originalNextUrl=nextUrl
+        previousUrl=doc.find("a", class_="previousMeditacao").get("href")
+        if previousUrl == None:
+            previousUrl = doc.find("link", rel="prev").get("href")
+        #originalPreviousUrl=previousUrl
+        devotionalDayMonth=doc.find("div", class_="descriptionText diaMesMeditacao").text
+        devotionalDate=dateFormat(devotionalDayMonth)
+        print(devotionalDate)
+        if counterDevotional == 1:
+            global lastDayOfMonth
+            lastDayOfMonth=calendar.monthrange(now.year,int(devotionalDate[5:7]))[1]
+            print(lastDayOfMonth)
+        devotionalTitle=doc.find("div", class_="mdl-typography--headline").text
+        print(devotionalTitle)
+        devotionalVerse=doc.find("div", class_="descriptionText versoBiblico").text
+        print(devotionalVerse)
+        devotionalContent=doc.find("div", class_="conteudoMeditacao")
+        #print(devotionalContent.text)
+        devotionalText=""
+        for p in devotionalContent.findAllNext("p"):
+            devotionalText += p.text + "\n\n"
+        
+        print(devotionalText)
+    
+        if int(devotionalDate[8:]) == lastDayOfMonth: 
+        #if int(devotionalDate[8:]) == 1: 
+            print('terminou') 
+        else:
+            #print(previousUrl)
+            #getDevotional(previousUrl)
+            print(nextUrl)
+            getDevotional(nextUrl)
+
+    except:
+        print("erro")
+
+# Adults
+counterDevotional = 0
+url="https://mais.cpb.com.br/meditacoes-diarias"
+getDevotional(url)
+# Womans
+counterDevotional = 0
+url="https://mais.cpb.com.br/meditacao-da-mulher-2"
+getDevotional(url)
+# Teenage
+counterDevotional = 0
+url="https://mais.cpb.com.br/inspiracao-juvenil-2"
+getDevotional(url)
+#os.chdir(".")
+#
+#json_obj = '['
+#
+#for file in sorted(glob.glob("*.xhtml"),key=numericalSort):
+#	#print(file)
+#	content = open(file,'r')
+#	# print(content.readlines())
+#	doc =  BeautifulSoup(content.read(), "lxml")
+#	dia = doc.select_one('p[class="x01-data"]').text
+#	titulo = doc.select_one('p[class="x03-t-tulo"]').text
+#	verso = doc.select_one('p[class="x04-medit"]')
+#
+#	json_obj += "{'day':'" + str(dateFormat(dia)) + "',"
+#	json_obj += "'title':'" + titulo + "',"
+#	json_obj += "'verse':'" + verso.text + "',"
+#
+#	texto = "'text':'"
+#
+#	paragrafos = verso.findAllNext("p")
+#	for paragrafo in paragrafos:
+#		texto += paragrafo.text + "\n\n"
+#
+#	texto += "',"
+#	json_obj += texto
+#	json_obj += "'type':" + str(4) + "},"
+#
+#json_obj  = json_obj[:-1]
+#json_obj += ']'
+#out = json.dumps(json_obj)
+#
+#print out
