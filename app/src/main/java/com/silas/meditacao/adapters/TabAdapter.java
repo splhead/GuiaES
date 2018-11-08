@@ -62,6 +62,8 @@ public class TabAdapter extends FragmentPagerAdapter {
     }
 
     public Meditacao getMeditacao(int position) {
-        return meditacoes.get(position);
+        if (position < meditacoes.size())
+            return meditacoes.get(position);
+        return null;
     }
 }

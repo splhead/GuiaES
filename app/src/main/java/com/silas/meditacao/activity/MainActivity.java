@@ -60,6 +60,7 @@ public class MainActivity extends ThemedActivity implements
     private ViewPager mViewPager;
     private TabAdapter tabAdapter;
     private FloatingActionButton fabFavorite;
+    private ArrayList<Meditacao> meditacoes;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private AdView mAdView;
@@ -84,6 +85,18 @@ public class MainActivity extends ThemedActivity implements
         setupAnalytics();
 
         setupFirstTimeNotifications();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(LauncherActivity.DEVOTIONALS, meditacoes);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        meditacoes = savedInstanceState.getParcelableArrayList(LauncherActivity.DEVOTIONALS);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void setupFirstTimeNotifications() {
@@ -152,7 +165,7 @@ public class MainActivity extends ThemedActivity implements
     }*/
 
     public void initMeditacoes() {
-        ArrayList<Meditacao> meditacoes = this.getIntent()
+        meditacoes = this.getIntent()
                 .getParcelableArrayListExtra(LauncherActivity.DEVOTIONALS);
 
         setupTabAdapter(meditacoes);
