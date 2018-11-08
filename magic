@@ -6,6 +6,7 @@ numbers = re.compile(r'(\d+)')
 now = datetime.datetime.now()
 counterDevotional = 0
 lastDayOfMonth = 28
+lastDayFound = 0
 
 #def numericalSort(value):
 #    parts = numbers.split(value)
@@ -37,6 +38,7 @@ def getFirstDevotionalURL(url):
 
 def getDevotional(url):
     global counterDevotional
+    global lastDayFound
     counterDevotional+=1
     print(counterDevotional)
     if counterDevotional == 1:
@@ -46,7 +48,6 @@ def getDevotional(url):
         
     doc = BeautifulSoup(devotionalContent, 'html.parser')
     try:
-        nextUrl=doc.find("link", rel="next").get("href")
         #originalNextUrl=nextUrl
         previousUrl=doc.find("a", class_="previousMeditacao").get("href")
         if previousUrl == None:
@@ -54,15 +55,38 @@ def getDevotional(url):
         #originalPreviousUrl=previousUrl
         devotionalDayMonth=doc.find("div", class_="descriptionText diaMesMeditacao").text
         devotionalDate=dateFormat(devotionalDayMonth)
+        
+        # check if date is correct
+        if counterDevotional > 1:
+            today = lastDayFound + 1
+            if int(devotionalDate[8:]) != today:
+                devotionalDate = devotionalDate[0:8] + str(today)
+        
+        # fix less than date bug
+        #print ("lastDayFound: ", lastDayFound, " date: ", devotionalDate[8:])
+        if lastDayFound < int(devotionalDate[8:]):
+            lastDayFound = int(devotionalDate[8:])
+            #print(lastDayFound)
+        else:
+            lastDayFound += 1
+
         print(devotionalDate)
+
+        nextUrl=doc.find("link", rel="next")
+        if nextUrl != None:
+            nextUrl = nextUrl.get("href")
+
         if counterDevotional == 1:
             global lastDayOfMonth
             lastDayOfMonth=calendar.monthrange(now.year,int(devotionalDate[5:7]))[1]
-            print(lastDayOfMonth)
+            #print(lastDayOfMonth)
+
         devotionalTitle=doc.find("div", class_="mdl-typography--headline").text
         print(devotionalTitle)
+
         devotionalVerse=doc.find("div", class_="descriptionText versoBiblico").text
         print(devotionalVerse)
+
         devotionalContent=doc.find("div", class_="conteudoMeditacao")
         #print(devotionalContent.text)
         devotionalText=""
@@ -74,14 +98,16 @@ def getDevotional(url):
         if int(devotionalDate[8:]) == lastDayOfMonth: 
         #if int(devotionalDate[8:]) == 1: 
             print('terminou') 
+            lastDayFound = 0
         else:
             #print(previousUrl)
             #getDevotional(previousUrl)
-            print(nextUrl)
-            getDevotional(nextUrl)
+            if nextUrl != None:
+                #print(nextUrl)
+                getDevotional(nextUrl)
 
-    except:
-        print("erro")
+    except Exception,e:
+        print("Erro: ", e)
 
 # Adults
 counterDevotional = 0
@@ -95,6 +121,7 @@ getDevotional(url)
 counterDevotional = 0
 url="https://mais.cpb.com.br/inspiracao-juvenil-2"
 getDevotional(url)
+
 #os.chdir(".")
 #
 #json_obj = '['
