@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#encoding: utf-8
 import re, json, urllib2, datetime, calendar
 from bs4 import BeautifulSoup
 
@@ -7,6 +8,12 @@ now = datetime.datetime.now()
 counterDevotional = 0
 lastDayOfMonth = 28
 lastDayFound = 0
+jsonArray = "["
+
+class Object:
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                sort_keys=False, indent=4)
 
 #def numericalSort(value):
 #    parts = numbers.split(value)
@@ -36,17 +43,18 @@ def getFirstDevotionalURL(url):
     soup = BeautifulSoup(content, 'html.parser')
     return soup.find("a", class_="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect").get("href")
 
-def getDevotional(url):
+def getDevotional(url, type_):
     global counterDevotional
     global lastDayFound
+    global jsonArray
     counterDevotional+=1
-    print(counterDevotional)
+    #print(counterDevotional)
     if counterDevotional == 1:
         devotionalContent = urllib2.urlopen(getFirstDevotionalURL(url))
     else:
         devotionalContent = urllib2.urlopen(url)
         
-    doc = BeautifulSoup(devotionalContent, 'html.parser')
+    doc = BeautifulSoup(devotionalContent, 'html.parser', from_encoding="utf-8")
     try:
         #originalNextUrl=nextUrl
         previousUrl=doc.find("a", class_="previousMeditacao").get("href")
@@ -70,7 +78,7 @@ def getDevotional(url):
         else:
             lastDayFound += 1
 
-        print(devotionalDate)
+        #print(devotionalDate)
 
         nextUrl=doc.find("link", rel="next")
         if nextUrl != None:
@@ -82,10 +90,10 @@ def getDevotional(url):
             #print(lastDayOfMonth)
 
         devotionalTitle=doc.find("div", class_="mdl-typography--headline").text
-        print(devotionalTitle)
+        #print(devotionalTitle)
 
         devotionalVerse=doc.find("div", class_="descriptionText versoBiblico").text
-        print(devotionalVerse)
+        #print(devotionalVerse)
 
         devotionalContent=doc.find("div", class_="conteudoMeditacao")
         #print(devotionalContent.text)
@@ -93,18 +101,26 @@ def getDevotional(url):
         for p in devotionalContent.findAllNext("p"):
             devotionalText += p.text + "\n\n"
         
-        print(devotionalText)
+        #print(devotionalText)
+        d = Object()
+        d.day = devotionalDate
+        d.title = devotionalTitle
+        d.verse = devotionalVerse
+        d.text = devotionalText
+        d.type = type_
+        d.favorite = False
+        jsonArray += d.toJSON() + ","
     
         if int(devotionalDate[8:]) == lastDayOfMonth: 
         #if int(devotionalDate[8:]) == 1: 
-            print('terminou') 
+            #print('terminou') 
             lastDayFound = 0
         else:
             #print(previousUrl)
             #getDevotional(previousUrl)
             if nextUrl != None:
                 #print(nextUrl)
-                getDevotional(nextUrl)
+                getDevotional(nextUrl, type_)
 
     except Exception,e:
         print("Erro: ", e)
@@ -112,16 +128,21 @@ def getDevotional(url):
 # Adults
 counterDevotional = 0
 url="https://mais.cpb.com.br/meditacoes-diarias"
-getDevotional(url)
+type_ = '1'
+getDevotional(url, type_)
 # Womans
 counterDevotional = 0
 url="https://mais.cpb.com.br/meditacao-da-mulher-2"
-getDevotional(url)
+type_ = '2'
+getDevotional(url, type_)
 # Teenage
 counterDevotional = 0
 url="https://mais.cpb.com.br/inspiracao-juvenil-2"
-getDevotional(url)
+type_ = '3'
+getDevotional(url, type_)
 
+jsonArray = jsonArray[:-1] + "]"
+print(jsonArray)
 #os.chdir(".")
 #
 #json_obj = '['
