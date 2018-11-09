@@ -34,8 +34,6 @@ class LauncherActivity : AppCompatActivity() {
 
     companion object {
 
-        const val DEVOTIONALS = "devotionals"
-
         class LoadDevotionalTask(activity: LauncherActivity)
             : AsyncTask<Void, Int, ArrayList<Meditacao>>() {
 
@@ -62,7 +60,7 @@ class LauncherActivity : AppCompatActivity() {
                 if (activity == null || activity.isFinishing) return
 
                 val intent = Intent(activity, MainActivity::class.java)
-                intent.putParcelableArrayListExtra(DEVOTIONALS, result)
+                intent.putParcelableArrayListExtra(Meditacao.DEVOTIONALS_ARRAY_KEY, result)
 
                 Handler().postDelayed(
                         {

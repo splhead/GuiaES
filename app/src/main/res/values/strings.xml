@@ -35,4 +35,5 @@
     <string name="pref_timepreference_category_title">Lembrar-me</string>
     <string name="fab_label">Botão para compartilhar a meditação</string>
     <string name="action_favorites">Favoritos</string>
+    <string name="loading">Carregando&#8230;</string>
 </resources>

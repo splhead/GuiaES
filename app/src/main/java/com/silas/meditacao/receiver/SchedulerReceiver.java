@@ -17,11 +17,14 @@ import java.util.Calendar;
 import kotlin.Pair;
 
 public class SchedulerReceiver extends BroadcastReceiver {
+    public static final String ALARM_SHOT_ACTION = "com.silas.meditacao.ALARME_DISPARADO";
+    public static final String SCHEDULER_ACTION = "com.silas.meditacao.AGENDADOR";
+
     public SchedulerReceiver() {
     }
 
     public static void setAlarm(Context context) {
-        Intent myIntent = new Intent("com.silas.meditacao.ALARME_DISPARADO");
+        Intent myIntent = new Intent(ALARM_SHOT_ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         boolean alarmeAtivo = (pendingIntent != null);
 
@@ -53,6 +56,6 @@ public class SchedulerReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action != null
                 && (action.equals("android.intent.action.BOOT_COMPLETED")
-                || action.equals("com.silas.meditacao.AGENDADOR"))) setAlarm(context);
+                || action.equals(SCHEDULER_ACTION))) setAlarm(context);
     }
 }

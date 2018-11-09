@@ -37,6 +37,14 @@ public class TabAdapter extends FragmentPagerAdapter {
         return contentFragment;
     }
 
+    public void updateTitlePadding(int margin) {
+        for (int i = 0; i < getCount(); i++) {
+            if (mList[i] != null) {
+                mList[i].updateTitlePadding(margin);
+            }
+        }
+    }
+
     @Override
     public int getCount() {
         return MainActivity.TYPES.length;

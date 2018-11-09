@@ -18,9 +18,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-thin"
             android:gravity="center_horizontal"
-            android:padding="8dp"
             android:textAlignment="center"
-
             android:textIsSelectable="true"
             android:textSize="?attr/font_large" />
 

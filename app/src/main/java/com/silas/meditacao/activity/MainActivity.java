@@ -24,7 +24,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
@@ -35,6 +37,7 @@ import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.io.ProcessaMeditacoesTask;
 import com.silas.meditacao.io.Util;
 import com.silas.meditacao.models.Meditacao;
+import com.silas.meditacao.receiver.SchedulerReceiver;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -64,6 +67,7 @@ public class MainActivity extends ThemedActivity implements
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private AdView mAdView;
+    private Activity activity = this;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -89,13 +93,13 @@ public class MainActivity extends ThemedActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(LauncherActivity.DEVOTIONALS, meditacoes);
+        outState.putParcelableArrayList(Meditacao.DEVOTIONALS_ARRAY_KEY, meditacoes);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        meditacoes = savedInstanceState.getParcelableArrayList(LauncherActivity.DEVOTIONALS);
+        meditacoes = savedInstanceState.getParcelableArrayList(Meditacao.DEVOTIONALS_ARRAY_KEY);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -104,7 +108,7 @@ public class MainActivity extends ThemedActivity implements
                 = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.getBoolean(FIRST_TIME_NOTIFICATION_KEY, true)) {
-            sendBroadcast(new Intent("com.silas.meditacao.AGENDADOR"));
+            sendBroadcast(new Intent(SchedulerReceiver.SCHEDULER_ACTION));
             sharedPreferences.edit().putBoolean(FIRST_TIME_NOTIFICATION_KEY, false).apply();
         }
 
@@ -166,7 +170,7 @@ public class MainActivity extends ThemedActivity implements
 
     public void initMeditacoes() {
         meditacoes = this.getIntent()
-                .getParcelableArrayListExtra(LauncherActivity.DEVOTIONALS);
+                .getParcelableArrayListExtra(Meditacao.DEVOTIONALS_ARRAY_KEY);
 
         setupTabAdapter(meditacoes);
         setupViewPager();
@@ -473,6 +477,16 @@ public class MainActivity extends ThemedActivity implements
             // Start loading the ad in the background.
             mAdView.loadAd(adRequest);
             Log.d(TAG, "Start loading ad");
+
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    if (tabAdapter != null && mViewPager != null) {
+                        tabAdapter.updateTitlePadding(AdSize.SMART_BANNER.getHeightInPixels(activity));
+                    }
+                    super.onAdLoaded();
+                }
+            });
         }
     }
 

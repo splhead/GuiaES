@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 public class Util {
 
-    public static Boolean internetDisponivel(MainActivity activity) {
+    static Boolean internetDisponivel(MainActivity activity) {
         WeakReference<MainActivity> wr = new WeakReference<>(activity);
         try {
             ConnectivityManager connectivityManager = (ConnectivityManager) wr.get()
@@ -203,6 +203,28 @@ public class Util {
         }
         return "";
     }
+
+    /*public static int getAdViewHeightInDP(Activity activity) {
+        int adHeight;
+
+        int screenHeightInDP = getScreenHeightInDP(activity);
+        if (screenHeightInDP < 400)
+            adHeight = 32;
+        else if (screenHeightInDP <= 720)
+            adHeight = 50;
+        else
+            adHeight = 90;
+
+        return adHeight;
+    }
+
+    private static int getScreenHeightInDP(Activity activity) {
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+
+        float screenHeightInDP = displayMetrics.heightPixels / displayMetrics.density;
+
+        return Math.round(screenHeightInDP);
+    }*/
 
     /*static String getURI(int type) {
         final String BASE_URL = "https://mais.cpb.com.br/?post_type=meditacao&p=45805";

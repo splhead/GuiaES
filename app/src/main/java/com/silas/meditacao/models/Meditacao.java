@@ -12,6 +12,8 @@ public class Meditacao implements Parcelable {
     public static final int MULHER = 2;
     public static final int JUVENIL = 3;
     public static final int ABJANELAS = 4;
+    public static final String DEVOTIONALS_ARRAY_KEY = "devotionals";
+    public static final String DEVOTIONAL_KEY = "devotinal";
     public static final Parcelable.Creator<Meditacao> CREATOR = new Parcelable.Creator<Meditacao>() {
         @Override
         public Meditacao createFromParcel(Parcel source) {

@@ -10,7 +10,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.silas.guiaes.activity.R;
@@ -32,8 +31,7 @@ public class ContentFragment extends Fragment {
     }
 
     public static ContentFragment newInstance() {
-        ContentFragment fragment = new ContentFragment();
-        return fragment;
+        return new ContentFragment();
     }
 
     public static ContentFragment newInstance(Meditacao m) {
@@ -54,7 +52,7 @@ public class ContentFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            meditacao = savedInstanceState.getParcelable("meditacao");
+            meditacao = savedInstanceState.getParcelable(Meditacao.DEVOTIONAL_KEY);
         }
 
         setupContent();
@@ -82,26 +80,32 @@ public class ContentFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelable("meditacao", meditacao);
+        outState.putParcelable(Meditacao.DEVOTIONAL_KEY, meditacao);
         super.onSaveInstanceState(outState);
     }
 
     private void setupContent() {
         if (meditacao != null) {
-            tvTitulo.setText(String.format("%s%s",getText(R.string.new_line), meditacao.getTitulo().toUpperCase()));
+//            tvTitulo.setText(String.format("%s%s",getText(R.string.new_line), meditacao.getTitulo().toUpperCase()));
+            tvTitulo.setText(meditacao.getTitulo().toUpperCase());
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
             tvData.setText(meditacao.getDataPorExtenso());
             tvTexto.setText(meditacao.getTexto());
             tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
             fixLinksColor();
         } else {
-            tvTexto.setText("Carregando...");
+            tvTexto.setText(getText(R.string.loading));
         }
     }
 
     public void update(Meditacao m) {
         setMeditacao(m);
         setupContent();
+    }
+
+    public void updateTitlePadding(int margin) {
+        tvTitulo.setPadding(tvTitulo.getTotalPaddingLeft(), margin
+                , tvTitulo.getTotalPaddingRight(), tvTitulo.getTotalPaddingBottom());
     }
 
     private void fixLinksColor() {
