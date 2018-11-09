@@ -338,24 +338,26 @@ public class MainActivity extends ThemedActivity implements
 
     public void setupFABs() {
         if (tabAdapter != null && mViewPager != null) {
-            final Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
+            Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
+            if (meditacao == null) meditacao = meditacoes.get(mViewPager.getCurrentItem());
             if (meditacao != null) {
                 FloatingActionButton fab = findViewById(R.id.fab_share);
 
                 if (fab != null) {
+                    final Meditacao finalMeditacao = meditacao;
                     fab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent sendIntent = new Intent();
                             sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(meditacao));
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(finalMeditacao));
                             sendIntent.setType("text/plain");
                             startActivity(Intent.createChooser(sendIntent,
                                     getResources().getText(R.string.send_to)));
                             //Analytics
                             Bundle params = new Bundle();
-                            params.putString("devotional_type", Meditacao.getNomeTipo(meditacao.getTipo()));
-                            params.putString("devotional_date", meditacao.getData());
+                            params.putString("devotional_type", Meditacao.getNomeTipo(finalMeditacao.getTipo()));
+                            params.putString("devotional_date", finalMeditacao.getData());
                             mFirebaseAnalytics.logEvent("share_devotional", params);
                         }
                     });
