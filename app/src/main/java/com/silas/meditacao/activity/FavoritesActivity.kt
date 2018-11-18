@@ -28,16 +28,12 @@ class FavoritesActivity : ThemedActivity() {
         private const val TAG = "FavoritesActivity"
     }
 
-    /*
-    private lateinit var adLoader: AdLoader
-    private val mNativeAds: ArrayList<UnifiedNativeAd> = ArrayList()*/
     private lateinit var favAdapter: FavoritesListAdapter
     private var mFavoritesItems: ArrayList<Meditacao> = ArrayList()
     private lateinit var recyclerView: RecyclerView
     private var counterToShow = 0
     private lateinit var interstitialAd: InterstitialAd
     private lateinit var adView: AdView
-//    private var devotionals = ArrayList<Meditacao>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,11 +69,9 @@ class FavoritesActivity : ThemedActivity() {
 
     fun sendBack(d: Meditacao) {
         val intent = Intent()
-        intent.putExtra("devotional", d)
+        intent.putExtra(Meditacao.DEVOTIONAL_KEY, d)
         setResult(Activity.RESULT_OK, intent)
-        if (counterToShow == 0
-                && Util.notShabbat(Calendar.getInstance())) {
-
+        if (counterToShow == 0) {
             showInterstial()
         } else {
             finish()
@@ -85,14 +79,14 @@ class FavoritesActivity : ThemedActivity() {
     }
 
     private fun requestAd() {
-        if (!interstitialAd.isLoading && !interstitialAd.isLoaded) {
-            val adRequest = AdRequest.Builder()
-//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
-                    .build()
-            interstitialAd.loadAd(adRequest)
-        }
-
         if (Util.notShabbat(Calendar.getInstance())) {
+            if (!interstitialAd.isLoading && !interstitialAd.isLoaded) {
+                val adRequest = AdRequest.Builder()
+//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                        .build()
+                interstitialAd.loadAd(adRequest)
+            }
+
             adView.let {
                 val adRequest = AdRequest.Builder()
 //                        .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
@@ -100,7 +94,6 @@ class FavoritesActivity : ThemedActivity() {
                 it.loadAd(adRequest)
             }
         }
-
     }
 
     override fun onStart() {

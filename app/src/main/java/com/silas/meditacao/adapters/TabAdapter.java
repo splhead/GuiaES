@@ -14,11 +14,11 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     private ContentFragment[] mList = new ContentFragment[getCount()];
 
-    private ArrayList<Meditacao> meditacoes = new ArrayList<>();
+    private ArrayList<Meditacao> devotionals = new ArrayList<>();
 
     public TabAdapter(FragmentManager fm, ArrayList<Meditacao> colecao) {
         super(fm);
-        meditacoes = colecao;
+        devotionals = colecao;
     }
 
     public TabAdapter(FragmentManager fm) {
@@ -28,19 +28,22 @@ public class TabAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         ContentFragment contentFragment;
-        if (meditacoes.size() > 0) {
-            contentFragment = ContentFragment.newInstance(meditacoes.get(position));
+        if (devotionals.size() > position && devotionals.get(position) != null) {
+            contentFragment = ContentFragment.newInstance(devotionals.get(position));
         } else {
-            contentFragment = ContentFragment.newInstance();
+            contentFragment = ContentFragment.newInstance(
+                    new Meditacao("", "", "", "",
+                            MainActivity.TYPES[position])
+            );
         }
         mList[position] = contentFragment;
         return contentFragment;
     }
 
-    public void updateTitlePadding(int margin) {
+    public void setAdIsLoaded() {
         for (int i = 0; i < getCount(); i++) {
             if (mList[i] != null) {
-                mList[i].updateTitlePadding(margin);
+                mList[i].setAdIsLoaded(true);
             }
         }
     }
@@ -57,21 +60,21 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     private void updateFragments() {
         for (int i = 0; i < getCount(); i++) {
-            if (mList[i] != null && meditacoes.get(i) != null) {
-                mList[i].update(meditacoes.get(i));
+            if (mList[i] != null && devotionals.get(i) != null) {
+                mList[i].update(devotionals.get(i));
             }
         }
     }
 
-    public void setMeditacoes(ArrayList<Meditacao> meditacoes) {
-        this.meditacoes.clear();
-        this.meditacoes = meditacoes;
+    public void setDevotionals(ArrayList<Meditacao> devotionals) {
+        this.devotionals = devotionals;
         updateFragments();
     }
 
     public Meditacao getMeditacao(int position) {
-        if (position < meditacoes.size())
-            return meditacoes.get(position);
-        return null;
+        if (position < devotionals.size() && devotionals.get(position) != null)
+            return devotionals.get(position);
+        return new Meditacao("", "", "", "",
+                MainActivity.TYPES[position]);
     }
 }

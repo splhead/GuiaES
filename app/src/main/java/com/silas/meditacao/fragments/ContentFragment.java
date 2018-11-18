@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdSize;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.io.Preferences;
 import com.silas.meditacao.models.Meditacao;
@@ -23,15 +24,13 @@ import com.silas.meditacao.models.Meditacao;
  */
 public class ContentFragment extends Fragment {
 
+    public static final String AD_LOADED_KEY = "ad_loaded";
     private Meditacao meditacao;
     private TextView tvTitulo, tvTextoBiblico, tvData, tvTexto, tvLinks;
+    private Boolean adIsLoaded = false;
 
     public ContentFragment() {
         // Required empty public constructor
-    }
-
-    public static ContentFragment newInstance() {
-        return new ContentFragment();
     }
 
     public static ContentFragment newInstance(Meditacao m) {
@@ -48,11 +47,17 @@ public class ContentFragment extends Fragment {
         this.meditacao = meditacao;
     }
 
+    public void setAdIsLoaded(Boolean adIsLoaded) {
+        this.adIsLoaded = adIsLoaded;
+        updateTitlePadding();
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             meditacao = savedInstanceState.getParcelable(Meditacao.DEVOTIONAL_KEY);
+            adIsLoaded = savedInstanceState.getBoolean(AD_LOADED_KEY);
         }
 
         setupContent();
@@ -81,11 +86,12 @@ public class ContentFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable(Meditacao.DEVOTIONAL_KEY, meditacao);
+        outState.putBoolean(AD_LOADED_KEY, adIsLoaded);
         super.onSaveInstanceState(outState);
     }
 
     private void setupContent() {
-        if (meditacao != null) {
+        if (!meditacao.getTitulo().isEmpty()) {
 //            tvTitulo.setText(String.format("%s%s",getText(R.string.new_line), meditacao.getTitulo().toUpperCase()));
             tvTitulo.setText(meditacao.getTitulo().toUpperCase());
             tvTextoBiblico.setText(meditacao.getTextoBiblico());
@@ -93,8 +99,9 @@ public class ContentFragment extends Fragment {
             tvTexto.setText(meditacao.getTexto());
             tvLinks.setMovementMethod(LinkMovementMethod.getInstance());
             fixLinksColor();
+            updateTitlePadding();
         } else {
-            tvTexto.setText(getText(R.string.loading));
+            tvTitulo.setText(getText(R.string.loading));
         }
     }
 
@@ -103,9 +110,12 @@ public class ContentFragment extends Fragment {
         setupContent();
     }
 
-    public void updateTitlePadding(int margin) {
-        tvTitulo.setPadding(tvTitulo.getTotalPaddingLeft(), margin
-                , tvTitulo.getTotalPaddingRight(), tvTitulo.getTotalPaddingBottom());
+    public void updateTitlePadding() {
+        if (adIsLoaded) {
+            int paddingTop = AdSize.SMART_BANNER.getHeightInPixels(getActivity());
+            tvTitulo.setPadding(tvTitulo.getTotalPaddingLeft(), paddingTop
+                    , tvTitulo.getTotalPaddingRight(), 16);
+        }
     }
 
     private void fixLinksColor() {

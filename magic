@@ -127,7 +127,7 @@ def getDevotional(url, type_):
 
 # Adults
 counterDevotional = 0
-url="https://mais.cpb.com.br/meditacoes-diarias"
+url="https://mais.cpb.com.br/devotionals-diarias"
 type_ = '1'
 getDevotional(url, type_)
 # Womans

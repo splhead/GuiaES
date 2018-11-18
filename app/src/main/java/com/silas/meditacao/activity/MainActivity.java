@@ -26,7 +26,6 @@ import android.widget.DatePicker;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
@@ -67,7 +66,6 @@ public class MainActivity extends ThemedActivity implements
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
     private AdView mAdView;
-    private Activity activity = this;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -76,9 +74,11 @@ public class MainActivity extends ThemedActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
 
-        initMeditacoes();
+        setupAnalytics();
 
         setupToolbar();
+
+        initMeditacoes();
 
         setupTTS();
 
@@ -86,21 +86,7 @@ public class MainActivity extends ThemedActivity implements
 
         setupAd();
 
-        setupAnalytics();
-
         setupFirstTimeNotifications();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(Meditacao.DEVOTIONALS_ARRAY_KEY, meditacoes);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        meditacoes = savedInstanceState.getParcelableArrayList(Meditacao.DEVOTIONALS_ARRAY_KEY);
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void setupFirstTimeNotifications() {
@@ -168,11 +154,13 @@ public class MainActivity extends ThemedActivity implements
         }
     }*/
 
-    public void initMeditacoes() {
+    private void initMeditacoes() {
+//            from LauncherActivity
         meditacoes = this.getIntent()
                 .getParcelableArrayListExtra(Meditacao.DEVOTIONALS_ARRAY_KEY);
 
-        setupTabAdapter(meditacoes);
+        setupTabAdapter();
+
         setupViewPager();
 
         if (meditacoes == null || meditacoes.size() < TYPES.length) {
@@ -180,7 +168,7 @@ public class MainActivity extends ThemedActivity implements
             new ProcessaMeditacoesTask(this, dia, true).execute(TYPES);
         } else {
             setupFABs();
-            setupTabDefault();
+            changeToTabDefault();
         }
     }
 
@@ -188,7 +176,7 @@ public class MainActivity extends ThemedActivity implements
         return tabAdapter;
     }
 
-    public void setupTabAdapter(ArrayList<Meditacao> meditacoes) {
+    private void setupTabAdapter() {
         if (meditacoes != null) {
             tabAdapter = new TabAdapter(getSupportFragmentManager(), meditacoes);
         } else {
@@ -206,7 +194,7 @@ public class MainActivity extends ThemedActivity implements
 
             mViewPager.setAdapter(tabAdapter);
 
-//            setupTab();
+//            changeToTab();
 
             TabLayout mTablayout = findViewById(R.id.tablayout);
 
@@ -220,7 +208,6 @@ public class MainActivity extends ThemedActivity implements
 
                 @Override
                 public void onPageSelected(int position) {
-//                    setupFavoriteFab(tabAdapter.getMeditacao(mViewPager.getCurrentItem()));
                     setupFABs();
                 }
 
@@ -232,7 +219,7 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    public void setupTab(int tabDefault) {
+    public void changeToTab(int tabDefault) {
         if (tabAdapter != null && mViewPager != null) {
 
             if (tabDefault < TYPES.length) {
@@ -243,11 +230,11 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-    public void setupTabDefault() {
+    public void changeToTabDefault() {
         int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Preferences.TYPE_DEFAULT, "0")));
 
-        setupTab(tabDefault);
+        changeToTab(tabDefault);
     }
 
     public View getCoordnatorLayout() {
@@ -289,9 +276,12 @@ public class MainActivity extends ThemedActivity implements
                         changeMenuItemIcon(item, R.drawable.ic_baseline_play_circle_outline_24px);
                     } else {
                         int i = mViewPager.getCurrentItem();
-                        speakOut(tabAdapter.getMeditacao(i));
-                        changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
-                        menuItem = item;
+                        Meditacao meditacao = tabAdapter.getMeditacao(i);
+                        if (!meditacao.getData().isEmpty()) {
+                            speakOut(meditacao);
+                            changeMenuItemIcon(item, R.drawable.ic_baseline_stop_24px);
+                            menuItem = item;
+                        }
                     }
                 }
 
@@ -338,9 +328,16 @@ public class MainActivity extends ThemedActivity implements
 
     public void setupFABs() {
         if (tabAdapter != null && mViewPager != null) {
-            Meditacao meditacao = tabAdapter.getMeditacao(mViewPager.getCurrentItem());
-            if (meditacao == null) meditacao = meditacoes.get(mViewPager.getCurrentItem());
-            if (meditacao != null) {
+
+            int position = mViewPager.getCurrentItem();
+            Meditacao meditacao = tabAdapter.getMeditacao(position);
+            if (meditacao.getData().isEmpty() && meditacoes != null) {
+                if (position < meditacoes.size()) {
+                    meditacao = meditacoes.get(position);
+                }
+            }
+
+            if (!meditacao.getData().isEmpty()) {
                 FloatingActionButton fab = findViewById(R.id.fab_share);
 
                 if (fab != null) {
@@ -350,13 +347,15 @@ public class MainActivity extends ThemedActivity implements
                         public void onClick(View v) {
                             Intent sendIntent = new Intent();
                             sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, Util.preparaCompartilhamento(finalMeditacao));
+                            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                                    Util.preparaCompartilhamento(finalMeditacao));
                             sendIntent.setType("text/plain");
                             startActivity(Intent.createChooser(sendIntent,
                                     getResources().getText(R.string.send_to)));
                             //Analytics
                             Bundle params = new Bundle();
-                            params.putString("devotional_type", Meditacao.getNomeTipo(finalMeditacao.getTipo()));
+                            params.putString("devotional_type",
+                                    Meditacao.getNomeTipo(finalMeditacao.getTipo()));
                             params.putString("devotional_date", finalMeditacao.getData());
                             mFirebaseAnalytics.logEvent("share_devotional", params);
                         }
@@ -365,7 +364,6 @@ public class MainActivity extends ThemedActivity implements
 
                 fabFavorite = findViewById(R.id.fab_favorite);
                 setupFavoriteFab(meditacao);
-
             }
         }
 
@@ -373,7 +371,7 @@ public class MainActivity extends ThemedActivity implements
 
     private void setupFavoriteFab(Meditacao med) {
         final Meditacao meditacao = med;
-        if (meditacao != null) {
+        if (!meditacao.getData().isEmpty()) {
             changeFavoriteFabIcon(meditacao.isFavorite());
 
             if (fabFavorite != null) {
@@ -399,23 +397,6 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-
-            int result = tts.setLanguage(new Locale("pt", "BR"));
-
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
-            }
-
-        } else {
-            Log.e("TTS", "Initilization Failed!");
-        }
-    }
-
     public static class MyUndoListener implements View.OnClickListener {
 
         private Meditacao devotional;
@@ -432,6 +413,28 @@ public class MainActivity extends ThemedActivity implements
         }
     }
 
+    private void setupAd() {
+        Calendar hoje = Calendar.getInstance();
+        if (Util.notShabbat(hoje)) {
+            mAdView = findViewById(R.id.ad_view);
+            AdRequest adRequest = new AdRequest.Builder()
+//                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
+//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
+                    .build();
+
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+            Log.d(TAG, "Start loading ad");
+
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    setAdIsLoaded();
+                    super.onAdLoaded();
+                }
+            });
+        }
+    }
 
     @Override
     public void onPause() {
@@ -466,30 +469,21 @@ public class MainActivity extends ThemedActivity implements
         super.onDestroy();
     }
 
-
-    private void setupAd() {
-        Calendar hoje = Calendar.getInstance();
-        if (Util.notShabbat(hoje)) {
-            mAdView = findViewById(R.id.ad_view);
-            AdRequest adRequest = new AdRequest.Builder()
-//                    .addTestDevice("B83B84C68C1C3930F91B91A13472E244")
-//                    .addTestDevice("FC5AAA3D1C3842A79510C4C83BC27DD9")
-                    .build();
-
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-            Log.d(TAG, "Start loading ad");
-
-            mAdView.setAdListener(new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    if (tabAdapter != null && mViewPager != null) {
-                        tabAdapter.updateTitlePadding(AdSize.SMART_BANNER.getHeightInPixels(activity));
-                    }
-                    super.onAdLoaded();
-                }
-            });
+    private void setAdIsLoaded() {
+        if (mAdView != null
+                && tabAdapter != null && mViewPager != null) {
+            tabAdapter.setAdIsLoaded();
         }
+    }
+
+    public void setDia(Meditacao devotional) {
+        int year = Integer.valueOf(devotional.getData().substring(0, 4));
+        if (devotional.getTipo() == Meditacao.ABJANELAS) year = dia.get(Calendar.YEAR);
+        int month = Integer.valueOf(devotional.getData().substring(5, 7)) - 1;
+        int day = Integer.valueOf(devotional.getData().substring(8));
+        this.dia.set(year, month, day);
+        updateMeditacoes();
+        changeToTab(devotional.getTipo() - 1);
     }
 
     @Override
@@ -503,28 +497,27 @@ public class MainActivity extends ThemedActivity implements
         mFirebaseAnalytics.logEvent("change_date", params);
     }
 
-    public void setDia(Meditacao devotional) {
-        int year = Integer.valueOf(devotional.getData().substring(0, 4));
-        if (devotional.getTipo() == Meditacao.ABJANELAS) year = dia.get(Calendar.YEAR);
-        int month = Integer.valueOf(devotional.getData().substring(5, 7)) - 1;
-        int day = Integer.valueOf(devotional.getData().substring(8));
-        this.dia.set(year, month, day);
-        updateMeditacoes();
-        setupTab(devotional.getTipo() - 1);
+    private void setupTTS() {
+        new TTSSetupTask(this).execute();
     }
 
     private void updateMeditacoes() {
         new ProcessaMeditacoesTask(this, dia).execute(TYPES);
     }
 
-    private void setupTTS() {
-        try {
-            Intent checkIntent = new Intent();
-            checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-            startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-        } catch (ActivityNotFoundException e) {
-            Log.e("TTS", "Oops! The function is not available in your device.");
-            e.printStackTrace();
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(new Locale("pt", "BR"));
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
         }
     }
 
@@ -553,7 +546,8 @@ public class MainActivity extends ThemedActivity implements
                                     public void run() {
 
                                         // Stuff that updates the UI
-                                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                                        changeMenuItemIcon(menuItem
+                                                , R.drawable.ic_baseline_play_circle_outline_24px);
                                     }
                                 });
 
@@ -574,7 +568,8 @@ public class MainActivity extends ThemedActivity implements
                                     public void run() {
 
                                         // Stuff that updates the UI
-                                        changeMenuItemIcon(menuItem, R.drawable.ic_baseline_play_circle_outline_24px);
+                                        changeMenuItemIcon(menuItem
+                                                , R.drawable.ic_baseline_play_circle_outline_24px);
                                     }
                                 });
                             }
@@ -594,7 +589,7 @@ public class MainActivity extends ThemedActivity implements
                 break;
             case FAVORITES_ACTIVITY_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Meditacao devotional = data.getParcelableExtra("devotional");
+                    Meditacao devotional = data.getParcelableExtra(Meditacao.DEVOTIONAL_KEY);
                     setDia(devotional);
                 }
                 break;
@@ -632,6 +627,29 @@ public class MainActivity extends ThemedActivity implements
             super.onPostExecute(meditacao);
 
         }
+    }
+
+    private static class TTSSetupTask extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<MainActivity> wr;
+
+        TTSSetupTask(MainActivity mainActivity) {
+            wr = new WeakReference<>(mainActivity);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Intent checkIntent = new Intent();
+                checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+                wr.get().startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+            } catch (ActivityNotFoundException e) {
+                Log.e("TTS", "Oops! The function is not available in your device.");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
     }
 
     private void speakOut(Meditacao meditacao) {

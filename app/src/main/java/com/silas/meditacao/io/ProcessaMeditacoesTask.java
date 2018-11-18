@@ -126,14 +126,14 @@ public class ProcessaMeditacoesTask extends
         activity.dismissProgressDialog();
 
 //      Atualiza
-        if (messages.isEmpty() && meditacoes != null && meditacoes.size() > 0) {
+        if (messages.isEmpty() && meditacoes.size() > 0) {
 
             TabAdapter tabAdapter = activity.getTabAdapter();
             if (tabAdapter != null) {
-                tabAdapter.setMeditacoes(meditacoes);
+                tabAdapter.setDevotionals(meditacoes);
                 activity.setupFABs();
                 if (setToDefaultTab) {
-                    activity.setupTabDefault();
+                    activity.changeToTabDefault();
                 }
             }
 
