@@ -23,19 +23,17 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     public TabAdapter(FragmentManager fm) {
         super(fm);
+        for (int type : MainActivity.TYPES) {
+            devotionals.add(new Meditacao("", "", "", "",
+                    MainActivity.TYPES[type]));
+        }
     }
 
     @Override
     public Fragment getItem(int position) {
-        ContentFragment contentFragment;
-        if (devotionals.size() > position && devotionals.get(position) != null) {
-            contentFragment = ContentFragment.newInstance(devotionals.get(position));
-        } else {
-            contentFragment = ContentFragment.newInstance(
-                    new Meditacao("", "", "", "",
-                            MainActivity.TYPES[position])
-            );
-        }
+        ContentFragment contentFragment = ContentFragment
+                .newInstance(devotionals.get(position));
+
         mList[position] = contentFragment;
         return contentFragment;
     }
@@ -59,7 +57,7 @@ public class TabAdapter extends FragmentPagerAdapter {
     }
 
     private void updateFragments() {
-        for (int i = 0; i < getCount(); i++) {
+        for (int i = 0; i < devotionals.size(); i++) {
             if (mList[i] != null && devotionals.get(i) != null) {
                 mList[i].update(devotionals.get(i));
             }
@@ -72,9 +70,6 @@ public class TabAdapter extends FragmentPagerAdapter {
     }
 
     public Meditacao getMeditacao(int position) {
-        if (position < devotionals.size() && devotionals.get(position) != null)
-            return devotionals.get(position);
-        return new Meditacao("", "", "", "",
-                MainActivity.TYPES[position]);
+        return devotionals.get(position);
     }
 }
