@@ -148,7 +148,7 @@ public class Util {
         map.put("fp", "Filipenses");
         map.put("cl", "Colossenses");
         map.put("ts", "Tessalonissenses");
-        map.put("tn", "Timóteo");
+        map.put("tm", "Timóteo");
         map.put("tt", "Tito");
         map.put("fm", "Filemon");
         map.put("hb", "Hebreus");
