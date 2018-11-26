@@ -39,6 +39,11 @@ public class ContentFragment extends Fragment {
         return fragment;
     }
 
+    public static ContentFragment newInstance(int type) {
+        Meditacao meditacao = new Meditacao("", "", "", "", type);
+        return newInstance(meditacao);
+    }
+
     public Meditacao getMeditacao() {
         return meditacao;
     }
@@ -72,15 +77,17 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_fragment, container, false);
+        return inflater.inflate(R.layout.content_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         tvTitulo = view.findViewById(R.id.tvTitulo);
         tvTextoBiblico = view.findViewById(R.id.tvTextoBiblico);
         tvData = view.findViewById(R.id.tvData);
         tvTexto = view.findViewById(R.id.tvTexto);
         tvLinks = view.findViewById(R.id.tvLinks);
-
-
-        return view;
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
