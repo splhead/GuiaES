@@ -76,7 +76,11 @@ public class TabAdapter extends FragmentPagerAdapter {
     }
 
     public Meditacao getMeditacao(int position) {
-        return devotionals.get(position);
+        if (position < mFragmentTagList.size()) {
+            ContentFragment contentFragment = getFragment(position);
+            if (contentFragment != null) return contentFragment.getMeditacao();
+        }
+        return new Meditacao("", "", "", "", position + 1);
     }
 
     @NonNull
