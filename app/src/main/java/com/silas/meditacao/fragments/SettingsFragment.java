@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.SeekBarPreference;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SeekBarPreference;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
@@ -19,8 +20,8 @@ import com.silas.meditacao.receiver.SchedulerReceiver;
 
 public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-    public static final String KEY_FONT_SIZE = "pref_font_size";
-    public final static String KEY_DARK_THEME = "pref_night_mode";
+    private static final String KEY_FONT_SIZE = "pref_font_size";
+    private final static String KEY_DARK_THEME = "pref_night_mode";
     public final static String KEY_TTS_PITCH = "pref_tts_pitch";
     public final static String KEY_TTS_RATE = "pref_tts_rate";
 
@@ -67,6 +68,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 Preference fontSizePref = findPreference(key);
                 String fontSize = sharedPreferences.getString(key, "Normal");
                 fontSizePref.setSummary(fontSize);
+                assert fontSize != null;
                 switch (fontSize) {
                     case "Pequena":
                         p.setFontStyle(Preferences.FontStyle.Pequena);
@@ -99,7 +101,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
             case KEY_TTS_PITCH:
             case KEY_TTS_RATE:
                 SeekBarPreference tts_preference = (SeekBarPreference) findPreference(key);
-                String k = tts_preference.getKey();
                 int iTts = sharedPreferences.getInt(key, 2);
                 if (iTts == 0) {
                     tts_preference.setValue(1);

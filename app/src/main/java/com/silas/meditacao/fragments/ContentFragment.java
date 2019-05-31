@@ -3,14 +3,15 @@ package com.silas.meditacao.fragments;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.ads.AdSize;
 import com.silas.guiaes.activity.R;
@@ -24,7 +25,7 @@ import com.silas.meditacao.models.Meditacao;
  */
 public class ContentFragment extends Fragment {
 
-    public static final String AD_LOADED_KEY = "ad_loaded";
+    private static final String AD_LOADED_KEY = "ad_loaded";
     private Meditacao meditacao;
     private TextView tvTitulo, tvTextoBiblico, tvData, tvTexto, tvLinks;
     private Boolean adIsLoaded = false;
@@ -117,7 +118,7 @@ public class ContentFragment extends Fragment {
         setupContent();
     }
 
-    public void updateTitlePadding() {
+    private void updateTitlePadding() {
         if (adIsLoaded) {
             int paddingTop = AdSize.SMART_BANNER.getHeightInPixels(getActivity());
             tvTitulo.setPadding(tvTitulo.getTotalPaddingLeft(), paddingTop

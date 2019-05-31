@@ -36,4 +36,5 @@
     <string name="fab_label">Botão para compartilhar a meditação</string>
     <string name="action_favorites">Favoritos</string>
     <string name="loading">Carregando&#8230;</string>
+    <string name="ad">Ad</string>
 </resources>

@@ -20,12 +20,11 @@ class DBAdapter {
 		this.contexto = contexto;
 	}
 
-	DBAdapter abrir() throws SQLException
+    void abrir() throws SQLException
 	{
 		dbHelper = new DBHelper(contexto);
 		bancoDados  = dbHelper.getWritableDatabase();
 //		Log.i(getClass().getName(), "Conectando com banco de dados");
-		return this;
 	}
 
 	void fechar() throws SQLException

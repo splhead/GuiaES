@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import androidx.core.app.TaskStackBuilder;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.models.Meditacao;
 

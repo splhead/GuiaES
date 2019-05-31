@@ -1,11 +1,12 @@
 package com.silas.meditacao.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.fragments.ContentFragment;
@@ -85,7 +86,7 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Object obj = super.instantiateItem(container, position);
         if (obj instanceof ContentFragment) {
             ContentFragment fragment = (ContentFragment) obj;

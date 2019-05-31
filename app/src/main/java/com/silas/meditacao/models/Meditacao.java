@@ -3,6 +3,8 @@ package com.silas.meditacao.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Calendar;
@@ -109,14 +111,10 @@ public class Meditacao implements Parcelable {
         return data;
     }
 
-    public void setData(String data) {
-        this.data = data;
-    }
-
     public String getDataPorExtenso() {
         //yyyy-MM-dd
         String out = "";
-        String mes[] = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        String[] mes = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
         try {
             String ano;
@@ -148,6 +146,7 @@ public class Meditacao implements Parcelable {
         return texto;
     }
 
+    @NonNull
     public String toString() {
         return this.getTitulo() + " " + this.getData() + " " + getTipo();
     }

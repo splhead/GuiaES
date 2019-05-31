@@ -2,10 +2,10 @@ package com.silas.meditacao.io
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.preference.PreferenceDialogFragmentCompat
 import android.text.format.DateFormat
 import android.view.View
 import android.widget.TimePicker
+import androidx.preference.PreferenceDialogFragmentCompat
 import com.silas.guiaes.activity.R
 
 class TimePreferenceDialogFragmentCompat: PreferenceDialogFragmentCompat() {
@@ -33,7 +33,7 @@ class TimePreferenceDialogFragmentCompat: PreferenceDialogFragmentCompat() {
         super.onBindDialogView(view)
 
         mTimePicker = view!!.findViewById(R.id.edit)
-        val preference = getPreference()
+        val preference = preference
         var minutesAfterMidnight = 0
         if (preference is TimePreference) {
             minutesAfterMidnight = preference.getTime()

@@ -122,7 +122,7 @@ def getDevotional(url, type_):
                 #print(nextUrl)
                 getDevotional(nextUrl, type_)
 
-    except Exception,e:
+    except Exception, e:
         print("Erro: ", e)
 
 # Adults

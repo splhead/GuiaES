@@ -7,26 +7,26 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
@@ -68,11 +68,14 @@ public class MainActivity extends ThemedActivity implements
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_main_activity);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         setupAnalytics();
 
@@ -90,12 +93,9 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupFirstTimeNotifications() {
-        SharedPreferences sharedPreferences
-                = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (sharedPreferences.getBoolean(FIRST_TIME_NOTIFICATION_KEY, true)) {
-            sendBroadcast(new Intent(SchedulerReceiver.SCHEDULER_ACTION));
-            sharedPreferences.edit().putBoolean(FIRST_TIME_NOTIFICATION_KEY, false).apply();
+        if (preferences.getBoolean(FIRST_TIME_NOTIFICATION_KEY, true)) {
+            sendBroadcast(new Intent(SchedulerReceiver.ACTION_SCHEDULER));
+            preferences.edit().putBoolean(FIRST_TIME_NOTIFICATION_KEY, false).apply();
         }
 
     }
@@ -134,7 +134,7 @@ public class MainActivity extends ThemedActivity implements
         if (mToolbar != null) {
 //            changeFontToolbar(mToolbar);
             mToolbar.setOnMenuItemClickListener(this);
-            if (!PreferenceManager.getDefaultSharedPreferences(this)
+            if (!preferences
                     .getBoolean(Preferences.DARK_THEME, false)) {
                 mToolbar.setPopupTheme(R.style.Theme_Light_PopupOverlay);
             }
@@ -231,10 +231,13 @@ public class MainActivity extends ThemedActivity implements
     }
 
     public void changeToTabDefault() {
-        int tabDefault = (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Preferences.TYPE_DEFAULT, "0")));
+        String typeDefault = preferences
+                .getString(Preferences.TYPE_DEFAULT, "0");
+
+        int tabDefault = typeDefault != null ? Integer.parseInt(typeDefault) : 0;
 
         changeToTab(tabDefault);
+
     }
 
     public View getCoordnatorLayout() {
@@ -303,7 +306,7 @@ public class MainActivity extends ThemedActivity implements
             dia = Calendar.getInstance();
             DatePickerDialog mDateDialog;
 
-            if (!PreferenceManager.getDefaultSharedPreferences(this)
+            if (!preferences
                     .getBoolean(Preferences.DARK_THEME, false)) {
                 mDateDialog = new DatePickerDialog(this,
                         R.style.AppTheme_DialogTheme, this
@@ -531,50 +534,32 @@ public class MainActivity extends ThemedActivity implements
                     // success, create the TTS instance
                     tts = new TextToSpeech(this, this);
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                            @Override
-                            public void onStart(String utteranceId) {
-                                //                Log.i("speech", "started");
-                            }
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+                            //                Log.i("speech", "started");
+                        }
 
-                            @Override
-                            public void onDone(String utteranceId) {
-                                runOnUiThread(new Runnable() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                            runOnUiThread(new Runnable() {
 
-                                    @Override
-                                    public void run() {
+                                @Override
+                                public void run() {
 
-                                        // Stuff that updates the UI
-                                        changeMenuItemIcon(menuItem
-                                                , R.drawable.ic_baseline_play_circle_outline_24px);
-                                    }
-                                });
+                                    // Stuff that updates the UI
+                                    changeMenuItemIcon(menuItem
+                                            , R.drawable.ic_baseline_play_circle_outline_24px);
+                                }
+                            });
 
-                            }
+                        }
 
-                            @Override
-                            public void onError(String utteranceId) {
-                                Log.e("speech", "error");
-                            }
-                        });
-                    } else {
-                        tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
-                            @Override
-                            public void onUtteranceCompleted(String utteranceId) {
-                                runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-
-                                        // Stuff that updates the UI
-                                        changeMenuItemIcon(menuItem
-                                                , R.drawable.ic_baseline_play_circle_outline_24px);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                        @Override
+                        public void onError(String utteranceId) {
+                            Log.e("speech", "error");
+                        }
+                    });
                 } else {
                     // missing data, install it
                     try {

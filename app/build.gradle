@@ -2,16 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
-apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.silas.guiaes.app"
-        minSdkVersion 14
-        targetSdkVersion 27
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion 16
+        targetSdkVersion 28
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -42,24 +42,26 @@ sourceSets {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.firebase:firebase-core:' + firebase_core_version
-    implementation 'com.google.firebase:firebase-ads:' + firebase_ads_version
-    implementation 'com.android.support:customtabs:' + support_version
-    implementation 'com.android.support:support-v4:' + support_version
-    implementation 'com.android.support:appcompat-v7:' + support_version
-    implementation 'com.android.support:preference-v7:' + support_version
-    implementation 'com.android.support:design:' + support_version
-    implementation 'com.android.support:recyclerview-v7:' + support_version
-    implementation 'com.android.support:cardview-v7:' + support_version
+    implementation "com.google.firebase:firebase-core:$firebase_core_version"
+    implementation "com.google.firebase:firebase-ads:$firebase_ads_version"
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.code.gson:gson:' + gson_version
-    implementation 'com.crashlytics.sdk.android:crashlytics:' + crashlytics_version
-    implementation 'com.google.firebase:firebase-perf:' + firebase_perf_version
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.crashlytics.sdk.android:crashlytics:$crashlytics_version"
+    implementation "com.google.firebase:firebase-perf:$firebase_perf_version"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    testImplementation "junit:junit:4.12"
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 }
 

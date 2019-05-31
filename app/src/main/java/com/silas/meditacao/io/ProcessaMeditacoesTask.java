@@ -1,9 +1,10 @@
 package com.silas.meditacao.io;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.adapters.MeditacaoDBAdapter;
 import com.silas.meditacao.adapters.TabAdapter;
