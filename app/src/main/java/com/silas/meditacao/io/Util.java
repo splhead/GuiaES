@@ -182,8 +182,10 @@ public class Util {
                     return "https://gist.githubusercontent.com/anonymous/a91302485781c31b840f93b055266b0f/raw/16d082773d6122aadc32b63301a2c091046fc918/a_caminho_do_lar.json";
                 } else if (year == 2018) {
                     return "https://gist.githubusercontent.com/anonymous/ad386a6c961d177e37394b458c9e9458/raw/4a3b41541373230d2c91d7809b43b4bf9af88ace/um_dia_inesquecivel_2018.json";
+                } else if (year == 2019) {
+                    return "http://chief-rodent.glitch.me/nossa_esperanca_2019.json";                    
                 } else {
-                    return "http://chief-rodent.glitch.me/nossa_esperanca_2019.json";
+                    return "http://blue-sassafras.glitch.me/de_coracao_a_coracao_2020.json";
                 }
             case Meditacao.MULHER:
                 //mulher
@@ -191,8 +193,10 @@ public class Util {
                     return "https://gist.githubusercontent.com/anonymous/2e25e4eca84fae894d0c10e0cc4e86ae/raw/df61d4a63b5756fbb3441b1a5431304c100977f6/vivendo_seu_amor.json";
                 } else if (year == 2018) {
                     return "https://gist.githubusercontent.com/anonymous/1435d6eadd5b15686ca5197cdd20c4e9/raw/8d0ec691fd0fc024f46cbc809e79e7b810b543d4/amor_eterno_2018.json";
-                } else {
+                } else if (year == 2019) {
                     return "http://chief-rodent.glitch.me/toque_de_alegria_2019.json";
+                } else {
+                    return "http://blue-sassafras.glitch.me/surpresa_do_ceu_2020.json";
                 }
             case Meditacao.JUVENIL:
                 //juvenil
@@ -200,8 +204,10 @@ public class Util {
                     return "https://gist.githubusercontent.com/anonymous/00b246e71aa73375621547219fd3aecf/raw/cd80726fb8c14ce7f29a2e3c55a3a944d99a87c2/siga_o_mestre.json";
                 } else if (year == 2018) {
                     return "https://gist.githubusercontent.com/anonymous/2e076da9d6c8a22ef40fb32ea7269ee8/raw/c9426c37dea0b213f56bc519e0143ba088c36432/pense_bem_2018.json";
-                } else {
+                } else if (year == 2019) {
                     return "http://chief-rodent.glitch.me/natureza_viva_2019.json";
+                } else {
+                    return "http://blue-sassafras.glitch.me/inegociavel_2020.json";
                 }
             case Meditacao.ABJANELAS:
                 return "https://gist.githubusercontent.com/anonymous/386f9d8d5ea404c14d6da332e7a4a744/raw/5b2a5f10eaa84e54e5da7029ce121ed1717a5fe5/janelas_para_a_vida.json";

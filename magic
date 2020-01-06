@@ -74,7 +74,7 @@ def getDevotional(url, type_):
         #print ("lastDayFound: ", lastDayFound, " date: ", devotionalDate[8:])
         if lastDayFound < int(devotionalDate[8:]):
             lastDayFound = int(devotionalDate[8:])
-            #print(lastDayFound)
+            print(lastDayFound)
         else:
             lastDayFound += 1
 
@@ -127,19 +127,19 @@ def getDevotional(url, type_):
 
 # Adults
 counterDevotional = 0
-url="https://mais.cpb.com.br/devotionals-diarias"
+url="https://mais.cpb.com.br/meditacoes-diarias/"
 type_ = '1'
 getDevotional(url, type_)
 # Womans
-counterDevotional = 0
-url="https://mais.cpb.com.br/meditacao-da-mulher-2"
-type_ = '2'
-getDevotional(url, type_)
+#counterDevotional = 0
+#url="https://mais.cpb.com.br/meditacao-da-mulher-2"
+#type_ = '2'
+#getDevotional(url, type_)
 # Teenage
-counterDevotional = 0
-url="https://mais.cpb.com.br/inspiracao-juvenil-2"
-type_ = '3'
-getDevotional(url, type_)
+#counterDevotional = 0
+#url="https://mais.cpb.com.br/inspiracao-juvenil-2"
+#type_ = '3'
+#getDevotional(url, type_)
 
 jsonArray = jsonArray[:-1] + "]"
 print(jsonArray)
