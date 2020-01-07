@@ -37,6 +37,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
         //Log.d("adapter", licao.toString());
         bancoDados.beginTransaction();
         try {
+            int counter = 0;
             for (Meditacao meditacao : meditacoes) {
                 // verifica se o registro já exite no banco
                 if (this.meditacao(stringToCalendar(meditacao.getData()), meditacao.getTipo()) != null) {
@@ -54,7 +55,14 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
 
                 bancoDados.insert(BD_TABELA, null, valores);
+                counter++;
 //                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
+                if (counter > 100) {
+                    counter = 0;
+                    bancoDados.setTransactionSuccessful();
+                    bancoDados.endTransaction();
+                    bancoDados.beginTransaction();
+                }
             }
             bancoDados.setTransactionSuccessful();
         } catch (SQLException e) {

@@ -40,8 +40,10 @@ import com.silas.meditacao.receiver.SchedulerReceiver;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -65,6 +67,7 @@ public class MainActivity extends ThemedActivity implements
     private ArrayList<Meditacao> meditacoes;
     public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
             Meditacao.JUVENIL, Meditacao.ABJANELAS};
+
     private AdView mAdView;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -165,11 +168,28 @@ public class MainActivity extends ThemedActivity implements
 
         if (meditacoes == null || meditacoes.size() < TYPES.length) {
 
-            new ProcessaMeditacoesTask(this, dia, true).execute(TYPES);
+            new ProcessaMeditacoesTask(this,
+                    dia,
+                    true)
+                    .execute(typesToDownload(meditacoes));
         } else {
             setupFABs();
             changeToTabDefault();
         }
+    }
+
+    private Integer[] typesToDownload(ArrayList<Meditacao> meditacoes) {
+        List<Integer> tmpTypes = new ArrayList<>(Arrays.asList(TYPES));
+
+        for (Meditacao meditacao : meditacoes) {
+            tmpTypes.remove((Integer) meditacao.getTipo());
+        }
+
+        Integer[] typesToDownload = new Integer[tmpTypes.size()];
+        for (int i = 0; i < typesToDownload.length; i++) {
+            typesToDownload[i] = tmpTypes.get(i);
+        }
+        return typesToDownload;
     }
 
     public TabAdapter getTabAdapter() {
@@ -590,6 +610,7 @@ public class MainActivity extends ThemedActivity implements
             case FAVORITES_ACTIVITY_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     Meditacao devotional = data.getParcelableExtra(Meditacao.DEVOTIONAL_KEY);
+                    assert devotional != null;
                     setDia(devotional);
                 }
                 break;

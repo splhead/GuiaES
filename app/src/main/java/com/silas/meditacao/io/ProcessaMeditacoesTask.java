@@ -78,19 +78,19 @@ public class ProcessaMeditacoesTask extends
 
     @NonNull
     private ArrayList<String> doExtraction(int tipo) {
-        ArrayList<Meditacao> dias = null;
+        ArrayList<Meditacao> dias = new ArrayList<>();
         ArrayList<String> status = new ArrayList<>();
         Extractable extrator;
 
         extrator = howToGet(tipo, Util.getURL(tipo, dia));
         try {
             if (extrator != null) {
-                dias = extrator.extractDevotional();
+                dias.addAll(extrator.extractDevotional());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (dias == null || dias.size() == 0) {
+        if (dias.size() == 0) {
             status.add(Meditacao.getDevotionalName(tipo)
                     + " indisponível \n tente mais tarde!");
         } else {
