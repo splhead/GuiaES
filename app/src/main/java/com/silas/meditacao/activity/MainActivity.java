@@ -166,8 +166,13 @@ public class MainActivity extends ThemedActivity implements
 
         setupViewPager();
 
-        if (meditacoes == null || meditacoes.size() < TYPES.length) {
+        if (meditacoes == null) {
+            new ProcessaMeditacoesTask(this,
+                    dia,
+                    true)
+                    .execute(TYPES);
 
+        } else if (meditacoes.size() < TYPES.length) {
             new ProcessaMeditacoesTask(this,
                     dia,
                     true)
