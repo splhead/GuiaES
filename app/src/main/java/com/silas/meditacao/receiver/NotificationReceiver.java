@@ -1,13 +1,16 @@
 package com.silas.meditacao.receiver;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.silas.guiaes.activity.R;
 import com.silas.meditacao.activity.LauncherActivity;
@@ -26,20 +29,16 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+//        Log.i("AlarmNotification", "recebeu");
         mContext = context;
         Meditacao meditacao = getTodayPreferedDevotional();
         if (meditacao != null) {
             String title = meditacao.getTitulo();
             String text = meditacao.getTextoBiblico();
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setSmallIcon(getNotificationIcon())
-                            .setContentTitle(title)
-                            .setContentText(text)
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText(text));
+
 
             Intent resultIntent = new Intent(context, LauncherActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             PendingIntent resultPendingIntent =
                     PendingIntent.getActivity(
@@ -49,20 +48,55 @@ public class NotificationReceiver extends BroadcastReceiver {
                             PendingIntent.FLAG_UPDATE_CURRENT
                     );
 
-            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setSmallIcon(getNotificationIcon())
+                            .setContentTitle(title)
+                            .setContentText(text)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(text))
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(resultPendingIntent)
+                            .setAutoCancel(true)
+                            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-            Notification n = mBuilder.build();
-            n.flags = Notification.FLAG_AUTO_CANCEL;
+            Notification notification = mBuilder.build();
+//            n.flags = Notification.FLAG_AUTO_CANCEL;
 
             // Sets an ID for the notification
             int mNotificationId = 1;
             // Gets an instance of the NotificationManager service
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(context);
+//                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // Builds the notification and issues it.
-            if (mNotifyMgr != null) {
-                mNotifyMgr.notify(mNotificationId, n);
+//            if (mNotifyMgr != null) {
+            createNotificationChannel();
+            mNotifyMgr.notify(mNotificationId, notification);
+//            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                SchedulerReceiver.setAlarm(context, true);
+//                Log.i("AlarmNotification", "new alarm scheduled");
             }
+//            Log.i("AlarmNotification", "Era para notificar");
+        }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = mContext.getString(R.string.channel_name);
+            String description = mContext.getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+            assert notificationManager != null;
+            notificationManager.createNotificationChannel(channel);
         }
     }
 

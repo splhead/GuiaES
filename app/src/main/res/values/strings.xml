@@ -36,4 +36,6 @@
     <string name="fab_label">Botão para compartilhar a meditação</string>
     <string name="action_favorites">Favoritos</string>
     <string name="loading">Carregando&#8230;</string>
+    <string name="channel_name">Meditação</string>
+    <string name="channel_description">Notificações do aplicativo Meditação Cristã Adventista</string>
 </resources>
