@@ -326,6 +326,10 @@ public class MainActivity extends ThemedActivity implements
         long[] dates = mdba.buscaDataMinMax(TYPES[mViewPager.getCurrentItem()]);
         if (dates != null) {
             dia = Calendar.getInstance();
+            if (Util.isAfterSunset(dia)) {
+                dia.add(Calendar.DAY_OF_MONTH, 1);
+                Log.i("dia", String.valueOf(dia.get(Calendar.DAY_OF_MONTH)));
+            }
             DatePickerDialog mDateDialog;
 
             if (!PreferenceManager.getDefaultSharedPreferences(this)

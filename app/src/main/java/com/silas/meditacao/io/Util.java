@@ -59,6 +59,10 @@ public class Util {
                 (hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && hoje.get(Calendar.HOUR_OF_DAY) < 18));
     }
 
+    public static boolean isAfterSunset(Calendar dia) {
+        return dia.get(Calendar.HOUR_OF_DAY) >= 18 && dia.get(Calendar.SECOND) > 0;
+    }
+
     public static String preparaCompartilhamento(Meditacao meditacao) {
         String sb = "Olhe que aplicativo bacana \"* Meditação Cristã Adventista *\"\n" +
                 "https://play.google.com/store/apps/details?id=com.silas.guiaes.app";
