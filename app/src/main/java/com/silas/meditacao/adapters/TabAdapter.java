@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import com.silas.meditacao.activity.MainActivity;
 import com.silas.meditacao.fragments.ContentFragment;
 import com.silas.meditacao.models.Meditacao;
 
@@ -53,12 +52,16 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return MainActivity.TYPES.length;
+        return devotionals.size() > 0 ? devotionals.size() : Meditacao.TYPES.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return Meditacao.getNomeTipo(MainActivity.TYPES[position]);
+        if (devotionals.size() > 0) {
+            return Meditacao.getNomeTipo(devotionals.get(position).getTipo());
+
+        }
+        return Meditacao.getNomeTipo(Meditacao.TYPES[position]);
     }
 
     private void updateFragments() {

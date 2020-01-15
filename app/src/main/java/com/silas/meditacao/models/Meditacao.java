@@ -12,6 +12,9 @@ public class Meditacao implements Parcelable {
     public static final int MULHER = 2;
     public static final int JUVENIL = 3;
     public static final int ABJANELAS = 4;
+    public static final int JOVEM = 5;
+    public static final Integer[] TYPES = {ADULTO, MULHER,
+            JUVENIL, ABJANELAS};
     public static final String DEVOTIONALS_ARRAY_KEY = "devotionals";
     public static final String DEVOTIONAL_KEY = "devotinal";
     public static final Parcelable.Creator<Meditacao> CREATOR = new Parcelable.Creator<Meditacao>() {
@@ -46,7 +49,11 @@ public class Meditacao implements Parcelable {
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
-        this.tipo = tipo;
+        if (tipo == Meditacao.JUVENIL && data.substring(0, 4).equals("2020")) {
+            this.tipo = Meditacao.JOVEM;
+        } else {
+            this.tipo = tipo;
+        }
         this.favorite = favorite;
     }
 
@@ -55,7 +62,12 @@ public class Meditacao implements Parcelable {
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
-        this.tipo = tipo;
+        if (tipo == Meditacao.JUVENIL && data.substring(0, 4).equals("2020")) {
+            this.tipo = Meditacao.JOVEM;
+        } else {
+            this.tipo = tipo;
+        }
+
     }
 
     private Meditacao(Parcel in) {
@@ -78,6 +90,8 @@ public class Meditacao implements Parcelable {
                 return "Juvenil";
             case ABJANELAS:
                 return "A. Bullon";
+            case JOVEM:
+                return "Jovem";
         }
         return "";
     }
@@ -92,6 +106,8 @@ public class Meditacao implements Parcelable {
                 return "Inspiração Juvenil";
             case ABJANELAS:
                 return "Janelas para Vida";
+            case JOVEM:
+                return "Meditação Jovem";
             default:
                 return "";
         }
@@ -116,7 +132,7 @@ public class Meditacao implements Parcelable {
     public String getDataPorExtenso() {
         //yyyy-MM-dd
         String out = "";
-        String mes[] = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        String[] mes = new String[]{"janeiro", "fevereiro", "março", "abril", "maio", "junho",
                 "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"};
         try {
             String ano;

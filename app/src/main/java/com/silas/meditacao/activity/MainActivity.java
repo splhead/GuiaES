@@ -65,8 +65,6 @@ public class MainActivity extends ThemedActivity implements
     private TabAdapter tabAdapter;
     private FloatingActionButton fabFavorite;
     private ArrayList<Meditacao> meditacoes;
-    public static final Integer[] TYPES = {Meditacao.ADULTO, Meditacao.MULHER,
-            Meditacao.JUVENIL, Meditacao.ABJANELAS};
 
     private AdView mAdView;
 
@@ -170,9 +168,9 @@ public class MainActivity extends ThemedActivity implements
             new ProcessaMeditacoesTask(this,
                     dia,
                     true)
-                    .execute(TYPES);
+                    .execute(Meditacao.TYPES);
 
-        } else if (meditacoes.size() < TYPES.length) {
+        } else if (meditacoes.size() < Meditacao.TYPES.length) {
             new ProcessaMeditacoesTask(this,
                     dia,
                     true)
@@ -184,7 +182,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private Integer[] typesToDownload(ArrayList<Meditacao> meditacoes) {
-        List<Integer> tmpTypes = new ArrayList<>(Arrays.asList(TYPES));
+        List<Integer> tmpTypes = new ArrayList<>(Arrays.asList(Meditacao.TYPES));
 
         for (Meditacao meditacao : meditacoes) {
             tmpTypes.remove((Integer) meditacao.getTipo());
@@ -215,7 +213,7 @@ public class MainActivity extends ThemedActivity implements
         if (mViewPager != null) {
 
 //                //corrige a troca de data para atualizar todas as tabs FragmentPagerAdapter
-            mViewPager.setOffscreenPageLimit(TYPES.length);
+            mViewPager.setOffscreenPageLimit(Meditacao.TYPES.length);
 
             mViewPager.setAdapter(tabAdapter);
 
@@ -247,7 +245,7 @@ public class MainActivity extends ThemedActivity implements
     public void changeToTab(int tabDefault) {
         if (tabAdapter != null && mViewPager != null) {
 
-            if (tabDefault < TYPES.length) {
+            if (tabDefault < Meditacao.TYPES.length) {
 
                 mViewPager.setCurrentItem(tabDefault);
 
@@ -323,7 +321,7 @@ public class MainActivity extends ThemedActivity implements
 
     private void setupDatePicker() {
         MeditacaoDBAdapter mdba = new MeditacaoDBAdapter(this);
-        long[] dates = mdba.buscaDataMinMax(TYPES[mViewPager.getCurrentItem()]);
+        long[] dates = mdba.buscaDataMinMax(Meditacao.TYPES[mViewPager.getCurrentItem()]);
         if (dates != null) {
             dia = Calendar.getInstance();
             if (Util.isAfterSunset(dia)) {
@@ -531,7 +529,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void updateMeditacoes() {
-        new ProcessaMeditacoesTask(this, dia).execute(TYPES);
+        new ProcessaMeditacoesTask(this, dia).execute(Meditacao.TYPES);
     }
 
     @Override

@@ -45,7 +45,7 @@ class LauncherActivity : AppCompatActivity() {
                 val day = Calendar.getInstance()
                 var counter = 0
 
-                MainActivity.TYPES.forEach { tipo ->
+                Meditacao.TYPES.forEach { tipo ->
                     counter++
                     val devotional = mdba.buscaMeditacao(day, tipo!!)
                     devotional?.let { devotionals.add(devotional) }
