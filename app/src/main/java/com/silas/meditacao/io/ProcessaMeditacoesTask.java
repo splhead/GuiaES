@@ -131,6 +131,7 @@ public class ProcessaMeditacoesTask extends
             TabAdapter tabAdapter = activity.getTabAdapter();
             if (tabAdapter != null) {
                 tabAdapter.setDevotionals(meditacoes);
+                tabAdapter.notifyDataSetChanged();
                 activity.setupFABs();
                 if (setToDefaultTab) {
                     activity.changeToTabDefault();
