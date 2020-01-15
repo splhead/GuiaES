@@ -49,7 +49,10 @@ public class Meditacao implements Parcelable {
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
-        if (tipo == Meditacao.JUVENIL && data.substring(0, 4).equals("2020")) {
+        if (tipo == Meditacao.JUVENIL
+                && data != null
+                && !data.isEmpty()
+                && data.substring(0, 4).equals("2020")) {
             this.tipo = Meditacao.JOVEM;
         } else {
             this.tipo = tipo;
@@ -62,7 +65,10 @@ public class Meditacao implements Parcelable {
         this.data = data;
         this.textoBiblico = textoBiblico;
         this.texto = texto;
-        if (tipo == Meditacao.JUVENIL && data.substring(0, 4).equals("2020")) {
+        if (tipo == Meditacao.JUVENIL
+                && data != null
+                && !data.isEmpty()
+                && data.substring(0, 4).equals("2020")) {
             this.tipo = Meditacao.JOVEM;
         } else {
             this.tipo = tipo;
