@@ -320,6 +320,7 @@ public class MainActivity extends ThemedActivity implements
     }
 
     private void setupDatePicker() {
+        dia = Calendar.getInstance();
         if (Util.isAfterSunset(dia)) {
             dia.add(Calendar.DAY_OF_MONTH, 1);
             Log.i("dia", String.valueOf(dia.get(Calendar.DAY_OF_MONTH)));
