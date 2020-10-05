@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "163866335155-k9jkhpauul5n0r2t34thk6o1dqsv72ef.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.silas.guiaes.app",
+            "certificate_hash": "0df46b9ee8c18770943b07a0ffcd9210dfec3781"
+          }
+        },
+        {
           "client_id": "163866335155-ftasol73p98uhvi39j42fk2mhtm9kiqq.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -25,17 +33,16 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163866335155-ftasol73p98uhvi39j42fk2mhtm9kiqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-5765621569845430~9691790109"
     }
   ],
   "configuration_version": "1"

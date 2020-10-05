@@ -1,7 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #encoding: utf-8
-import glob, os, re, json, sys
+import glob, os, re, json, sys, datetime
 from bs4 import BeautifulSoup
+
+currentDate = datetime.datetime.now();
 
 numbers = re.compile(r'(\d+)')
 def numericalSort(value):
@@ -14,11 +16,10 @@ def dateFormat(date):
 		      'julho', 'agosto', 'setembro','outubro', 'novembro', 'dezembro');
 
 	dia = numbers.findall(date)
-
 	for mes in meses:
 		sMes = ""
 		sDia = ""
-		if date.__contains__(mes.encode('utf-8')) :
+		if date.__contains__(mes) :
 			if meses.index(mes) + 1 < 10 :
 				sMes = '0' + str(meses.index(mes) + 1)
 			else:
@@ -28,7 +29,7 @@ def dateFormat(date):
 				sDia = '0' + str(dia[0])
 			else:
 				sDia = str(dia[0])
-			return "2017-" + sMes + "-" + sDia
+			return str(currentDate.year) + "-" + sMes + "-" + sDia
 
 os.chdir(".")
 
@@ -42,31 +43,40 @@ for file in sorted(glob.glob("*.xhtml"),key=numericalSort):
 	doc =  BeautifulSoup(content, "lxml", from_encoding="utf-8")
 
 	# doc =  BeautifulSoup(content, "lxml", exclude_encodings="utf-8")
-
-	dia = doc.select_one('p[class="data]')
+ 
+	dia = doc.find(attrs={"class":"data"})
+	
 	if dia is not None:
-		dia = dia.text.encode('utf-8')
-
-		titulo = doc.select_one('p[class="titulo"]').text.encode('utf-8').upper()
+		dia = dia.text.lower().strip()
 		
-		verso = doc.select_one('p[class="verso"]')
+		titulo = doc.select_one('h1[class="titulo"]').text.upper()
+		# print(dia, titulo)
+		
+		verso = doc.select_one('p[class="_3_VersoBiblico"]')
 
-		json_obj += "{'day':'" + str(dateFormat(dia)) + "',"
-		json_obj += "'title':'" + titulo + "',"
-		json_obj += "'verse':'" + verso.text.encode('utf-8') + "',"
+		formattedDay = str(dateFormat(dia))
 
-		texto = "'text':'"
+		if formattedDay is not None:
 
-		paragrafos = verso.findAllNext("p")
-		for paragrafo in paragrafos:
-			texto += paragrafo.text.encode('utf-8') + "\n\n"
+			json_obj += "{\"day\":\"" + formattedDay + '",'
+			json_obj += '"title":"' + titulo + '",'
+			json_obj += '"verse":"' + verso.text + '",'
 
-		texto += "',"
-		json_obj += texto
-		json_obj += "'type':" + str(2) + "},"
+			texto = '"text":"'
+
+			paragrafos = verso.findAllNext("p")
+			for paragrafo in paragrafos:
+				texto += paragrafo.text + "\n\n"
+
+			texto += '",'
+			json_obj += texto
+			json_obj += '"type":' + str(1) + '},'
+		else:
+			print('Erro na data')
 
 json_obj  = json_obj[:-1]
 json_obj += ']'
 out = json.dumps(json_obj)
+final_out = re.sub(r'\\"','"', out[1:-1])
 
-print out
+print(final_out)

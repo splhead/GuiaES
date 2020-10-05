@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GuiaES.iml" filepath="$PROJECT_DIR$/GuiaES.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="GuiaES/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/git-GuiaES.iml" filepath="$PROJECT_DIR$/.idea/modules/git-GuiaES.iml" group="GuiaES" />
     </modules>
   </component>
 </project>

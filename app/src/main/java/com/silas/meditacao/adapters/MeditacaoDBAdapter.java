@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class MeditacaoDBAdapter extends DBAdapter {
@@ -43,6 +44,7 @@ public class MeditacaoDBAdapter extends DBAdapter {
                 if (this.meditacao(stringToCalendar(meditacao.getData()), meditacao.getTipo()) != null) {
                     Log.w(getClass().getName(),
                             "A meditacao já existe e não será gravada");
+                    continue;
                 }
 
                 ContentValues valores = new ContentValues();
@@ -56,8 +58,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
 
                 bancoDados.insert(BD_TABELA, null, valores);
                 counter++;
-//                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
+                Log.i(getClass().getSimpleName(), "Gravando: " + meditacao.toString());
                 if (counter > 100) {
+                    if (meditacao.getTipo() == 1) {
+                        Log.w(getClass().getName(), "aqui dá merda tbm alskdjfçalsdfjk");
+                    }
                     counter = 0;
                     bancoDados.setTransactionSuccessful();
                     bancoDados.endTransaction();
@@ -79,8 +84,11 @@ public class MeditacaoDBAdapter extends DBAdapter {
     private Calendar stringToCalendar(String data) {
         try {
             Calendar dia = Calendar.getInstance();
-            dia.setTime(sdf.parse(data));
-            return dia;
+            Date temp = sdf.parse(data);
+            if (temp != null) {
+                dia.setTime(temp);
+                return dia;
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -234,8 +242,10 @@ public class MeditacaoDBAdapter extends DBAdapter {
             try {
                 minMax[0] = sdf.parse(c.getString(0)).getTime();
                 minMax[1] = sdf.parse(c.getString(1)).getTime();
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } catch (NullPointerException ne) {
+                ne.printStackTrace();
+            } catch (ParseException pe) {
+                pe.printStackTrace();
             }
 
             c.close();

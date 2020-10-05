@@ -37,10 +37,14 @@ public class Util {
             if (connectivityManager != null) {
                 internet = connectivityManager
                         .getActiveNetworkInfo();
+
+                assert internet != null;
                 if (internet.isConnected()) {
 //                Log.i("TestaInternet", "Está conectado.");
                     return true;
                 }
+
+
             }
 
 
@@ -100,7 +104,7 @@ public class Util {
     }
 
     private static String changeAbbreviation(String in) {
-        Pattern pattern = Pattern.compile("[A-Za-z]{2}(?=\\s+\\d)");
+        Pattern pattern = Pattern.compile("[A-Z][a-z](?=\\s+\\d+:)");
         Matcher matcher = pattern.matcher(in);
         StringBuffer sb = new StringBuffer(in.length());
         Map<String, String> map = new HashMap<>();
@@ -163,11 +167,15 @@ public class Util {
 
         while (matcher.find()) {
             String abbreviation = matcher.group().toLowerCase();
+
             if (map.containsKey(abbreviation)) {
                 abbreviation = map.get(abbreviation);
+                assert abbreviation != null;
                 matcher.appendReplacement(sb, Matcher.quoteReplacement(abbreviation));
+                //            Log.i("Encontrou", matcher.group());
             }
-//            Log.i("Encontrou", matcher.group());
+
+
         }
 
         matcher.appendTail(sb);
@@ -187,9 +195,9 @@ public class Util {
                 } else if (year == 2018) {
                     return "https://gist.githubusercontent.com/anonymous/ad386a6c961d177e37394b458c9e9458/raw/4a3b41541373230d2c91d7809b43b4bf9af88ace/um_dia_inesquecivel_2018.json";
                 } else if (year == 2019) {
-                    return "http://chief-rodent.glitch.me/nossa_esperanca_2019.json";                    
+                    return "http://chief-rodent.glitch.me/nossa_esperanca_2019.json";
                 } else {
-                    return "http://blue-sassafras.glitch.me/de_coracao_a_coracao_2020.json";
+                    return "https://devotionals.github.io/de_coracao_a_coracao_2020.json";
                 }
             case Meditacao.MULHER:
                 //mulher
@@ -200,7 +208,7 @@ public class Util {
                 } else if (year == 2019) {
                     return "http://chief-rodent.glitch.me/toque_de_alegria_2019.json";
                 } else {
-                    return "http://blue-sassafras.glitch.me/surpresa_do_ceu_2020.json";
+                    return "https://devotionals.github.io/surpresa_no_ceu_2020.json";
                 }
             case Meditacao.JUVENIL:
                 //juvenil
@@ -211,7 +219,7 @@ public class Util {
                 } else if (year == 2019) {
                     return "http://chief-rodent.glitch.me/natureza_viva_2019.json";
                 } else {
-                    return "http://blue-sassafras.glitch.me/inegociavel_2020.json";
+                    return "https://devotionals.github.io/inegociavel_2020.json";
                 }
             case Meditacao.ABJANELAS:
                 return "https://gist.githubusercontent.com/anonymous/386f9d8d5ea404c14d6da332e7a4a744/raw/5b2a5f10eaa84e54e5da7029ce121ed1717a5fe5/janelas_para_a_vida.json";
@@ -288,7 +296,7 @@ public class Util {
             connection.setReadTimeout(30 * 1000);
 
 //            if (Build.VERSION.SDK_INT > 13) {
-                connection.setRequestProperty("Connection", "close");
+            connection.setRequestProperty("Connection", "close");
 //            }
 
             connection.connect();
